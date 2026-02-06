@@ -13,16 +13,17 @@ export interface InquiryData {
 }
 
 export async function submitInquiry(data: InquiryData): Promise<boolean> {
+    console.log("Attempting to submit inquiry to:", INQUIRY_SCRIPT_URL);
+
     if (!INQUIRY_SCRIPT_URL) {
-        console.warn("Inquiry script URL is not defined. Submission skipped.");
-        // Simulate success in development if URL is missing
-        return true;
+        console.error("CRITICAL: Inquiry script URL is missing! Check your environment variables.");
+        return false;
     }
 
     try {
         const response = await fetch(INQUIRY_SCRIPT_URL, {
             method: 'POST',
-            mode: 'no-cors', // Apps Script requires no-cors if not handling OPTIONS
+            mode: 'no-cors',
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -32,7 +33,7 @@ export async function submitInquiry(data: InquiryData): Promise<boolean> {
             })
         });
 
-        // With no-cors, we can't see the response status, but if it doesn't throw, it likely sent.
+        console.log("Inquiry submission request sent successfully.");
         return true;
     } catch (error) {
         console.error("Error submitting inquiry:", error);
