@@ -38,7 +38,7 @@ const services = [
 
 export default function LuxuryServices() {
     return (
-        <section className="py-32 bg-[#F2F0EB]">
+        <section id="services" className="py-32 bg-[#F2F0EB]">
             <div className="max-w-7xl mx-auto px-6">
                 <div className="grid lg:grid-cols-2 gap-20 items-end mb-20">
                     <div>

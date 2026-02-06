@@ -13,7 +13,7 @@ export default function LandingHero() {
     const scale = useTransform(scrollY, [0, 500], [1, 1.1]);
 
     return (
-        <section ref={containerRef} className="relative h-[110vh] w-full overflow-hidden bg-[#23312D]">
+        <section ref={containerRef} id="home" className="relative h-[110vh] w-full overflow-hidden bg-[#23312D]">
             {/* Background Image with Parallax */}
             <motion.div
                 style={{ y: y1, scale }}
@@ -65,7 +65,7 @@ export default function LandingHero() {
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
                         <Link
-                            href="/properties"
+                            href="#properties"
                             className="group relative px-10 py-5 bg-[#AE9573] text-white overflow-hidden transition-all duration-500 rounded-sm"
                         >
                             <span className="relative z-10 flex items-center gap-2 tracking-widest uppercase text-sm font-bold">
@@ -75,7 +75,7 @@ export default function LandingHero() {
                         </Link>
 
                         <Link
-                            href="/contact-us"
+                            href="#contact"
                             className="group px-10 py-5 bg-transparent border border-white/30 text-white backdrop-blur-md hover:bg-white hover:text-[#23312D] transition-all duration-500 rounded-sm"
                         >
                             <span className="tracking-widest uppercase text-sm font-bold">Book a Private Viewing</span>

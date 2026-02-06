@@ -37,6 +37,13 @@ const navItems = [
     { name: 'Contact Us', page: 'Contact' }
 ];
 
+const landingNavItems = [
+    { name: 'Home', href: '#home' },
+    { name: 'Services', href: '#services' },
+    { name: 'Properties', href: '#properties' },
+    { name: 'FAQ', href: '#faq' }
+];
+
 export default function MainLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const [isScrolled, setIsScrolled] = useState(false);
@@ -83,9 +90,9 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
                     {/* Desktop Navigation */}
                     <nav className="hidden lg:flex items-center gap-8">
-                        {navItems.map((item, index) => (
+                        {(pathname === '/landing' ? landingNavItems : navItems).map((item, index) => (
                             <div key={index} className="relative group">
-                                {item.children ? (
+                                {('children' in item) ? (
                                     <div>
                                         <button className={`flex items-center gap-1 text-sm tracking-wider transition-colors duration-300 ${isScrolled || !isHomePage ? 'text-[#23312D] hover:text-[#AE9573]' : 'text-white hover:text-[#B4A68C]'
                                             }`}>
@@ -94,7 +101,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                                         </button>
                                         <div className="absolute top-full left-0 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
                                             <div className="bg-white shadow-xl py-4 min-w-[200px] rounded-lg border border-gray-100">
-                                                {item.children.map((child, childIndex) => (
+                                                {(item.children as any[]).map((child, childIndex) => (
                                                     <Link
                                                         key={childIndex}
                                                         href={createPageUrl(child.page)}
@@ -108,9 +115,9 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                                     </div>
                                 ) : (
                                     <Link
-                                        href={createPageUrl(item.page)}
+                                        href={'href' in item ? item.href : createPageUrl(item.page as string)}
                                         className={`text-sm tracking-wider transition-colors duration-300 ${isScrolled || !isHomePage ? 'text-[#23312D] hover:text-[#AE9573]' : 'text-white hover:text-[#B4A68C]'
-                                            } ${isCurrentPage(item.page) ? 'text-[#B4A68C]' : ''}`}
+                                            } ${!('href' in item) && isCurrentPage(item.page as string) ? 'text-[#B4A68C]' : ''}`}
                                     >
                                         {item.name}
                                     </Link>
@@ -147,9 +154,9 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                             className="lg:hidden bg-white border-t max-h-[85vh] overflow-y-auto"
                         >
                             <nav className="max-w-7xl mx-auto px-6 py-6 space-y-4">
-                                {navItems.map((item, index) => (
+                                {(pathname === '/landing' ? landingNavItems : navItems).map((item, index) => (
                                     <div key={index}>
-                                        {item.children ? (
+                                        {('children' in item) ? (
                                             <div>
                                                 <button
                                                     onClick={() => setServicesOpen(!servicesOpen)}
@@ -160,7 +167,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                                                 </button>
                                                 {servicesOpen && (
                                                     <div className="pl-4 space-y-2 mt-2 border-l-2 border-gray-100 ml-2">
-                                                        {item.children.map((child, childIndex) => (
+                                                        {(item.children as any[]).map((child, childIndex) => (
                                                             <Link
                                                                 key={childIndex}
                                                                 href={createPageUrl(child.page)}
@@ -174,8 +181,9 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                                             </div>
                                         ) : (
                                             <Link
-                                                href={createPageUrl(item.page)}
-                                                className={`block py-2 text-[#23312D] ${isCurrentPage(item.page) ? 'text-[#AE9573]' : ''}`}
+                                                href={'href' in item ? item.href : createPageUrl(item.page as string)}
+                                                className={`block py-2 text-[#23312D] ${!('href' in item) && isCurrentPage(item.page as string) ? 'text-[#AE9573]' : ''}`}
+                                                onClick={() => setMobileMenuOpen(false)}
                                             >
                                                 {item.name}
                                             </Link>

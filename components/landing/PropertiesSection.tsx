@@ -80,7 +80,7 @@ export default function PropertiesSection() {
     };
 
     return (
-        <section className="py-32 bg-[#F9F8F6]">
+        <section id="properties" className="py-32 bg-[#F9F8F6]">
             <div className="max-w-7xl mx-auto px-6">
                 <div className="mb-20 flex flex-col md:flex-row md:items-end justify-between gap-8">
                     <div className="max-w-2xl">

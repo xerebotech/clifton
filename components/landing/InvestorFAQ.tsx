@@ -25,7 +25,7 @@ const faqs = [
 
 export default function InvestorFAQ() {
     return (
-        <section className="py-32 bg-[#F9F8F6]">
+        <section id="faq" className="py-32 bg-[#F9F8F6]">
             <div className="max-w-4xl mx-auto px-6">
                 <div className="text-center mb-20">
                     <span className="text-[#AE9573] text-sm tracking-[0.3em] uppercase block mb-4">Investment Clarity</span>
