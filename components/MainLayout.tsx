@@ -94,7 +94,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                             <div key={index} className="relative group">
                                 {('children' in item) ? (
                                     <div>
-                                        <button className={`flex items-center gap-1 text-sm tracking-wider transition-colors duration-300 ${isScrolled || !isHomePage ? 'text-[#23312D] hover:text-[#AE9573]' : 'text-white hover:text-[#B4A68C]'
+                                        <button className={`flex items-center gap-1 text-base tracking-wider transition-colors duration-300 ${isScrolled || !isHomePage ? 'text-[#23312D] hover:text-[#AE9573]' : 'text-white hover:text-[#B4A68C]'
                                             }`}>
                                             {item.name}
                                             <ChevronDown className="w-4 h-4" />
@@ -105,7 +105,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                                                     <Link
                                                         key={childIndex}
                                                         href={createPageUrl(child.page)}
-                                                        className="block px-6 py-3 text-sm text-[#868787] hover:bg-[#F2F0EB] hover:text-[#23312D] transition-colors"
+                                                        className="block px-6 py-3 text-base text-[#868787] hover:bg-[#F2F0EB] hover:text-[#23312D] transition-colors"
                                                     >
                                                         {child.name}
                                                     </Link>
@@ -116,7 +116,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                                 ) : (
                                     <Link
                                         href={'href' in item ? item.href : createPageUrl(item.page as string)}
-                                        className={`text-sm tracking-wider transition-colors duration-300 ${isScrolled || !isHomePage ? 'text-[#23312D] hover:text-[#AE9573]' : 'text-white hover:text-[#B4A68C]'
+                                        className={`text-base tracking-wider transition-colors duration-300 ${isScrolled || !isHomePage ? 'text-[#23312D] hover:text-[#AE9573]' : 'text-white hover:text-[#B4A68C]'
                                             } ${!('href' in item) && isCurrentPage(item.page as string) ? 'text-[#B4A68C]' : ''}`}
                                     >
                                         {item.name}
@@ -171,7 +171,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                                                             <Link
                                                                 key={childIndex}
                                                                 href={createPageUrl(child.page)}
-                                                                className="block py-2 text-sm text-[#5a5a5a]"
+                                                                className="block py-2 text-base text-[#5a5a5a]"
                                                             >
                                                                 {child.name}
                                                             </Link>

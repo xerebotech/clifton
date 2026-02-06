@@ -65,8 +65,9 @@ export default function LuxuryServices() {
                             initial={{ opacity: 0, y: 30 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.8, delay: index * 0.1 }}
+                            className="h-full"
                         >
-                            <Link href={service.path} className="group block bg-white p-10 h-full border border-gray-100 hover:border-[#AE9573]/30 transition-all duration-500 relative overflow-hidden shadow-sm hover:shadow-xl">
+                            <Link href={service.path} className="group flex flex-col bg-white p-10 h-full border border-gray-100 hover:border-[#AE9573]/30 transition-all duration-500 relative overflow-hidden shadow-sm hover:shadow-xl">
                                 <div className={`w-12 h-12 ${service.color} flex items-center justify-center rounded-sm mb-8 text-white group-hover:scale-110 transition-transform duration-500`}>
                                     <service.icon className="w-6 h-6" />
                                 </div>
@@ -82,7 +83,7 @@ export default function LuxuryServices() {
                                     {service.description}
                                 </p>
 
-                                <div className="flex items-center gap-2 text-[#23312D] text-xs tracking-widest uppercase font-bold group-hover:gap-4 transition-all">
+                                <div className="mt-auto flex items-center gap-2 text-[#23312D] text-xs tracking-widest uppercase font-bold group-hover:gap-4 transition-all">
                                     Inquire Now <ArrowUpRight className="w-4 h-4" />
                                 </div>
 
