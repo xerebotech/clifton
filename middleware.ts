@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
     const url = request.nextUrl.clone();
-    const hostname = request.headers.get('host');
+    const hostname = request.headers.get('host')?.split(':')[0];
 
     // Check if the user is visiting your subdomain
     if (hostname === 'realestate.cliftonuae.com') {
