@@ -8,9 +8,9 @@ export default function AboutSection() {
     const isInView = useInView(ref, { once: true, margin: "-100px" });
 
     return (
-        <section ref={ref} className="py-24 md:py-32 bg-[#F2F0EB]">
+        <section ref={ref} className="py-16 md:py-32 bg-[#F2F0EB] overflow-hidden">
             <div className="max-w-7xl mx-auto px-6">
-                <div className="grid lg:grid-cols-2 gap-16 items-center">
+                <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
                     {/* Images */}
                     <motion.div
                         className="relative"
@@ -23,11 +23,11 @@ export default function AboutSection() {
                             <img
                                 src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80"
                                 alt="Luxury Property"
-                                className="w-full h-[400px] object-cover"
+                                className="w-full h-[300px] md:h-[400px] object-cover rounded-sm"
                             />
                         </div>
                         <motion.div
-                            className="absolute -bottom-8 -right-8 w-64 h-64 bg-[#23312D] z-0"
+                            className="absolute -bottom-6 -right-6 md:-bottom-8 md:-right-8 w-32 h-32 md:w-64 md:h-64 bg-[#23312D] z-0"
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={isInView ? { opacity: 1, scale: 1 } : {}}
                             transition={{ duration: 0.8, delay: 0.3 }}
@@ -35,7 +35,7 @@ export default function AboutSection() {
                         <motion.img
                             src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=300&q=80"
                             alt="Interior"
-                            className="absolute -bottom-16 right-4 w-48 h-48 object-cover border-4 border-white shadow-2xl z-20"
+                            className="absolute -bottom-12 right-0 md:-bottom-16 md:right-4 w-32 h-32 md:w-48 md:h-48 object-cover border-4 border-white shadow-2xl z-20 rounded-sm"
                             initial={{ opacity: 0, y: 30 }}
                             animate={isInView ? { opacity: 1, y: 0 } : {}}
                             transition={{ duration: 0.8, delay: 0.5 }}
@@ -64,33 +64,33 @@ export default function AboutSection() {
                                 We specialize in real estate portfolio management, guiding investors to optimal investment choices and ensuring robust returns.
                             </p>
                         </div>
-                        <div className="mt-10 flex gap-12">
+                        <div className="mt-10 flex flex-wrap gap-8 md:gap-12">
                             <div>
                                 <span
-                                    className="text-5xl font-light text-[#23312D]"
+                                    className="text-4xl md:text-5xl font-light text-[#23312D]"
                                     style={{ fontFamily: 'var(--font-cinzel), serif' }}
                                 >
                                     100%
                                 </span>
-                                <p className="text-sm text-[#A5A19D] mt-2 tracking-wide">Client Satisfaction</p>
+                                <p className="text-xs md:text-sm text-[#A5A19D] mt-2 tracking-wide">Client Satisfaction</p>
                             </div>
                             <div>
                                 <span
-                                    className="text-5xl font-light text-[#23312D]"
+                                    className="text-4xl md:text-5xl font-light text-[#23312D]"
                                     style={{ fontFamily: 'var(--font-cinzel), serif' }}
                                 >
                                     15+
                                 </span>
-                                <p className="text-sm text-[#A5A19D] mt-2 tracking-wide">Years Experience</p>
+                                <p className="text-xs md:text-sm text-[#A5A19D] mt-2 tracking-wide">Years Experience</p>
                             </div>
                             <div>
                                 <span
-                                    className="text-5xl font-light text-[#23312D]"
+                                    className="text-4xl md:text-5xl font-light text-[#23312D]"
                                     style={{ fontFamily: 'var(--font-cinzel), serif' }}
                                 >
                                     100M+
                                 </span>
-                                <p className="text-sm text-[#A5A19D] mt-2 tracking-wide">Portfolio Value(AED)</p>
+                                <p className="text-xs md:text-sm text-[#A5A19D] mt-2 tracking-wide">Portfolio Value(AED)</p>
                             </div>
                         </div>
                     </motion.div>

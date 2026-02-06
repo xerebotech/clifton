@@ -21,6 +21,9 @@ const cinzel = Cinzel({
 export const metadata: Metadata = {
   title: "Clifton Capital Real Estate LLC",
   description: "Premium real estate services in Dubai",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 import MainLayout from "@/components/MainLayout";
