@@ -72,8 +72,9 @@ const jsonLd = {
     "email": "realestate@cliftonuae.com"
   },
   "sameAs": [
-    "https://www.cliftonuae.com"
-    // Add social media links here if available
+    "https://www.cliftonuae.com",
+    "https://www.instagram.com/akhilsaja",
+    "https://www.linkedin.com/in/akhil-saja-vijay-b6a8a41a4"
   ]
 };
 

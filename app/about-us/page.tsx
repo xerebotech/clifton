@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Target, Eye, Heart, Shield, Award, TrendingUp, CheckCircle, Quote, ArrowRight, Phone, Mail, Calendar } from 'lucide-react';
+import { Target, Eye, Heart, Shield, Award, TrendingUp, CheckCircle, Quote, ArrowRight, Phone, Mail, Calendar, Linkedin, Instagram } from 'lucide-react';
 import Link from 'next/link';
+import TestimonialsSection from '@/components/TestimonialsSection';
 
 // Animated Counter Component
 function AnimatedCounter({ end, duration = 2, suffix = "" }: { end: number; duration?: number; suffix?: string }) {
@@ -33,8 +34,58 @@ function AnimatedCounter({ end, duration = 2, suffix = "" }: { end: number; dura
 }
 
 export default function AboutUs() {
+    const teamSchema = {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "Person",
+                "name": "Mr. Akhil Saja Vijay",
+                "jobTitle": "Founder & CEO",
+                "worksFor": {
+                    "@type": "Organization",
+                    "name": "Clifton Capital Real Estate LLC"
+                },
+                "sameAs": [
+                    "https://www.instagram.com/akhilsaja",
+                    "https://www.linkedin.com/in/akhil-saja-vijay-b6a8a41a4"
+                ]
+            },
+            {
+                "@type": "Person",
+                "name": "Mr. Chandramohan",
+                "jobTitle": "Sales Director",
+                "worksFor": {
+                    "@type": "Organization",
+                    "name": "Clifton Capital Real Estate LLC"
+                }
+            },
+            {
+                "@type": "Person",
+                "name": "Ms. Alasandra",
+                "jobTitle": "Sales Manager",
+                "worksFor": {
+                    "@type": "Organization",
+                    "name": "Clifton Capital Real Estate LLC"
+                }
+            },
+            {
+                "@type": "Person",
+                "name": "Mr. Akhil Iypachan",
+                "jobTitle": "Sales Manager",
+                "worksFor": {
+                    "@type": "Organization",
+                    "name": "Clifton Capital Real Estate LLC"
+                }
+            }
+        ]
+    };
+
     return (
         <div>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(teamSchema) }}
+            />
             {/* Hero Section */}
             <section className="relative h-[60vh] min-h-[400px] flex items-center justify-center overflow-hidden">
                 <div
@@ -150,6 +201,186 @@ export default function AboutUs() {
                 </div>
             </section>
 
+            {/* Why Choose Us Section */}
+            <section className="py-24 bg-[#F2F0EB]">
+                <div className="max-w-7xl mx-auto px-6">
+                    <motion.div
+                        className="text-center mb-16"
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                        viewport={{ once: true }}
+                    >
+                        <span className="text-[#AE9573] text-sm tracking-[0.3em] uppercase">Our Advantage</span>
+                        <h2
+                            className="text-4xl md:text-5xl text-[#23312D] mt-4"
+                            style={{ fontFamily: 'var(--font-cinzel), serif' }}
+                        >
+                            Why Choose Clifton Capital
+                        </h2>
+                    </motion.div>
+
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {[
+                            {
+                                icon: Target,
+                                title: "Personalized Service",
+                                description: "Every client receives tailored solutions designed to meet their unique investment goals and lifestyle preferences."
+                            },
+                            {
+                                icon: Award,
+                                title: "Proven Track Record",
+                                description: "100% client satisfaction rate with over 500+ successful property transactions in Dubai's competitive market."
+                            },
+                            {
+                                icon: TrendingUp,
+                                title: "Market Expertise",
+                                description: "Deep understanding of Dubai's real estate landscape with insights into emerging trends and investment opportunities."
+                            },
+                            {
+                                icon: Shield,
+                                title: "Transparent Dealings",
+                                description: "Complete transparency in all transactions with no hidden fees or surprises. Your trust is our priority."
+                            },
+                            {
+                                icon: Heart,
+                                title: "Long-term Partnerships",
+                                description: "We build lasting relationships, providing ongoing support and guidance beyond the initial transaction."
+                            },
+                            {
+                                icon: CheckCircle,
+                                title: "End-to-End Support",
+                                description: "From property search to final handover, we manage every detail to ensure a seamless experience."
+                            }
+                        ].map((item, index) => {
+                            const Icon = item.icon;
+                            return (
+                                <motion.div
+                                    key={index}
+                                    className="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 group hover:-translate-y-2"
+                                    initial={{ opacity: 0, y: 30 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                                    viewport={{ once: true }}
+                                >
+                                    <div className="w-16 h-16 bg-gradient-to-br from-[#00594F] to-[#004a3f] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                                        <Icon className="w-8 h-8 text-[#AE9573]" />
+                                    </div>
+                                    <h3
+                                        className="text-xl text-[#23312D] mb-4 font-bold"
+                                        style={{ fontFamily: 'var(--font-cinzel), serif' }}
+                                    >
+                                        {item.title}
+                                    </h3>
+                                    <p className="text-gray-600 leading-relaxed text-sm">
+                                        {item.description}
+                                    </p>
+                                </motion.div>
+                            );
+                        })}
+                    </div>
+                </div>
+            </section>
+
+            {/* Company Timeline */}
+            <section className="py-24 bg-white">
+                <div className="max-w-7xl mx-auto px-6">
+                    <motion.div
+                        className="text-center mb-16"
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                        viewport={{ once: true }}
+                    >
+                        <span className="text-[#AE9573] text-sm tracking-[0.3em] uppercase">Our Journey</span>
+                        <h2
+                            className="text-4xl md:text-5xl text-[#23312D] mt-4"
+                            style={{ fontFamily: 'var(--font-cinzel), serif' }}
+                        >
+                            Company Timeline
+                        </h2>
+                    </motion.div>
+
+                    <div className="relative">
+                        {/* Timeline Line */}
+                        <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-[#AE9573] to-[#00594F] hidden lg:block"></div>
+
+                        <div className="space-y-12">
+                            {[
+                                {
+                                    year: "2024",
+                                    title: "Foundation",
+                                    description: "Clifton Capital Real Estate LLC was founded with a vision to revolutionize Dubai's real estate market through client-centric service and transparent dealings."
+                                },
+                                {
+                                    year: "2024",
+                                    title: "Digital Launch",
+                                    description: "Launched our comprehensive digital platform and social media presence, reaching a global audience of investors and property seekers from day one."
+                                },
+                                {
+                                    year: "2024",
+                                    title: "Premier Partnerships",
+                                    description: "Established strategic partnerships with Dubai's leading developers, gaining access to exclusive off-plan projects and luxury properties."
+                                },
+                                {
+                                    year: "2024",
+                                    title: "Rapid Growth",
+                                    description: "Built a portfolio of satisfied clients and successful transactions, establishing ourselves as a trusted name in Dubai's competitive real estate market."
+                                },
+                                {
+                                    year: "2025",
+                                    title: "Market Expansion",
+                                    description: "Expanding our services to cover all major Dubai developments and investment opportunities, with a growing team of expert consultants."
+                                },
+                                {
+                                    year: "2026",
+                                    title: "Continued Excellence",
+                                    description: "Continuing to set new standards in real estate excellence, innovation, and customer service while maintaining our commitment to 100% client satisfaction."
+                                }
+                            ].map((milestone, index) => (
+                                <motion.div
+                                    key={index}
+                                    className={`flex flex-col lg:flex-row gap-8 items-center ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'}`}
+                                    initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                                    viewport={{ once: true }}
+                                >
+                                    {/* Content */}
+                                    <div className={`flex-1 ${index % 2 === 0 ? 'lg:text-right' : 'lg:text-left'}`}>
+                                        <div className="bg-[#F2F0EB] p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+                                            <span
+                                                className="text-5xl font-bold text-[#AE9573] block mb-3"
+                                                style={{ fontFamily: 'var(--font-cinzel), serif' }}
+                                            >
+                                                {milestone.year}
+                                            </span>
+                                            <h3
+                                                className="text-2xl text-[#23312D] mb-3 font-bold"
+                                                style={{ fontFamily: 'var(--font-cinzel), serif' }}
+                                            >
+                                                {milestone.title}
+                                            </h3>
+                                            <p className="text-gray-600 leading-relaxed">
+                                                {milestone.description}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Timeline Dot */}
+                                    <div className="relative flex-shrink-0 hidden lg:block">
+                                        <div className="w-6 h-6 bg-[#AE9573] rounded-full border-4 border-white shadow-lg"></div>
+                                    </div>
+
+                                    {/* Spacer */}
+                                    <div className="flex-1 hidden lg:block"></div>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             {/* Our Values - Mission & Vision */}
             <section className="py-24 bg-gradient-to-br from-[#23312D] to-[#1a2521] relative overflow-hidden">
                 {/* Background Pattern */}
@@ -252,22 +483,41 @@ export default function AboutUs() {
                             transition={{ duration: 0.8 }}
                             viewport={{ once: true }}
                         >
-                            <div className="relative">
+                            <div className="relative group">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img
-                                    src="/founder.jpg"
+                                    src="/founder.webp"
                                     alt="Mr. Akhil Saja Vijay"
-                                    className="w-full h-[600px] object-cover rounded-2xl shadow-2xl"
+                                    className="w-full h-[600px] object-cover object-top rounded-2xl shadow-2xl transition-transform duration-500 group-hover:scale-[1.02]"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-[#23312D]/80 to-transparent rounded-2xl" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-[#23312D]/95 via-[#23312D]/40 to-transparent rounded-2xl" />
                                 <div className="absolute bottom-8 left-8 right-8 text-white">
+                                    <div className="mb-4 w-16 h-1 bg-[#AE9573] rounded-full"></div>
                                     <h3
-                                        className="text-3xl mb-2"
+                                        className="text-3xl md:text-4xl mb-3 font-bold"
                                         style={{ fontFamily: 'var(--font-cinzel), serif' }}
                                     >
                                         Mr. Akhil Saja Vijay
                                     </h3>
-                                    <p className="text-[#AE9573] text-sm tracking-wider uppercase">Founder & CEO</p>
+                                    <p className="text-[#AE9573] text-sm tracking-[0.2em] uppercase font-semibold mb-4">Founder & CEO</p>
+                                    <div className="flex gap-4">
+                                        <a
+                                            href="https://www.linkedin.com/in/akhil-saja-vijay-b6a8a41a4"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-[#AE9573] hover:scale-110 transition-all duration-300 shadow-lg"
+                                        >
+                                            <Linkedin className="w-5 h-5 text-white" />
+                                        </a>
+                                        <a
+                                            href="https://www.instagram.com/akhilsaja"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-[#AE9573] hover:scale-110 transition-all duration-300 shadow-lg"
+                                        >
+                                            <Instagram className="w-5 h-5 text-white" />
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </motion.div>
@@ -317,6 +567,131 @@ export default function AboutUs() {
                                 </div>
                             </div>
                         </motion.div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Our Team */}
+            <section className="py-24 bg-white">
+                <div className="max-w-7xl mx-auto px-6">
+                    <motion.div
+                        className="text-center mb-16"
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                        viewport={{ once: true }}
+                    >
+                        <span className="text-[#AE9573] text-sm tracking-[0.3em] uppercase">Meet The Team</span>
+                        <h2
+                            className="text-4xl md:text-5xl text-[#23312D] mt-4"
+                            style={{ fontFamily: 'var(--font-cinzel), serif' }}
+                        >
+                            OUR EXPERTS
+                        </h2>
+                    </motion.div>
+
+                    <div className="grid md:grid-cols-3 gap-10">
+                        {[
+                            {
+                                name: "Mr.Chandramohan",
+                                role: "Sales Director",
+                                image: "/mohan.webp",
+                                description: "A highly accomplished and experienced Sales Manager with over 35 years of experience across multiple market cycles in Dubai.His professional approach is grounded in integrity, strategic  insight, and a deep understanding of Dubai's landscape adding value to every real estate deal sealed  and every unit sold.",
+                                linkedin: "#",
+                                instagram: "#"
+                            }, {
+                                name: "Ms.Alasandra",
+                                role: "Sales Manager",
+                                image: "/alasandra.webp",
+                                description: "Leading our sales team with over 8 years of experience in Dubai's luxury real estate market. Specializes in high-value transactions and client relationship management.",
+                                linkedin: "#",
+                                instagram: "#"
+                            },
+
+                            {
+                                name: "Mr.Akhil Iypachan",
+                                role: "Sales Manager",
+                                image: "/Akhil iypachan.webp",
+                                description: "A trusted Dubai real estate advisor, dedicated to helping investors secure legacy-building, income-generating assets. With a proven track record of delivering tailored, results-driven solutions, I specialize in creating long-term value and building sustainable wealth for families across generations, guided by integrity, market expertise, and a deep understanding of Dubai's real estate landscape.",
+                                linkedin: "#",
+                                instagram: "#"
+                            }
+                        ].map((member, index) => (
+                            <motion.div
+                                key={index}
+                                className="group relative overflow-hidden rounded-2xl shadow-2xl bg-white border-2 border-transparent hover:border-[#AE9573] transition-all duration-500"
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.6, delay: index * 0.1 }}
+                                viewport={{ once: true }}
+                                whileHover={{ y: -10 }}
+                            >
+                                <div className="relative h-[500px] overflow-hidden">
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img
+                                        src={member.image}
+                                        alt={member.name}
+                                        className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-110"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-[#23312D]/95 via-[#23312D]/40 to-transparent" />
+
+
+                                    <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                                        <div className="mb-3 w-12 h-1 bg-[#AE9573] rounded-full"></div>
+                                        <h3
+                                            className="text-2xl md:text-3xl mb-2 font-bold"
+                                            style={{ fontFamily: 'var(--font-cinzel), serif' }}
+                                        >
+                                            {member.name}
+                                        </h3>
+                                        <p className="text-[#AE9573] text-sm tracking-[0.2em] uppercase mb-4 font-semibold">
+                                            {member.role}
+                                        </p>
+                                        <div className="flex gap-3">
+                                            <a
+                                                href="tel:+971559304697"
+                                                className="w-11 h-11 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-[#AE9573] hover:scale-110 transition-all duration-300 shadow-lg"
+                                            >
+                                                <Phone className="w-5 h-5" />
+                                            </a>
+                                            <a
+                                                href="mailto:realestate@cliftonuae.com"
+                                                className="w-11 h-11 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-[#AE9573] hover:scale-110 transition-all duration-300 shadow-lg"
+                                            >
+                                                <Mail className="w-5 h-5" />
+                                            </a>
+                                            {member.linkedin && (
+                                                <a
+                                                    href={member.linkedin}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="w-11 h-11 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-[#AE9573] hover:scale-110 transition-all duration-300 shadow-lg"
+                                                >
+                                                    <Linkedin className="w-5 h-5" />
+                                                </a>
+                                            )}
+                                            {member.instagram && (
+                                                <a
+                                                    href={member.instagram}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="w-11 h-11 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-[#AE9573] hover:scale-110 transition-all duration-300 shadow-lg"
+                                                >
+                                                    <Instagram className="w-5 h-5" />
+                                                </a>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Description Section */}
+                                <div className="p-6 bg-white flex items-start">
+                                    <p className="text-gray-600 text-sm leading-relaxed">
+                                        {member.description}
+                                    </p>
+                                </div>
+                            </motion.div>
+                        ))}
                     </div>
                 </div>
             </section>
@@ -377,6 +752,9 @@ export default function AboutUs() {
                 </div>
             </section>
 
+            {/* Testimonials Section */}
+            <TestimonialsSection />
+
             {/* Core Principles */}
             <section className="py-24 bg-[#F2F0EB]">
                 <div className="max-w-7xl mx-auto px-6">
@@ -433,7 +811,6 @@ export default function AboutUs() {
                 </div>
             </section>
 
-
             {/* CTA Section */}
             <section className="py-24 bg-gradient-to-br from-[#00594F] to-[#004a3f] relative overflow-hidden">
                 {/* Background Pattern */}
@@ -461,7 +838,7 @@ export default function AboutUs() {
 
                         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                             <Link
-                                href="/contact"
+                                href="/contact-us"
                                 className="group px-8 py-4 bg-white text-[#00594F] rounded-lg font-semibold flex items-center gap-2 hover:bg-[#AE9573] hover:text-white transition-all duration-300 shadow-xl"
                             >
                                 <Calendar className="w-5 h-5" />
