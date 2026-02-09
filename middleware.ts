@@ -6,7 +6,7 @@ export function middleware(request: NextRequest) {
     const hostname = request.headers.get('host')?.split(':')[0];
 
     // Check if the user is visiting your subdomain
-    if (hostname === 'realestate.cliftonuae.com') {
+    if (hostname === 'realestate.cliftonuae.com' || hostname === 'www.realestate.cliftonuae.com') {
         // If they are at the root "/", show them "/landing" content
         if (url.pathname === '/') {
             url.pathname = '/landing';
