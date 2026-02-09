@@ -1,11 +1,42 @@
 "use client";
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Mail } from 'lucide-react';
+import { submitInquiry } from '@/lib/inquiryService';
 import Link from 'next/link';
 
 export default function ExclusiveOffer() {
+    const [step, setStep] = React.useState(1);
+    const [email, setEmail] = React.useState('');
+    const [name, setName] = React.useState('');
+    const [phone, setPhone] = React.useState('');
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
+    const [submitted, setSubmitted] = React.useState(false);
+
+    const handleNextStep = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (email) setStep(2);
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+
+        const success = await submitInquiry({
+            name,
+            email,
+            phone,
+            message: "Exclusive Offer Access Request",
+            projectOrService: "Exclusive Offer"
+        });
+
+        setIsSubmitting(false);
+        if (success) {
+            setSubmitted(true);
+        }
+    };
+
     return (
         <section className="py-20 bg-[#23312D] relative overflow-hidden">
             {/* Decorative Background Elements */}
@@ -36,19 +67,84 @@ export default function ExclusiveOffer() {
                         </p>
 
                         <div className="flex flex-col items-center gap-12">
-                            <div className="flex flex-col sm:flex-row gap-6 w-full max-w-xl">
-                                <div className="flex-1 relative">
-                                    <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-white/30 w-5 h-5" />
-                                    <input
-                                        type="email"
-                                        placeholder="Enter your professional email"
-                                        className="w-full h-16 bg-white/5 border border-white/10 rounded-sm pl-16 pr-6 text-white outline-none focus:border-[#AE9573] transition-colors font-light placeholder:text-white/50"
-                                    />
+                            {submitted ? (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="bg-white/5 border border-[#AE9573]/30 p-10 rounded-sm backdrop-blur-md max-w-lg w-full"
+                                >
+                                    <h3 className="text-[#AE9573] text-2xl mb-4 font-bold" style={{ fontFamily: 'var(--font-cinzel), serif' }}>ACCESS REQUESTED</h3>
+                                    <p className="text-white/70">Thank you. One of our private advisors will reach out to you shortly to complete your verification.</p>
+                                </motion.div>
+                            ) : (
+                                <div className="w-full max-w-xl">
+                                    <form onSubmit={step === 1 ? handleNextStep : handleSubmit} className="flex flex-col gap-6">
+                                        <div className="relative overflow-hidden">
+                                            <AnimatePresence mode="wait">
+                                                {step === 1 ? (
+                                                    <motion.div
+                                                        key="step1"
+                                                        initial={{ opacity: 0, x: 20 }}
+                                                        animate={{ opacity: 1, x: 0 }}
+                                                        exit={{ opacity: 0, x: -20 }}
+                                                        className="flex flex-col sm:flex-row gap-6"
+                                                    >
+                                                        <div className="flex-1 relative">
+                                                            <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-white/30 w-5 h-5" />
+                                                            <input
+                                                                required
+                                                                type="email"
+                                                                value={email}
+                                                                onChange={(e) => setEmail(e.target.value)}
+                                                                placeholder="Enter your professional email"
+                                                                className="w-full h-16 bg-white/5 border border-white/10 rounded-sm pl-16 pr-6 text-white outline-none focus:border-[#AE9573] transition-colors font-light placeholder:text-white/50"
+                                                            />
+                                                        </div>
+                                                        <button
+                                                            type="submit"
+                                                            className="h-16 px-10 bg-[#AE9573] text-white hover:bg-[#c4a982] transition-colors tracking-widest uppercase font-bold text-sm whitespace-nowrap rounded-sm flex items-center justify-center gap-3"
+                                                        >
+                                                            Request Access <ArrowRight className="w-5 h-5" />
+                                                        </button>
+                                                    </motion.div>
+                                                ) : (
+                                                    <motion.div
+                                                        key="step2"
+                                                        initial={{ opacity: 0, x: 20 }}
+                                                        animate={{ opacity: 1, x: 0 }}
+                                                        exit={{ opacity: 0, x: -20 }}
+                                                        className="grid md:grid-cols-2 gap-4"
+                                                    >
+                                                        <input
+                                                            required
+                                                            type="text"
+                                                            value={name}
+                                                            onChange={(e) => setName(e.target.value)}
+                                                            placeholder="Your Full Name"
+                                                            className="w-full h-16 bg-white/5 border border-white/10 rounded-sm px-6 text-white outline-none focus:border-[#AE9573] transition-colors font-light placeholder:text-white/50"
+                                                        />
+                                                        <input
+                                                            required
+                                                            type="tel"
+                                                            value={phone}
+                                                            onChange={(e) => setPhone(e.target.value)}
+                                                            placeholder="Mobile Number"
+                                                            className="w-full h-16 bg-white/5 border border-white/10 rounded-sm px-6 text-white outline-none focus:border-[#AE9573] transition-colors font-light placeholder:text-white/50"
+                                                        />
+                                                        <button
+                                                            type="submit"
+                                                            disabled={isSubmitting}
+                                                            className="md:col-span-2 h-16 bg-[#AE9573] text-white hover:bg-[#c4a982] transition-colors tracking-widest uppercase font-bold text-sm rounded-sm flex items-center justify-center gap-3 disabled:opacity-50"
+                                                        >
+                                                            {isSubmitting ? "Processing..." : "Submit Details"} <ArrowRight className="w-5 h-5" />
+                                                        </button>
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        </div>
+                                    </form>
                                 </div>
-                                <button className="h-16 px-10 bg-[#AE9573] text-white hover:bg-[#c4a982] transition-colors tracking-widest uppercase font-bold text-sm whitespace-nowrap rounded-sm flex items-center justify-center gap-3">
-                                    Request Access <ArrowRight className="w-5 h-5" />
-                                </button>
-                            </div>
+                            )}
 
                             <p className="text-white/30 text-xs tracking-wider">
                                 Or contact our private office directly at <span className="text-white/60 underline cursor-pointer">+971 (0) 4 123 4567</span>

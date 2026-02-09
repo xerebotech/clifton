@@ -229,31 +229,60 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
                         {/* Quick Links */}
                         <div>
-                            <h4 className="text-lg mb-6 font-bold" style={{ fontFamily: 'var(--font-cinzel), serif' }}>Quick Links</h4>
+                            <h4 className="text-lg mb-6 font-bold" style={{ fontFamily: 'var(--font-cinzel), serif' }}>
+                                {pathname === '/landing' ? 'Navigation' : 'Quick Links'}
+                            </h4>
                             <ul className="space-y-3">
-                                {['Home', 'About', 'Contact'].map((page, index) => (
+                                {(pathname === '/landing'
+                                    ? [
+                                        { name: 'Home', href: '#home' },
+                                        { name: 'Services', href: '#services' },
+                                        { name: 'Properties', href: '#properties' },
+                                        { name: 'FAQ', href: '#faq' },
+                                        { name: 'Contact Us', href: '#contact' }
+                                    ]
+                                    : [
+                                        { name: 'Home', page: 'Home' },
+                                        { name: 'About Us', page: 'About' },
+                                        { name: 'Contact Us', page: 'Contact' }
+                                    ]
+                                ).map((link, index) => (
                                     <li key={index}>
-                                        <Link href={createPageUrl(page)} className="text-white/60 hover:text-[#AE9573] transition-colors">
-                                            {page === 'Home' ? 'Home' : page === 'About' ? 'About Us' : 'Contact Us'}
+                                        <Link
+                                            href={'href' in link ? link.href : createPageUrl(link.page as string)}
+                                            className="text-white/60 hover:text-[#AE9573] transition-colors"
+                                        >
+                                            {link.name}
                                         </Link>
                                     </li>
                                 ))}
                             </ul>
                         </div>
 
-                        {/* Services */}
+                        {/* Services / Extra Links */}
                         <div>
-                            <h4 className="text-lg mb-6 font-bold" style={{ fontFamily: 'var(--font-cinzel), serif' }}>Services</h4>
+                            <h4 className="text-lg mb-6 font-bold" style={{ fontFamily: 'var(--font-cinzel), serif' }}>
+                                {pathname === '/landing' ? 'Legal' : 'Services'}
+                            </h4>
                             <ul className="space-y-3">
-                                {[
-                                    { name: 'Invest in Dubai', page: 'InvestInDubai' },
-                                    { name: 'Buy a Property', page: 'BuyProperty' },
-                                    { name: 'Sell Your Property', page: 'SellProperty' },
-                                    { name: 'Rent Your Property', page: 'RentProperty' }
-                                ].map((service, index) => (
+                                {(pathname === '/landing'
+                                    ? [
+                                        { name: 'Privacy Policy', page: 'PrivacyPolicy' },
+                                        { name: 'Terms of Service', page: 'TermsOfService' }
+                                    ]
+                                    : [
+                                        { name: 'Invest in Dubai', page: 'InvestInDubai' },
+                                        { name: 'Buy a Property', page: 'BuyProperty' },
+                                        { name: 'Sell Your Property', page: 'SellProperty' },
+                                        { name: 'Rent Your Property', page: 'RentProperty' }
+                                    ]
+                                ).map((link, index) => (
                                     <li key={index}>
-                                        <Link href={createPageUrl(service.page)} className="text-white/60 hover:text-[#AE9573] transition-colors">
-                                            {service.name}
+                                        <Link
+                                            href={createPageUrl(link.page as string)}
+                                            className="text-white/60 hover:text-[#AE9573] transition-colors"
+                                        >
+                                            {link.name}
                                         </Link>
                                     </li>
                                 ))}
