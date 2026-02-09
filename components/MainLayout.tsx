@@ -21,7 +21,14 @@ const routeMap: Record<string, string> = {
 
 const createPageUrl = (page: string) => routeMap[page] || '/';
 
-const navItems = [
+interface NavItem {
+    name: string;
+    page?: string;
+    href?: string;
+    children?: { name: string; page: string }[];
+}
+
+const navItems: NavItem[] = [
     { name: 'Home', page: 'Home' },
     { name: 'Properties', page: 'Properties' },
     { name: 'About Us', page: 'About' },
@@ -37,7 +44,7 @@ const navItems = [
     { name: 'Contact Us', page: 'Contact' }
 ];
 
-const landingNavItems = [
+const landingNavItems: NavItem[] = [
     { name: 'Home', href: '#home' },
     { name: 'Services', href: '#services' },
     { name: 'Properties', href: '#properties' },
@@ -58,9 +65,12 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    useEffect(() => {
+    const [prevPathname, setPrevPathname] = useState(pathname);
+
+    if (pathname !== prevPathname) {
+        setPrevPathname(pathname);
         setMobileMenuOpen(false);
-    }, [pathname]);
+    }
 
     const isHomePage = pathname === '/';
 
@@ -101,7 +111,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                                         </button>
                                         <div className="absolute top-full left-0 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
                                             <div className="bg-white shadow-xl py-4 min-w-[200px] rounded-lg border border-gray-100">
-                                                {(item.children as any[]).map((child, childIndex) => (
+                                                {item.children?.map((child, childIndex) => (
                                                     <Link
                                                         key={childIndex}
                                                         href={createPageUrl(child.page)}
@@ -115,9 +125,9 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                                     </div>
                                 ) : (
                                     <Link
-                                        href={'href' in item ? item.href : createPageUrl(item.page as string)}
+                                        href={'href' in item && item.href ? item.href : createPageUrl(item.page || 'Home')}
                                         className={`text-base tracking-wider transition-colors duration-300 ${isScrolled || !isHomePage ? 'text-[#23312D] hover:text-[#AE9573]' : 'text-white hover:text-[#B4A68C]'
-                                            } ${!('href' in item) && isCurrentPage(item.page as string) ? 'text-[#B4A68C]' : ''}`}
+                                            } ${!('href' in item) && item.page && isCurrentPage(item.page) ? 'text-[#B4A68C]' : ''}`}
                                     >
                                         {item.name}
                                     </Link>
@@ -167,7 +177,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                                                 </button>
                                                 {servicesOpen && (
                                                     <div className="pl-4 space-y-2 mt-2 border-l-2 border-gray-100 ml-2">
-                                                        {(item.children as any[]).map((child, childIndex) => (
+                                                        {item.children?.map((child, childIndex) => (
                                                             <Link
                                                                 key={childIndex}
                                                                 href={createPageUrl(child.page)}
@@ -181,8 +191,8 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                                             </div>
                                         ) : (
                                             <Link
-                                                href={'href' in item ? item.href : createPageUrl(item.page as string)}
-                                                className={`block py-2 text-[#23312D] ${!('href' in item) && isCurrentPage(item.page as string) ? 'text-[#AE9573]' : ''}`}
+                                                href={'href' in item && item.href ? item.href : createPageUrl(item.page || 'Home')}
+                                                className={`block py-2 text-[#23312D] ${!('href' in item) && item.page && isCurrentPage(item.page) ? 'text-[#AE9573]' : ''}`}
                                                 onClick={() => setMobileMenuOpen(false)}
                                             >
                                                 {item.name}
@@ -218,7 +228,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                                 {[Facebook, Instagram, Linkedin, Twitter].map((Icon, index) => (
                                     <a
                                         key={index}
-                                        href="#"
+                                        href="https://www.instagram.com/cliftonrealestate/"
                                         className="w-10 h-10 border border-white/20 flex items-center justify-center hover:bg-[#AE9573] hover:border-[#AE9573] transition-all duration-300 rounded-full"
                                     >
                                         <Icon className="w-4 h-4" />
