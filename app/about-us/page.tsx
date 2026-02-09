@@ -46,7 +46,7 @@ export default function AboutUs() {
                     "name": "Clifton Capital Real Estate LLC"
                 },
                 "sameAs": [
-                    "https://www.instagram.com/akhilsaja",
+                    "https://www.instagram.com/theakhilofdubai/",
                     "https://www.linkedin.com/in/akhil-saja-vijay-b6a8a41a4"
                 ]
             },
@@ -108,7 +108,7 @@ export default function AboutUs() {
                         About Clifton Capital
                     </h1>
                     <p className="mt-6 text-white/70 max-w-2xl mx-auto text-lg">
-                        Dubai's Most Trusted Real Estate Agency
+                        Dubai&apos;s Most Trusted Real Estate Agency
                     </p>
                 </motion.div>
             </section>
@@ -163,7 +163,7 @@ export default function AboutUs() {
                             </h2>
                             <div className="space-y-6 text-gray-600 leading-relaxed">
                                 <p>
-                                    With a strong commitment to customer-centricity and ethics, under the guidance of our founder and renowned real estate expert, our organization has built a flawless track record of meeting our clients' investment objectives.
+                                    With a strong commitment to customer-centricity and ethics, under the guidance of our founder and renowned real estate expert, our organization has built a flawless track record of meeting our clients&apos; investment objectives.
                                 </p>
                                 <p>
                                     We turn dream homes into reality and help sellers get top dollar for their properties. With our deep market expertise and personal service, we make real estate transactions seamless and stress-free.
@@ -510,7 +510,7 @@ export default function AboutUs() {
                                             <Linkedin className="w-5 h-5 text-white" />
                                         </a>
                                         <a
-                                            href="https://www.instagram.com/akhilsaja"
+                                            href="https://www.instagram.com/theakhilofdubai/"
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-[#AE9573] hover:scale-110 transition-all duration-300 shadow-lg"
@@ -537,7 +537,7 @@ export default function AboutUs() {
                                 </div>
 
                                 <p className="text-gray-600 leading-relaxed">
-                                    Personally managing a real estate portfolio valued at nearly <span className="font-bold text-[#23312D]">100 million dirhams</span>, Mr. Akhil is dedicated to positioning Clifton Capital as Dubai's most trusted real estate agency.
+                                    Personally managing a real estate portfolio valued at nearly <span className="font-bold text-[#23312D]">100 million dirhams</span>, Mr. Akhil is dedicated to positioning Clifton Capital as Dubai&apos;s most trusted real estate agency.
                                 </p>
 
                                 <p className="text-gray-600 leading-relaxed">
@@ -598,14 +598,14 @@ export default function AboutUs() {
                                 image: "/mohan.webp",
                                 description: "A highly accomplished and experienced Sales Manager with over 35 years of experience across multiple market cycles in Dubai.His professional approach is grounded in integrity, strategic  insight, and a deep understanding of Dubai's landscape adding value to every real estate deal sealed  and every unit sold.",
                                 linkedin: "#",
-                                instagram: "#"
+                                instagram: "https://www.instagram.com/mohan.cliftoncapital/"
                             }, {
                                 name: "Ms.Alasandra",
                                 role: "Sales Manager",
                                 image: "/alasandra.webp",
-                                description: "A customer service professional with 5 years of proven experience, transitioned into Dubai's luxury real estate sector with 1 years of expertise in premium property transactions and personalized client relationship management.",
+                                description: "Alasandra relocated to Dubai in the first quarter of 2025 to pursue a career in real estate as a Property Consultant. She brings strong expertise, a genuine passion for the Dubai property market, and a clear commitment to continuous professional growth. Since joining the industry, she has proven to be a valuable asset to her team, contributing significantly to business performance with total property sales amounting to AED 15 million to date.",
                                 linkedin: "#",
-                                instagram: "#"
+                                instagram: "https://www.instagram.com/alasandra.cliftoncapital/"
                             },
 
                             {
@@ -613,8 +613,8 @@ export default function AboutUs() {
                                 role: "Sales Manager",
                                 image: "/Akhil iypachan.webp",
                                 description: "A trusted Dubai real estate advisor, dedicated to helping investors secure legacy-building, income-generating assets. With a proven track record of delivering tailored, results-driven solutions, I specialize in creating long-term value and building sustainable wealth for families across generations, guided by integrity, market expertise, and a deep understanding of Dubai's real estate landscape.",
-                                linkedin: "#",
-                                instagram: "#"
+                                linkedin: "https://www.linkedin.com/in/akhil-iypachan-a8367646/",
+                                instagram: "https://www.instagram.com/findhomeswithakhil/"
                             }
                         ].map((member, index) => (
                             <motion.div
