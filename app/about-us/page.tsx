@@ -603,7 +603,7 @@ export default function AboutUs() {
                                 name: "Ms.Alasandra",
                                 role: "Sales Manager",
                                 image: "/alasandra.webp",
-                                description: "Leading our sales team with over 8 years of experience in Dubai's luxury real estate market. Specializes in high-value transactions and client relationship management.",
+                                description: "A customer service professional with 5 years of proven experience, transitioned into Dubai's luxury real estate sector with 1 years of expertise in premium property transactions and personalized client relationship management.",
                                 linkedin: "#",
                                 instagram: "#"
                             },
