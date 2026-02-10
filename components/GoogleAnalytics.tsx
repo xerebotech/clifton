@@ -5,6 +5,8 @@ import Script from "next/script";
 export default function GoogleAnalytics({ GA_MEASUREMENT_ID }: { GA_MEASUREMENT_ID: string }) {
     if (!GA_MEASUREMENT_ID) return null;
 
+    const GOOGLE_ADS_ID = "AW-17933543375";
+
     return (
         <>
             <Script
@@ -23,6 +25,8 @@ export default function GoogleAnalytics({ GA_MEASUREMENT_ID }: { GA_MEASUREMENT_
                 gtag('config', '${GA_MEASUREMENT_ID}', {
                     page_path: window.location.pathname,
                 });
+                
+                gtag('config', '${GOOGLE_ADS_ID}');
             `,
                 }}
             />
