@@ -79,7 +79,7 @@ const jsonLd = {
 };
 
 import MainLayout from "@/components/MainLayout";
-import GoogleTag from "@/components/GoogleAnalytics";
+import GoogleTagManager from "@/components/GoogleTagManager";
 
 export default function RootLayout({
   children,
@@ -89,7 +89,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <GoogleTag />
+        <GoogleTagManager />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -98,6 +98,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${cinzel.variable} antialiased overflow-x-hidden`}
       >
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-WRC99LCR"
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          />
+        </noscript>
         <MainLayout>{children}</MainLayout>
       </body>
     </html>
