@@ -79,7 +79,7 @@ const jsonLd = {
 };
 
 import MainLayout from "@/components/MainLayout";
-import GoogleAnalytics from "@/components/GoogleAnalytics";
+import GoogleTag from "@/components/GoogleAnalytics";
 
 export default function RootLayout({
   children,
@@ -89,7 +89,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <GoogleAnalytics GA_MEASUREMENT_ID={process.env.NEXT_PUBLIC_GA_ID || ""} />
+        <GoogleTag />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
