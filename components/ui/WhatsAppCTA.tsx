@@ -20,7 +20,7 @@ export default function WhatsAppCTA() {
                 stiffness: 260,
                 damping: 20
             }}
-            className="fixed bottom-8 left-8 z-[90]"
+            className="fixed bottom-8 right-8 z-[90]"
         >
             <a
                 href={whatsappUrl}
@@ -32,7 +32,7 @@ export default function WhatsAppCTA() {
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-20"></span>
 
                 {/* Tooltip */}
-                <span className="absolute left-full ml-4 px-3 py-1 bg-[#23312D] text-white text-[10px] tracking-widest uppercase whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-sm">
+                <span className="absolute right-full mr-4 px-3 py-1 bg-[#23312D] text-white text-[10px] tracking-widest uppercase whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-sm">
                     Chat with an expert
                 </span>
 
