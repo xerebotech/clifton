@@ -56,6 +56,14 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     const [isScrolled, setIsScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [servicesOpen, setServicesOpen] = useState(false);
+    const [isLandingPage, setIsLandingPage] = useState(false);
+
+    useEffect(() => {
+        setIsLandingPage(
+            pathname === '/landing' ||
+            (typeof window !== 'undefined' && window.location.hostname === 'realestate.cliftonuae.com')
+        );
+    }, [pathname]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -100,7 +108,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
                     {/* Desktop Navigation */}
                     <nav className="hidden lg:flex items-center gap-8">
-                        {(pathname === '/landing' ? landingNavItems : navItems).map((item, index) => (
+                        {(isLandingPage ? landingNavItems : navItems).map((item, index) => (
                             <div key={index} className="relative group">
                                 {('children' in item) ? (
                                     <div>
@@ -135,13 +143,13 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                             </div>
                         ))}
                         <Link
-                            href={pathname === '/landing' ? '#contact' : createPageUrl('Contact')}
+                            href={isLandingPage ? '#contact' : createPageUrl('Contact')}
                             className={`px-6 py-3 text-sm tracking-widest uppercase transition-all duration-500 rounded-sm ${isScrolled || !isHomePage
                                 ? 'bg-[#00594F] text-white hover:bg-[#AE9573]'
                                 : 'bg-white/10 backdrop-blur-sm border border-white/30 text-white hover:bg-white hover:text-[#23312D]'
                                 }`}
                         >
-                            {pathname === '/landing' ? 'Book a Meeting' : 'Get In Touch'}
+                            {isLandingPage ? 'Book a Meeting' : 'Get In Touch'}
                         </Link>
                     </nav>
 
@@ -164,7 +172,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                             className="lg:hidden bg-white border-t max-h-[85vh] overflow-y-auto"
                         >
                             <nav className="max-w-7xl mx-auto px-6 py-6 space-y-4">
-                                {(pathname === '/landing' ? landingNavItems : navItems).map((item, index) => (
+                                {(isLandingPage ? landingNavItems : navItems).map((item, index) => (
                                     <div key={index}>
                                         {('children' in item) ? (
                                             <div>
@@ -240,10 +248,10 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                         {/* Quick Links / Navigation */}
                         <div>
                             <h4 className="text-lg mb-6 font-bold" style={{ fontFamily: 'var(--font-cinzel), serif' }}>
-                                {pathname === '/landing' ? 'Navigation' : 'Quick Links'}
+                                {isLandingPage ? 'Navigation' : 'Quick Links'}
                             </h4>
                             <ul className="space-y-3">
-                                {(pathname === '/landing'
+                                {(isLandingPage
                                     ? [
                                         { name: 'Home', href: '#home' },
                                         { name: 'Services', href: '#services' },
@@ -271,10 +279,10 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                         {/* Legal / Services */}
                         <div>
                             <h4 className="text-lg mb-6 font-bold" style={{ fontFamily: 'var(--font-cinzel), serif' }}>
-                                {pathname === '/landing' ? 'Legal' : 'Services'}
+                                {isLandingPage ? 'Legal' : 'Services'}
                             </h4>
                             <ul className="space-y-3">
-                                {(pathname === '/landing'
+                                {(isLandingPage
                                     ? [
                                         { name: 'Privacy Policy', page: 'PrivacyPolicy' },
                                         { name: 'Terms of Service', page: 'TermsOfService' }
