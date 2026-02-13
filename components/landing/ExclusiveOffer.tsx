@@ -9,7 +9,8 @@ import Link from 'next/link';
 export default function ExclusiveOffer() {
     const [step, setStep] = React.useState(1);
     const [email, setEmail] = React.useState('');
-    const [name, setName] = React.useState('');
+    const [firstName, setFirstName] = React.useState('');
+    const [lastName, setLastName] = React.useState('');
     const [phone, setPhone] = React.useState('');
     const [isSubmitting, setIsSubmitting] = React.useState(false);
     const [submitted, setSubmitted] = React.useState(false);
@@ -24,7 +25,8 @@ export default function ExclusiveOffer() {
         setIsSubmitting(true);
 
         const success = await submitInquiry({
-            name,
+            firstName,
+            lastName,
             email,
             phone,
             message: "Exclusive Offer Access Request",
@@ -118,9 +120,17 @@ export default function ExclusiveOffer() {
                                                         <input
                                                             required
                                                             type="text"
-                                                            value={name}
-                                                            onChange={(e) => setName(e.target.value)}
-                                                            placeholder="Your Full Name"
+                                                            value={firstName}
+                                                            onChange={(e) => setFirstName(e.target.value)}
+                                                            placeholder="First Name"
+                                                            className="w-full h-16 bg-white/5 border border-white/10 rounded-sm px-6 text-white outline-none focus:border-[#AE9573] transition-colors font-light placeholder:text-white/50"
+                                                        />
+                                                        <input
+                                                            required
+                                                            type="text"
+                                                            value={lastName}
+                                                            onChange={(e) => setLastName(e.target.value)}
+                                                            placeholder="Last Name"
                                                             className="w-full h-16 bg-white/5 border border-white/10 rounded-sm px-6 text-white outline-none focus:border-[#AE9573] transition-colors font-light placeholder:text-white/50"
                                                         />
                                                         <input
@@ -134,7 +144,7 @@ export default function ExclusiveOffer() {
                                                         <button
                                                             type="submit"
                                                             disabled={isSubmitting}
-                                                            className="md:col-span-2 h-16 bg-[#AE9573] text-white hover:bg-[#c4a982] transition-colors tracking-widest uppercase font-bold text-sm rounded-sm flex items-center justify-center gap-3 disabled:opacity-50"
+                                                            className="md:col-span-1 h-16 bg-[#AE9573] text-white hover:bg-[#c4a982] transition-colors tracking-widest uppercase font-bold text-sm rounded-sm flex items-center justify-center gap-3 disabled:opacity-50"
                                                         >
                                                             {isSubmitting ? "Processing..." : "Submit Details"} <ArrowRight className="w-5 h-5" />
                                                         </button>
