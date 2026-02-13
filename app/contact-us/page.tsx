@@ -26,11 +26,11 @@ function ContactContent() {
     const serviceParam = searchParams.get('service');
 
     const [formData, setFormData] = useState({
-        name: '',
+        firstName: '',
+        lastName: '',
         email: '',
         phone: '',
         service: '',
-        subject: '',
         message: ''
     });
 
@@ -48,10 +48,11 @@ function ContactContent() {
         setIsSubmitting(true);
 
         const success = await submitInquiry({
-            name: formData.name,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
             email: formData.email,
             phone: formData.phone,
-            message: `Subject: ${formData.subject}\n\n${formData.message}`,
+            message: formData.message,
             projectOrService: formData.service || "General Inquiry (Contact Page)"
         });
 
@@ -59,7 +60,7 @@ function ContactContent() {
         if (success) {
             setSubmitted(true);
             setTimeout(() => setSubmitted(false), 3000);
-            setFormData({ name: '', email: '', phone: '', service: '', subject: '', message: '' });
+            setFormData({ firstName: '', lastName: '', email: '', phone: '', service: '', message: '' });
         }
     };
 
@@ -154,15 +155,31 @@ function ContactContent() {
                                 <form onSubmit={handleSubmit} className="bg-white p-10 shadow-lg space-y-6">
                                     <div className="grid md:grid-cols-2 gap-6">
                                         <div>
-                                            <label className="text-sm text-[#23312D] mb-2 block font-medium">Your Name *</label>
+                                            <label className="text-sm text-[#23312D] mb-2 block font-medium">First Name *</label>
                                             <input
-                                                placeholder="John Doe"
-                                                value={formData.name}
-                                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                                id="contact-page-first-name"
+                                                name="firstName"
+                                                placeholder="John"
+                                                value={formData.firstName}
+                                                onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                                                 required
                                                 className="w-full h-14 px-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D] placeholder:text-[#23312D]/50"
                                             />
                                         </div>
+                                        <div>
+                                            <label className="text-sm text-[#23312D] mb-2 block font-medium">Last Name *</label>
+                                            <input
+                                                id="contact-page-last-name"
+                                                name="lastName"
+                                                placeholder="Doe"
+                                                value={formData.lastName}
+                                                onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                                                required
+                                                className="w-full h-14 px-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D] placeholder:text-[#23312D]/50"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="grid md:grid-cols-2 gap-6">
                                         <div>
                                             <label className="text-sm text-[#23312D] mb-2 block font-medium">Your Email *</label>
                                             <input
@@ -174,8 +191,6 @@ function ContactContent() {
                                                 className="w-full h-14 px-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D] placeholder:text-[#23312D]/50"
                                             />
                                         </div>
-                                    </div>
-                                    <div className="grid md:grid-cols-2 gap-6">
                                         <div>
                                             <label className="text-sm text-[#23312D] mb-2 block font-medium">Phone Number</label>
                                             <input
@@ -185,34 +200,22 @@ function ContactContent() {
                                                 className="w-full h-14 px-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D] placeholder:text-[#23312D]/50"
                                             />
                                         </div>
-                                        <div>
-                                            <label className="text-sm text-[#23312D] mb-2 block font-medium">Service of Interest</label>
-                                            <select
-                                                value={formData.service}
-                                                onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-                                                className="w-full h-14 px-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D]"
-                                            >
-                                                <option value="" disabled>Select Service</option>
-                                                <option value="Buying">Buying a Property</option>
-                                                <option value="Selling">Selling a Property</option>
-                                                <option value="Renting">Renting</option>
-                                                <option value="Management">Property Management</option>
-                                                <option value="Investment">Investment Consultation</option>
-                                                <option value="Other">General Inquiry</option>
-                                            </select>
-                                        </div>
                                     </div>
-                                    <div className="grid md:grid-cols-1 gap-6">
-                                        <div>
-                                            <label className="text-sm text-[#23312D] mb-2 block font-medium">Subject *</label>
-                                            <input
-                                                placeholder="How can we help?"
-                                                value={formData.subject}
-                                                onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                                                required
-                                                className="w-full h-14 px-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D] placeholder:text-[#23312D]/50"
-                                            />
-                                        </div>
+                                    <div>
+                                        <label className="text-sm text-[#23312D] mb-2 block font-medium">Service of Interest</label>
+                                        <select
+                                            value={formData.service}
+                                            onChange={(e) => setFormData({ ...formData, service: e.target.value })}
+                                            className="w-full h-14 px-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D]"
+                                        >
+                                            <option value="" disabled>Select Service</option>
+                                            <option value="Buying">Buying a Property</option>
+                                            <option value="Selling">Selling a Property</option>
+                                            <option value="Renting">Renting</option>
+                                            <option value="Management">Property Management</option>
+                                            <option value="Investment">Investment Consultation</option>
+                                            <option value="Other">General Inquiry</option>
+                                        </select>
                                     </div>
                                     <div>
                                         <label className="text-sm text-[#23312D] mb-2 block font-medium">Your Message *</label>
@@ -267,7 +270,7 @@ function ContactContent() {
                         </motion.div>
                     </div>
                 </div>
-            </section>
-        </div>
+            </section >
+        </div >
     );
 }

@@ -8,7 +8,7 @@ import { MapPin, Phone, Mail, Clock, Send, CheckCircle, RefreshCw } from 'lucide
 export default function ContactSection() {
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true, margin: "-100px" });
-    const [formData, setFormData] = useState({ name: '', email: '', phone: '', service: '', message: '' });
+    const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', phone: '', service: '', message: '' });
     const [submitted, setSubmitted] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -17,7 +17,8 @@ export default function ContactSection() {
         setIsSubmitting(true);
 
         const success = await submitInquiry({
-            name: formData.name,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
             email: formData.email,
             phone: formData.phone,
             message: formData.message,
@@ -28,7 +29,7 @@ export default function ContactSection() {
         if (success) {
             setSubmitted(true);
             setTimeout(() => setSubmitted(false), 3000);
-            setFormData({ name: '', email: '', phone: '', service: '', message: '' });
+            setFormData({ firstName: '', lastName: '', email: '', phone: '', service: '', message: '' });
         }
     };
 
@@ -122,13 +123,30 @@ export default function ContactSection() {
                                     >
                                         <div className="grid md:grid-cols-2 gap-6">
                                             <input
-                                                placeholder="Your Name"
-                                                value={formData.name}
-                                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                                id="contact-first-name"
+                                                name="firstName"
+                                                type="text"
+                                                placeholder="First Name"
+                                                value={formData.firstName}
+                                                onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                                                 required
                                                 className="w-full h-14 px-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-transparent text-[#23312D] placeholder:text-[#23312D]/50"
                                             />
                                             <input
+                                                id="contact-last-name"
+                                                name="lastName"
+                                                type="text"
+                                                placeholder="Last Name"
+                                                value={formData.lastName}
+                                                onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                                                required
+                                                className="w-full h-14 px-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-transparent text-[#23312D] placeholder:text-[#23312D]/50"
+                                            />
+                                        </div>
+                                        <div className="grid md:grid-cols-2 gap-6">
+                                            <input
+                                                id="contact-email"
+                                                name="email"
                                                 type="email"
                                                 placeholder="Your Email"
                                                 value={formData.email}
@@ -136,14 +154,19 @@ export default function ContactSection() {
                                                 required
                                                 className="w-full h-14 px-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-transparent text-[#23312D] placeholder:text-[#23312D]/50"
                                             />
+                                            <input
+                                                id="contact-phone"
+                                                name="phone"
+                                                type="tel"
+                                                placeholder="Phone Number"
+                                                value={formData.phone}
+                                                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                                className="w-full h-14 px-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-transparent text-[#23312D] placeholder:text-[#23312D]/50"
+                                            />
                                         </div>
-                                        <input
-                                            placeholder="Phone Number"
-                                            value={formData.phone}
-                                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                            className="w-full h-14 px-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-transparent text-[#23312D] placeholder:text-[#23312D]/50"
-                                        />
                                         <select
+                                            id="contact-service"
+                                            name="service"
                                             value={formData.service}
                                             onChange={(e) => setFormData({ ...formData, service: e.target.value })}
                                             className="w-full h-14 px-4 mb-6 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-transparent text-[#23312D]"
@@ -157,6 +180,8 @@ export default function ContactSection() {
                                             <option value="Other">General Inquiry</option>
                                         </select>
                                         <textarea
+                                            id="contact-message"
+                                            name="message"
                                             placeholder="Your Message"
                                             value={formData.message}
                                             onChange={(e) => setFormData({ ...formData, message: e.target.value })}

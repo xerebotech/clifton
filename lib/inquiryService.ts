@@ -5,7 +5,8 @@
 const INQUIRY_SCRIPT_URL = process.env.NEXT_PUBLIC_INQUIRY_SCRIPT_URL || "";
 
 export interface InquiryData {
-    name: string;
+    firstName: string;
+    lastName: string;
     email: string;
     phone: string;
     projectOrService: string;
@@ -28,7 +29,12 @@ export async function submitInquiry(data: InquiryData): Promise<boolean> {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                ...data,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                email: data.email,
+                phone: data.phone,
+                projectOrService: data.projectOrService,
+                message: data.message,
                 timestamp: new Date().toISOString()
             })
         });
