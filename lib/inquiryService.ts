@@ -14,7 +14,6 @@ export interface InquiryData {
 }
 
 export async function submitInquiry(data: InquiryData): Promise<boolean> {
-    console.log("Attempting to submit inquiry to:", INQUIRY_SCRIPT_URL);
 
     if (!INQUIRY_SCRIPT_URL) {
         console.error("CRITICAL: Inquiry script URL is missing! Check your environment variables.");
@@ -39,7 +38,6 @@ export async function submitInquiry(data: InquiryData): Promise<boolean> {
             })
         });
 
-        console.log("Inquiry submission request sent successfully.");
         return true;
     } catch (error) {
         console.error("Error submitting inquiry:", error);
