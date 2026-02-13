@@ -41,7 +41,7 @@ export default function TestimonialsSection() {
     const prev = () => setCurrent((prev) => (prev - 1 + testimonials.length) % testimonials.length);
 
     return (
-        <section ref={ref} className="py-24 md:py-32 bg-[#23312D] relative overflow-hidden">
+        <section ref={ref} className="py-24 md:py-32 bg-[#23312D] relative z-0 overflow-hidden">
             {/* Background pattern */}
             <div className="absolute inset-0 opacity-5">
                 <div className="absolute top-20 left-20 text-white">
@@ -88,7 +88,7 @@ export default function TestimonialsSection() {
                                     </div>
                                 </div>
                             </div>
-                            <p className="text-white/90 text-lg md:text-xl leading-relaxed mb-8 max-w-3xl mx-auto font-light italic">
+                            <p className="text-white text-lg md:text-xl leading-relaxed mb-8 max-w-3xl mx-auto font-light italic drop-shadow-sm">
                                 &quot;{testimonials[current].content}&quot;
                             </p>
                             <h4
@@ -107,17 +107,17 @@ export default function TestimonialsSection() {
                     <div className="flex justify-center items-center gap-4 mt-12">
                         <button
                             onClick={prev}
-                            className="w-12 h-12 border border-white/30 rounded-full flex items-center justify-center text-white hover:bg-white hover:text-[#23312D] transition-all duration-300"
+                            className="w-12 h-12 border-2 border-[#AE9573] rounded-full flex items-center justify-center text-[#AE9573] hover:bg-[#AE9573] hover:text-[#23312D] transition-all duration-300 shadow-lg"
                             aria-label="Previous testimonial"
                         >
-                            <ChevronLeft className="w-5 h-5" />
+                            <ChevronLeft className="w-6 h-6" />
                         </button>
                         <div className="flex gap-2">
                             {testimonials.map((_, idx) => (
                                 <button
                                     key={idx}
                                     onClick={() => setCurrent(idx)}
-                                    className={`w-2 h-2 rounded-full transition-all duration-500 ${idx === current ? 'bg-[#AE9573] w-8' : 'bg-white/30'
+                                    className={`h-2 rounded-full transition-all duration-500 ${idx === current ? 'bg-[#AE9573] w-10 shadow-[0_0_10px_rgba(174,149,115,0.3)]' : 'bg-white/40 w-4 hover:bg-white/60'
                                         }`}
                                     aria-label={`Go to testimonial ${idx + 1}`}
                                 />
@@ -125,10 +125,10 @@ export default function TestimonialsSection() {
                         </div>
                         <button
                             onClick={next}
-                            className="w-12 h-12 border border-white/30 rounded-full flex items-center justify-center text-white hover:bg-white hover:text-[#23312D] transition-all duration-300"
+                            className="w-12 h-12 border-2 border-[#AE9573] rounded-full flex items-center justify-center text-[#AE9573] hover:bg-[#AE9573] hover:text-[#23312D] transition-all duration-300 shadow-lg"
                             aria-label="Next testimonial"
                         >
-                            <ChevronRight className="w-5 h-5" />
+                            <ChevronRight className="w-6 h-6" />
                         </button>
                     </div>
                 </div>

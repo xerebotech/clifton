@@ -52,7 +52,7 @@ export default function HeroSection() {
                 </motion.div>
             </AnimatePresence>
 
-            <div className="relative z-10 h-full flex flex-col items-center justify-center px-6 text-center">
+            <div className="relative z-0 h-full flex flex-col items-center justify-center px-6 text-center">
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={currentSlide}
@@ -73,7 +73,7 @@ export default function HeroSection() {
                         </p>
                         <Link
                             href="/contact-us"
-                            className="inline-block bg-white/10 backdrop-blur-sm border border-white/30 text-white hover:bg-white hover:text-[#23312D] px-10 py-4 text-base tracking-widest uppercase transition-all duration-500 rounded-sm"
+                            className="inline-block bg-[#AE9573] border-2 border-[#AE9573] text-[#23312D] hover:bg-transparent hover:text-white px-10 py-4 text-sm font-black tracking-[0.2em] uppercase transition-all duration-500 rounded-sm shadow-[0_10px_30px_rgba(0,0,0,0.3)]"
                         >
                             Contact Us
                         </Link>
@@ -81,12 +81,12 @@ export default function HeroSection() {
                 </AnimatePresence>
 
                 {/* Slide indicators */}
-                <div className="absolute bottom-32 flex gap-3">
+                <div className="absolute bottom-32 flex gap-4">
                     {slides.map((_, idx) => (
                         <button
                             key={idx}
                             onClick={() => setCurrentSlide(idx)}
-                            className={`w-12 h-1 rounded-full transition-all duration-500 ${idx === currentSlide ? 'bg-white' : 'bg-white/30'
+                            className={`h-1.5 rounded-full transition-all duration-500 ${idx === currentSlide ? 'bg-[#AE9573] w-12 shadow-[0_0_15px_rgba(174,149,115,0.5)]' : 'bg-white/40 w-8 hover:bg-white/60'
                                 }`}
                             aria-label={`Go to slide ${idx + 1}`}
                         />
@@ -99,7 +99,7 @@ export default function HeroSection() {
                     animate={{ y: [0, 10, 0] }}
                     transition={{ duration: 2, repeat: Infinity }}
                 >
-                    <ChevronDown className="w-8 h-8 text-white/60" />
+                    <ChevronDown className="w-10 h-10 text-[#AE9573] drop-shadow-[0_0_10px_rgba(174,149,115,0.4)]" />
                 </motion.div>
             </div>
         </section>
