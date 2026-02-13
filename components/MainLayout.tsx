@@ -57,11 +57,28 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [servicesOpen, setServicesOpen] = useState(false);
     const [isLandingPage, setIsLandingPage] = useState(false);
+    const [prevPathname, setPrevPathname] = useState(pathname);
+
+    useEffect(() => {
+        if (pathname !== prevPathname) {
+            setPrevPathname(pathname);
+            setMobileMenuOpen(false);
+        }
+    }, [pathname, prevPathname]);
+
+    const isHomePage = pathname === '/' || pathname === '/landing' ||
+        (typeof window !== 'undefined' && (
+            window.location.hostname === 'realestate.cliftonuae.com' ||
+            window.location.hostname === 'www.realestate.cliftonuae.com'
+        ));
 
     useEffect(() => {
         setIsLandingPage(
             pathname === '/landing' ||
-            (typeof window !== 'undefined' && window.location.hostname === 'realestate.cliftonuae.com')
+            (typeof window !== 'undefined' && (
+                window.location.hostname === 'realestate.cliftonuae.com' ||
+                window.location.hostname === 'www.realestate.cliftonuae.com'
+            ))
         );
     }, [pathname]);
 
@@ -73,14 +90,6 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const [prevPathname, setPrevPathname] = useState(pathname);
-
-    if (pathname !== prevPathname) {
-        setPrevPathname(pathname);
-        setMobileMenuOpen(false);
-    }
-
-    const isHomePage = pathname === '/';
 
     const isCurrentPage = (pageName: string) => {
         const path = createPageUrl(pageName);
