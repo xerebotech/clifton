@@ -80,6 +80,7 @@ const jsonLd = {
 
 import MainLayout from "@/components/MainLayout";
 import GoogleTagManager from "@/components/GoogleTagManager";
+import CookieBanner from "@/components/ui/CookieBanner";
 
 export default function RootLayout({
   children,
@@ -107,6 +108,7 @@ export default function RootLayout({
           />
         </noscript>
         <MainLayout>{children}</MainLayout>
+        <CookieBanner />
       </body>
     </html>
   );

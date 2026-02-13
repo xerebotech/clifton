@@ -81,7 +81,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     };
 
     return (
-        <div className="min-h-screen bg-white">
+        <div className="relative z-0 min-h-screen bg-white">
             {/* Header */}
             <header
                 className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled || !isHomePage
