@@ -81,7 +81,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     };
 
     return (
-        <div className="relative z-0 min-h-screen bg-white">
+        <div className="min-h-screen bg-white">
             {/* Header */}
             <header
                 className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled || !isHomePage
@@ -141,7 +141,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                                 : 'bg-white/10 backdrop-blur-sm border border-white/30 text-white hover:bg-white hover:text-[#23312D]'
                                 }`}
                         >
-                            {pathname === '/landing' ? 'Inquire Now' : 'Get In Touch'}
+                            {pathname === '/landing' ? 'Book a Meeting' : 'Get In Touch'}
                         </Link>
                     </nav>
 
@@ -212,7 +212,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
             </main>
 
             {/* Footer */}
-            <footer className="bg-[#1a1a1a] text-white">
+            <footer className="bg-[#1a1a1a] text-white -mt-px relative z-10">
                 <div className="max-w-7xl mx-auto px-6 py-16">
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
                         {/* Logo & Description */}
@@ -237,7 +237,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                             </div>
                         </div>
 
-                        {/* Quick Links */}
+                        {/* Quick Links / Navigation */}
                         <div>
                             <h4 className="text-lg mb-6 font-bold" style={{ fontFamily: 'var(--font-cinzel), serif' }}>
                                 {pathname === '/landing' ? 'Navigation' : 'Quick Links'}
@@ -248,8 +248,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                                         { name: 'Home', href: '#home' },
                                         { name: 'Services', href: '#services' },
                                         { name: 'Properties', href: '#properties' },
-                                        { name: 'FAQ', href: '#faq' },
-                                        { name: 'Contact Us', href: '#contact' }
+                                        { name: 'FAQ', href: '#faq' }
                                     ]
                                     : [
                                         { name: 'Home', page: 'Home' },
@@ -269,7 +268,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                             </ul>
                         </div>
 
-                        {/* Services / Extra Links */}
+                        {/* Legal / Services */}
                         <div>
                             <h4 className="text-lg mb-6 font-bold" style={{ fontFamily: 'var(--font-cinzel), serif' }}>
                                 {pathname === '/landing' ? 'Legal' : 'Services'}
@@ -302,7 +301,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                 </div>
 
                 {/* Bottom Bar */}
-                <div className="border-t border-white/10">
+                <div>
                     <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
                         <p className="text-white/40 text-sm">
                             © {new Date().getFullYear()} Clifton Capital Real Estate LLC. All rights reserved.

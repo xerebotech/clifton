@@ -29,7 +29,7 @@ export default function LandingHero() {
             </motion.div>
 
             {/* Content */}
-            <div className="relative z-0 h-full flex flex-col items-center justify-center px-6 text-center">
+            <div className="relative z-10 h-full flex flex-col items-center justify-center px-6 text-center">
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
