@@ -33,7 +33,8 @@ export default function PropertyDetailPage() {
 
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [formData, setFormData] = useState({
-        name: "",
+        firstName: "",
+        lastName: "",
         email: "",
         phone: "",
         message: "I'm interested in this property. Please contact me with more details."
@@ -60,7 +61,8 @@ export default function PropertyDetailPage() {
         setIsSubmitting(true);
 
         const success = await submitInquiry({
-            name: formData.name,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
             email: formData.email,
             phone: formData.phone,
             message: formData.message,
@@ -72,7 +74,8 @@ export default function PropertyDetailPage() {
             setSubmitted(true);
             setTimeout(() => setSubmitted(false), 3000);
             setFormData({
-                name: "",
+                firstName: "",
+                lastName: "",
                 email: "",
                 phone: "",
                 message: "I'm interested in this property. Please contact me with more details."
@@ -282,16 +285,29 @@ export default function PropertyDetailPage() {
                                                 Enquire About This Property
                                             </h3>
                                             <form onSubmit={handleSubmit} className="space-y-6">
-                                                <div className="relative">
-                                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                                    <input
-                                                        required
-                                                        type="text"
-                                                        placeholder="Your Name"
-                                                        value={formData.name}
-                                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                                        className="w-full h-14 pl-12 pr-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D] placeholder:text-[#23312D]/50"
-                                                    />
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div className="relative">
+                                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                                        <input
+                                                            required
+                                                            type="text"
+                                                            placeholder="First Name"
+                                                            value={formData.firstName}
+                                                            onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                                                            className="w-full h-14 pl-12 pr-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D] placeholder:text-[#23312D]/50"
+                                                        />
+                                                    </div>
+                                                    <div className="relative">
+                                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                                        <input
+                                                            required
+                                                            type="text"
+                                                            placeholder="Last Name"
+                                                            value={formData.lastName}
+                                                            onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                                                            className="w-full h-14 pl-12 pr-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D] placeholder:text-[#23312D]/50"
+                                                        />
+                                                    </div>
                                                 </div>
                                                 <div className="relative">
                                                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
