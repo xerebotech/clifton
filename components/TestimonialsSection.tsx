@@ -41,7 +41,7 @@ export default function TestimonialsSection() {
     const prev = () => setCurrent((prev) => (prev - 1 + testimonials.length) % testimonials.length);
 
     return (
-        <section ref={ref} className="py-24 md:py-32 bg-[#23312D] relative z-0 overflow-hidden">
+        <section ref={ref} className="py-24 md:py-32 bg-[#23312D] relative overflow-hidden">
             {/* Background pattern */}
             <div className="absolute inset-0 opacity-5">
                 <div className="absolute top-20 left-20 text-white">

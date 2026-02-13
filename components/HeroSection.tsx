@@ -52,7 +52,7 @@ export default function HeroSection() {
                 </motion.div>
             </AnimatePresence>
 
-            <div className="relative z-0 h-full flex flex-col items-center justify-center px-6 text-center">
+            <div className="relative z-10 h-full flex flex-col items-center justify-center px-6 text-center">
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={currentSlide}

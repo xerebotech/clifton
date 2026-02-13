@@ -222,7 +222,7 @@ export default function CookieBanner() {
                                         <div className="px-8 py-6 space-y-3 bg-[#23312D]">
                                             <button
                                                 onClick={() => handleConsent("all")}
-                                                className="w-full py-5 bg-[#AE9573] hover:bg-[#C5AD8F] text-[#23312D] font-black rounded-xl transition-all duration-300 text-sm uppercase tracking-[0.2em] shadow-[0_10px_40px_rgba(174,149,115,0.3)] hover:shadow-[0_15px_50px_rgba(174,149,115,0.5)] hover:-translate-y-0.5 active:translate-y-0"
+                                                className="w-full py-4 bg-[#AE9573] hover:bg-[#C5AD8F] text-[#23312D] font-black rounded-xl transition-all duration-300 text-sm uppercase tracking-[0.15em] shadow-lg"
                                             >
                                                 Accept All Experience
                                             </button>
