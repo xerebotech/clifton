@@ -152,7 +152,7 @@ function ContactContent() {
                                     <p className="text-[#A5A19D] mt-2">We&apos;ll get back to you shortly.</p>
                                 </motion.div>
                             ) : (
-                                <form onSubmit={handleSubmit} className="bg-white p-10 shadow-lg space-y-6">
+                                <form id="contact-page-form" onSubmit={handleSubmit} className="bg-white p-10 shadow-lg space-y-6">
                                     <div className="grid md:grid-cols-2 gap-6">
                                         <div>
                                             <label className="text-sm text-[#23312D] mb-2 block font-medium">First Name *</label>
@@ -196,7 +196,14 @@ function ContactContent() {
                                             <input
                                                 placeholder="+971 XX XXX XXXX"
                                                 value={formData.phone}
-                                                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                                onChange={(e) => {
+                                                    const val = e.target.value;
+                                                    const cleaned = val.replace(/[^\d+]/g, '');
+                                                    if (val !== cleaned) {
+                                                        alert("Please enter numbers only");
+                                                    }
+                                                    setFormData({ ...formData, phone: cleaned });
+                                                }}
                                                 className="w-full h-14 px-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D] placeholder:text-[#23312D]/50"
                                             />
                                         </div>

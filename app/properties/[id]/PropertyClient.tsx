@@ -7,7 +7,6 @@ import { fetchPropertiesFromSheet } from '@/lib/googleSheets';
 import { submitInquiry } from '@/lib/inquiryService';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { sortedCountries } from '@/lib/countries';
 import {
     MapPin,
     Bed,
@@ -38,7 +37,6 @@ export default function PropertyDetailPage() {
         lastName: "",
         email: "",
         phone: "",
-        countryCode: "+971",
         message: "I'm interested in this property. Please contact me with more details."
     });
     const [submitted, setSubmitted] = useState(false);
@@ -66,7 +64,7 @@ export default function PropertyDetailPage() {
             firstName: formData.firstName,
             lastName: formData.lastName,
             email: formData.email,
-            phone: `${formData.countryCode} ${formData.phone}`,
+            phone: formData.phone,
             message: formData.message,
             projectOrService: `Property Enquiry: ${property?.title || id}`
         });
@@ -80,7 +78,6 @@ export default function PropertyDetailPage() {
                 lastName: "",
                 email: "",
                 phone: "",
-                countryCode: "+971",
                 message: "I'm interested in this property. Please contact me with more details."
             });
         }
@@ -215,7 +212,7 @@ export default function PropertyDetailPage() {
                             </div>
 
                             {/* Key Features */}
-                            <div className="grid grid-cols-4 gap-4 p-6 bg-[#F2F0EB] rounded-xl mb-8">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 bg-[#F2F0EB] rounded-xl mb-8">
                                 <div className="text-center">
                                     <Bed className="w-6 h-6 text-[#AE9573] mx-auto mb-2" />
                                     <div className="text-2xl font-bold text-[#23312D]">{property.beds}</div>
@@ -287,7 +284,7 @@ export default function PropertyDetailPage() {
                                             <h3 className="text-2xl text-[#23312D] mb-8" style={{ fontFamily: 'var(--font-cinzel), serif' }}>
                                                 Enquire About This Property
                                             </h3>
-                                            <form onSubmit={handleSubmit} className="space-y-6">
+                                            <form id="property-detail-inquiry-form" onSubmit={handleSubmit} className="space-y-6">
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <div className="relative">
                                                         <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -323,29 +320,22 @@ export default function PropertyDetailPage() {
                                                         className="w-full h-14 pl-12 pr-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D] placeholder:text-[#23312D]/50"
                                                     />
                                                 </div>
-                                                <div className="flex gap-2">
-                                                    <select
-                                                        value={formData.countryCode}
-                                                        onChange={(e) => setFormData({ ...formData, countryCode: e.target.value })}
-                                                        className="w-32 h-14 px-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D] appearance-none"
-                                                        style={{ backgroundPosition: 'calc(100% - 10px) center', backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='gray' %3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundSize: '10px' }}
-                                                    >
-                                                        {sortedCountries.map(c => (
-                                                            <option key={c.code} value={c.dialCode}>
-                                                                {c.code} ({c.dialCode})
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                    <div className="relative flex-1">
-                                                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                                        <input
-                                                            type="tel"
-                                                            placeholder="Phone Number"
-                                                            value={formData.phone}
-                                                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                                            className="w-full h-14 pl-12 pr-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D] placeholder:text-[#23312D]/50"
-                                                        />
-                                                    </div>
+                                                <div className="relative">
+                                                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                                    <input
+                                                        type="tel"
+                                                        placeholder="+971 XX XXX XXXX"
+                                                        value={formData.phone}
+                                                        onChange={(e) => {
+                                                            const val = e.target.value;
+                                                            const cleaned = val.replace(/[^\d+]/g, '');
+                                                            if (val !== cleaned) {
+                                                                alert("Please enter numbers only");
+                                                            }
+                                                            setFormData({ ...formData, phone: cleaned });
+                                                        }}
+                                                        className="w-full h-14 pl-12 pr-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D] placeholder:text-[#23312D]/50"
+                                                    />
                                                 </div>
                                                 <textarea
                                                     required
