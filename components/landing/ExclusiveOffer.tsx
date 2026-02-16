@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Mail } from 'lucide-react';
 import { submitInquiry } from '@/lib/inquiryService';
 import Link from 'next/link';
-import { sortedCountries } from '@/lib/countries';
 
 export default function ExclusiveOffer() {
     const [step, setStep] = React.useState(1);
@@ -13,7 +12,6 @@ export default function ExclusiveOffer() {
     const [firstName, setFirstName] = React.useState('');
     const [lastName, setLastName] = React.useState('');
     const [phone, setPhone] = React.useState('');
-    const [countryCode, setCountryCode] = React.useState('+971');
     const [isSubmitting, setIsSubmitting] = React.useState(false);
     const [submitted, setSubmitted] = React.useState(false);
 
@@ -30,7 +28,7 @@ export default function ExclusiveOffer() {
             firstName,
             lastName,
             email,
-            phone: `${countryCode} ${phone}`,
+            phone,
             message: "Exclusive Offer Access Request",
             projectOrService: "Exclusive Offer"
         });
@@ -82,7 +80,7 @@ export default function ExclusiveOffer() {
                                 </motion.div>
                             ) : (
                                 <div className="w-full max-w-xl">
-                                    <form onSubmit={step === 1 ? handleNextStep : handleSubmit} className="flex flex-col gap-6">
+                                    <form id="exclusive-offer-form" onSubmit={step === 1 ? handleNextStep : handleSubmit} className="flex flex-col gap-6">
                                         <div className="relative overflow-hidden">
                                             <AnimatePresence mode="wait">
                                                 {step === 1 ? (
@@ -135,28 +133,21 @@ export default function ExclusiveOffer() {
                                                             placeholder="Last Name"
                                                             className="w-full h-16 bg-white/5 border border-white/10 rounded-sm px-6 text-white outline-none focus:border-[#AE9573] transition-colors font-light placeholder:text-white/50"
                                                         />
-                                                        <div className="flex gap-2">
-                                                            <select
-                                                                value={countryCode}
-                                                                onChange={(e) => setCountryCode(e.target.value)}
-                                                                className="w-32 h-16 bg-white/5 border border-white/10 rounded-sm px-4 text-white outline-none focus:border-[#AE9573] transition-colors font-light appearance-none"
-                                                                style={{ backgroundPosition: 'calc(100% - 15px) center', backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white' %3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundSize: '12px' }}
-                                                            >
-                                                                {sortedCountries.map(c => (
-                                                                    <option key={c.code} value={c.dialCode} className="bg-[#23312D]">
-                                                                        {c.code} ({c.dialCode})
-                                                                    </option>
-                                                                ))}
-                                                            </select>
-                                                            <input
-                                                                required
-                                                                type="tel"
-                                                                value={phone}
-                                                                onChange={(e) => setPhone(e.target.value)}
-                                                                placeholder="Mobile Number"
-                                                                className="flex-1 h-16 bg-white/5 border border-white/10 rounded-sm px-6 text-white outline-none focus:border-[#AE9573] transition-colors font-light placeholder:text-white/50"
-                                                            />
-                                                        </div>
+                                                        <input
+                                                            required
+                                                            type="tel"
+                                                            value={phone}
+                                                            onChange={(e) => {
+                                                                const val = e.target.value;
+                                                                const cleaned = val.replace(/[^\d+]/g, '');
+                                                                if (val !== cleaned) {
+                                                                    alert("Please enter numbers only");
+                                                                }
+                                                                setPhone(cleaned);
+                                                            }}
+                                                            placeholder="+971 XX XXX XXXX"
+                                                            className="w-full h-16 bg-white/5 border border-white/10 rounded-sm px-6 text-white outline-none focus:border-[#AE9573] transition-colors font-light placeholder:text-white/50"
+                                                        />
                                                         <button
                                                             type="submit"
                                                             disabled={isSubmitting}

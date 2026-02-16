@@ -56,7 +56,7 @@ export default function AboutSection() {
                             CLIFTON CAPITAL<br />
                             <span className="text-[#4D6969]">REAL ESTATE LLC</span>
                         </h2>
-                        <div className="space-y-6 text-[#23312D] leading-relaxed font-medium">
+                        <div className="space-y-6 text-[#23312D] leading-relaxed">
                             <p>
                                 We turn dream homes into reality and help sellers get top dollar for their properties. With our deep market expertise and personal service, we make real estate transactions seamless and stress free.
                             </p>
@@ -72,7 +72,7 @@ export default function AboutSection() {
                                 >
                                     100%
                                 </span>
-                                <p className="text-[10px] md:text-xs text-[#AE9573] mt-2 font-black uppercase tracking-[0.2em]">Client Satisfaction</p>
+                                <p className="text-[10px] md:text-xs text-[#AE9573] mt-2 uppercase tracking-[0.2em]">Client Satisfaction</p>
                             </div>
                             <div>
                                 <span
@@ -81,7 +81,7 @@ export default function AboutSection() {
                                 >
                                     15+
                                 </span>
-                                <p className="text-[10px] md:text-xs text-[#AE9573] mt-2 font-black uppercase tracking-[0.2em]">Years Experience</p>
+                                <p className="text-[10px] md:text-xs text-[#AE9573] mt-2 uppercase tracking-[0.2em]">Years Experience</p>
                             </div>
                             <div>
                                 <span
@@ -90,7 +90,7 @@ export default function AboutSection() {
                                 >
                                     100M+
                                 </span>
-                                <p className="text-[10px] md:text-xs text-[#AE9573] mt-2 font-black uppercase tracking-[0.2em]">Portfolio Value(AED)</p>
+                                <p className="text-[10px] md:text-xs text-[#AE9573] mt-2 uppercase tracking-[0.2em]">Portfolio Value(AED)</p>
                             </div>
                         </div>
                     </motion.div>
