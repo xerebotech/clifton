@@ -4,11 +4,12 @@ import React, { useState, useRef } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { submitInquiry } from '@/lib/inquiryService';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle, RefreshCw } from 'lucide-react';
+import { sortedCountries } from '@/lib/countries';
 
 export default function ContactSection() {
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true, margin: "-100px" });
-    const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', phone: '', service: '', message: '' });
+    const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', phone: '', countryCode: '+971', service: '', message: '' });
     const [submitted, setSubmitted] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -20,7 +21,7 @@ export default function ContactSection() {
             firstName: formData.firstName,
             lastName: formData.lastName,
             email: formData.email,
-            phone: formData.phone,
+            phone: `${formData.countryCode} ${formData.phone}`,
             message: formData.message,
             projectOrService: formData.service || "General Inquiry"
         });
@@ -29,7 +30,7 @@ export default function ContactSection() {
         if (success) {
             setSubmitted(true);
             setTimeout(() => setSubmitted(false), 3000);
-            setFormData({ firstName: '', lastName: '', email: '', phone: '', service: '', message: '' });
+            setFormData({ firstName: '', lastName: '', email: '', phone: '', countryCode: '+971', service: '', message: '' });
         }
     };
 
@@ -154,15 +155,29 @@ export default function ContactSection() {
                                                 required
                                                 className="w-full h-14 px-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-transparent text-[#23312D] placeholder:text-[#23312D]/50"
                                             />
-                                            <input
-                                                id="contact-phone"
-                                                name="phone"
-                                                type="tel"
-                                                placeholder="Phone Number"
-                                                value={formData.phone}
-                                                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                                className="w-full h-14 px-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-transparent text-[#23312D] placeholder:text-[#23312D]/50"
-                                            />
+                                            <div className="flex gap-4">
+                                                <select
+                                                    value={formData.countryCode}
+                                                    onChange={(e) => setFormData({ ...formData, countryCode: e.target.value })}
+                                                    className="w-32 h-14 px-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-transparent text-[#23312D] appearance-none"
+                                                    style={{ backgroundPosition: 'calc(100% - 10px) center', backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='gray' %3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundSize: '10px' }}
+                                                >
+                                                    {sortedCountries.map(c => (
+                                                        <option key={c.code} value={c.dialCode}>
+                                                            {c.code} ({c.dialCode})
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                <input
+                                                    id="contact-phone"
+                                                    name="phone"
+                                                    type="tel"
+                                                    placeholder="Phone Number"
+                                                    value={formData.phone}
+                                                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                                    className="flex-1 h-14 px-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-transparent text-[#23312D] placeholder:text-[#23312D]/50"
+                                                />
+                                            </div>
                                         </div>
                                         <select
                                             id="contact-service"

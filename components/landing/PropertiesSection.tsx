@@ -7,6 +7,7 @@ import { properties as staticProperties, Property } from '@/lib/propertiesData';
 import { fetchPropertiesFromSheet } from '@/lib/googleSheets';
 import { submitInquiry } from '@/lib/inquiryService';
 import { MapPin, Bed, Bath, Square, ArrowRight, X, User, Mail, Phone, Send, CheckCircle, Info, RefreshCw } from 'lucide-react';
+import { sortedCountries } from '@/lib/countries';
 
 export default function PropertiesSection() {
     const [properties, setProperties] = useState<Property[]>(staticProperties);
@@ -49,6 +50,7 @@ export default function PropertiesSection() {
         lastName: '',
         email: '',
         phone: '',
+        countryCode: '+971',
         message: "I'm interested in this property. Please provide more details."
     });
 
@@ -60,7 +62,7 @@ export default function PropertiesSection() {
             firstName: formData.firstName,
             lastName: formData.lastName,
             email: formData.email,
-            phone: formData.phone,
+            phone: `${formData.countryCode} ${formData.phone}`,
             message: formData.message,
             projectOrService: `Property Enquiry: ${selectedProperty?.title || "Unknown Property"}`
         });
@@ -76,6 +78,7 @@ export default function PropertiesSection() {
                     lastName: '',
                     email: '',
                     phone: '',
+                    countryCode: '+971',
                     message: "I'm interested in this property. Please provide more details."
                 });
             }, 3000);
@@ -310,16 +313,30 @@ export default function PropertiesSection() {
                                                     className="w-full h-14 pl-12 pr-4 bg-white border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none text-[#23312D] placeholder:text-[#23312D]/50 transition-all font-medium"
                                                 />
                                             </div>
-                                            <div className="relative">
-                                                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                                <input
-                                                    required
-                                                    type="tel"
-                                                    placeholder="Phone Number"
-                                                    value={formData.phone}
-                                                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                                    className="w-full h-14 pl-12 pr-4 bg-white border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none text-[#23312D] placeholder:text-[#23312D]/50 transition-all font-medium"
-                                                />
+                                            <div className="flex gap-2">
+                                                <select
+                                                    value={formData.countryCode}
+                                                    onChange={(e) => setFormData({ ...formData, countryCode: e.target.value })}
+                                                    className="w-32 h-14 bg-white border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none text-[#23312D] font-medium appearance-none px-4"
+                                                    style={{ backgroundPosition: 'calc(100% - 10px) center', backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='gray' %3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundSize: '10px' }}
+                                                >
+                                                    {sortedCountries.map(c => (
+                                                        <option key={c.code} value={c.dialCode}>
+                                                            {c.code} ({c.dialCode})
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                <div className="relative flex-1">
+                                                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                                    <input
+                                                        required
+                                                        type="tel"
+                                                        placeholder="Phone Number"
+                                                        value={formData.phone}
+                                                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                                        className="w-full h-14 pl-12 pr-4 bg-white border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none text-[#23312D] placeholder:text-[#23312D]/50 transition-all font-medium"
+                                                    />
+                                                </div>
                                             </div>
                                             <textarea
                                                 rows={4}
