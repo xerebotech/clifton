@@ -14,8 +14,32 @@ export default function CookieBanner() {
     });
 
     useEffect(() => {
-        const consent = localStorage.getItem("clifton-cookie-consent");
-        if (!consent) {
+        const storedConsent = localStorage.getItem("clifton-cookie-consent");
+        if (storedConsent) {
+            try {
+                const consentData = JSON.parse(storedConsent);
+
+                // Update GTM state on load if consent exists
+                if (typeof window !== "undefined" && (window as any).gtag) {
+                    (window as any).gtag("consent", "update", {
+                        ad_storage: consentData.ad_storage,
+                        ad_user_data: consentData.ad_user_data,
+                        ad_personalization: consentData.ad_personalization,
+                        analytics_storage: consentData.analytics_storage,
+                    });
+                }
+
+                // Also initialize preferences state to match stored consent
+                setPreferences({
+                    necessary: true,
+                    analytics: consentData.analytics_storage === "granted",
+                    marketing: consentData.ad_storage === "granted",
+                });
+            } catch (e) {
+                console.error("Error parsing stored cookie consent:", e);
+                setIsVisible(true);
+            }
+        } else {
             const timer = setTimeout(() => setIsVisible(true), 1500);
             return () => clearTimeout(timer);
         }
