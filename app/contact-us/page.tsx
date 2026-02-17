@@ -12,7 +12,7 @@ const contactInfo = [
         title: "Visit Us",
         content: "508, Sultan business centre, Oud metha, Dubai",
         subtext: "Dubai, UAE",
-        link: "https://maps.app.goo.gl/9R686s179G63Y59k9",
+        link: "https://maps.app.goo.gl/A8C2Rnh5k1rqJkmdA",
         type: "address"
     },
     {
