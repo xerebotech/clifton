@@ -308,15 +308,22 @@ function ContactContent() {
                             )}
                         </motion.div>
 
-                        {/* Map Placeholder */}
                         <motion.div
                             initial={{ opacity: 0, x: 50 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.8 }}
                             viewport={{ once: true }}
                             className="relative"
+                            onClick={() => {
+                                if (typeof window !== 'undefined' && (window as any).dataLayer) {
+                                    (window as any).dataLayer.push({
+                                        event: 'map_interaction',
+                                        map_location: 'Sultan Business Centre, Dubai'
+                                    });
+                                }
+                            }}
                         >
-                            <div className="h-full min-h-[500px] w-full bg-[#f2f0eb] rounded-xl overflow-hidden shadow-lg">
+                            <div className="h-full min-h-[500px] w-full bg-[#f2f0eb] rounded-xl overflow-hidden shadow-lg border-4 border-transparent hover:border-[#3B5B5D]/10 transition-colors">
                                 <iframe
                                     src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3609.1000183593183!2d55.30871200000001!3d25.233556!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f42cc28ba49af%3A0x57bbd7cd1311987e!2sSultan%20Business%20Centre!5e0!3m2!1sen!2sin!4v1769682109943!5m2!1sen!2sin"
                                     width="100%"
