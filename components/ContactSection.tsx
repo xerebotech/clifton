@@ -1,20 +1,41 @@
 "use client";
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, Suspense } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
+import { useSearchParams } from 'next/navigation';
 import { submitInquiry } from '@/lib/inquiryService';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle, RefreshCw } from 'lucide-react';
 
-export default function ContactSection() {
+function ContactSectionContent() {
+    const searchParams = useSearchParams();
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true, margin: "-100px" });
     const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', phone: '', service: '', message: '' });
     const [submitted, setSubmitted] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    // GTM tracking function
+    const trackClick = (type: string, value: string) => {
+        if (typeof window !== 'undefined' && (window as any).dataLayer) {
+            (window as any).dataLayer.push({
+                event: 'contact_link_click',
+                link_type: type,
+                link_value: value
+            });
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
+
+        const utmParams = {
+            utm_source: searchParams.get('utm_source') || '',
+            utm_medium: searchParams.get('utm_medium') || '',
+            utm_campaign: searchParams.get('utm_campaign') || '',
+            utm_term: searchParams.get('utm_term') || '',
+            utm_content: searchParams.get('utm_content') || '',
+        };
 
         const success = await submitInquiry({
             firstName: formData.firstName,
@@ -22,7 +43,8 @@ export default function ContactSection() {
             email: formData.email,
             phone: formData.phone,
             message: formData.message,
-            projectOrService: formData.service || "General Inquiry"
+            projectOrService: formData.service || "General Inquiry",
+            ...utmParams
         });
 
         setIsSubmitting(false);
@@ -34,9 +56,27 @@ export default function ContactSection() {
     };
 
     const contactInfo = [
-        { icon: MapPin, title: "Address", content: "508, Sultan business centre, Oud metha, Dubai" },
-        { icon: Phone, title: "Phone", content: "+971 55 930 4697" },
-        { icon: Mail, title: "Email", content: "realestate@cliftonuae.com" },
+        {
+            icon: MapPin,
+            title: "Address",
+            content: "508, Sultan business centre, Oud metha, Dubai",
+            link: "https://maps.app.goo.gl/9R686s179G63Y59k9",
+            type: "address"
+        },
+        {
+            icon: Phone,
+            title: "Phone",
+            content: "+971 55 930 4697",
+            link: "tel:+971559304697",
+            type: "phone"
+        },
+        {
+            icon: Mail,
+            title: "Email",
+            content: "realestate@cliftonuae.com",
+            link: "mailto:realestate@cliftonuae.com",
+            type: "email"
+        },
         { icon: Clock, title: "Working Hours", content: "Sun - Thu: 9AM - 6PM" }
     ];
 
@@ -77,7 +117,19 @@ export default function ContactSection() {
                                         </div>
                                         <div>
                                             <h4 className="text-[#23312D] font-medium mb-1">{info.title}</h4>
-                                            <p className="text-[#5a5a5a]">{info.content}</p>
+                                            {info.link ? (
+                                                <a
+                                                    href={info.link}
+                                                    target={info.type === 'address' ? "_blank" : undefined}
+                                                    rel={info.type === 'address' ? "noopener noreferrer" : undefined}
+                                                    className="text-[#5a5a5a] hover:text-[#AE9573] transition-colors duration-300"
+                                                    onClick={() => trackClick(info.type || 'link', info.content)}
+                                                >
+                                                    {info.content}
+                                                </a>
+                                            ) : (
+                                                <p className="text-[#5a5a5a]">{info.content}</p>
+                                            )}
                                         </div>
                                     </motion.div>
                                 );
@@ -221,5 +273,13 @@ export default function ContactSection() {
                 </div>
             </div>
         </section>
+    );
+}
+
+export default function ContactSection() {
+    return (
+        <Suspense fallback={<div className="py-24 bg-[#F2F0EB] text-center">Loading Contact Section...</div>}>
+            <ContactSectionContent />
+        </Suspense>
     );
 }
