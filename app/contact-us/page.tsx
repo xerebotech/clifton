@@ -7,9 +7,30 @@ import { useSearchParams } from 'next/navigation';
 import { submitInquiry } from '@/lib/inquiryService';
 
 const contactInfo = [
-    { icon: MapPin, title: "Visit Us", content: "508, Sultan business centre, Oud metha, Dubai", subtext: "Dubai, UAE" },
-    { icon: Phone, title: "Call Us", content: "+971 55 930 4697", subtext: "24/7 Support Available" },
-    { icon: Mail, title: "Email Us", content: "realestate@cliftonuae.com", subtext: "We reply within 24 hours" },
+    {
+        icon: MapPin,
+        title: "Visit Us",
+        content: "508, Sultan business centre, Oud metha, Dubai",
+        subtext: "Dubai, UAE",
+        link: "https://maps.app.goo.gl/9R686s179G63Y59k9",
+        type: "address"
+    },
+    {
+        icon: Phone,
+        title: "Call Us",
+        content: "+971 55 930 4697",
+        subtext: "24/7 Support Available",
+        link: "tel:+971559304697",
+        type: "phone"
+    },
+    {
+        icon: Mail,
+        title: "Email Us",
+        content: "realestate@cliftonuae.com",
+        subtext: "We reply within 24 hours",
+        link: "mailto:realestate@cliftonuae.com",
+        type: "email"
+    },
     { icon: Clock, title: "Working Hours", content: "Sun - Thu: 9AM - 6PM", subtext: "Fri - Sat: Closed" }
 ];
 
@@ -24,6 +45,17 @@ export default function Contact() {
 function ContactContent() {
     const searchParams = useSearchParams();
     const serviceParam = searchParams.get('service');
+
+    // GTM tracking function
+    const trackClick = (type: string, value: string) => {
+        if (typeof window !== 'undefined' && (window as any).dataLayer) {
+            (window as any).dataLayer.push({
+                event: 'contact_link_click',
+                link_type: type,
+                link_value: value
+            });
+        }
+    };
 
     const [formData, setFormData] = useState({
         firstName: '',
@@ -47,13 +79,22 @@ function ContactContent() {
         e.preventDefault();
         setIsSubmitting(true);
 
+        const utmParams = {
+            utm_source: searchParams.get('utm_source') || '',
+            utm_medium: searchParams.get('utm_medium') || '',
+            utm_campaign: searchParams.get('utm_campaign') || '',
+            utm_term: searchParams.get('utm_term') || '',
+            utm_content: searchParams.get('utm_content') || '',
+        };
+
         const success = await submitInquiry({
             firstName: formData.firstName,
             lastName: formData.lastName,
             email: formData.email,
             phone: formData.phone,
             message: formData.message,
-            projectOrService: formData.service || "General Inquiry (Contact Page)"
+            projectOrService: formData.service || "General Inquiry (Contact Page)",
+            ...utmParams
         });
 
         setIsSubmitting(false);
@@ -113,7 +154,19 @@ function ContactContent() {
                                     >
                                         {info.title}
                                     </h3>
-                                    <p className="text-[#3B5B5D] font-medium">{info.content}</p>
+                                    {info.link ? (
+                                        <a
+                                            href={info.link}
+                                            target={info.type === 'address' ? "_blank" : undefined}
+                                            rel={info.type === 'address' ? "noopener noreferrer" : undefined}
+                                            className="text-[#3B5B5D] font-medium hover:text-[#AE9573] transition-colors duration-300 truncate block w-full"
+                                            onClick={() => trackClick(info.type || 'link', info.content)}
+                                        >
+                                            {info.content}
+                                        </a>
+                                    ) : (
+                                        <p className="text-[#3B5B5D] font-medium">{info.content}</p>
+                                    )}
                                     <p className="text-[#A5A19D] text-sm mt-1">{info.subtext}</p>
                                 </motion.div>
                             );

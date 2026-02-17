@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { properties as staticProperties, Property } from '@/lib/propertiesData';
@@ -8,7 +9,8 @@ import { fetchPropertiesFromSheet } from '@/lib/googleSheets';
 import { submitInquiry } from '@/lib/inquiryService';
 import { MapPin, Bed, Bath, Square, ArrowRight, X, User, Mail, Phone, Send, CheckCircle, Info, RefreshCw } from 'lucide-react';
 
-export default function PropertiesSection() {
+function PropertiesSectionContent() {
+    const searchParams = useSearchParams();
     const [properties, setProperties] = useState<Property[]>(staticProperties);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedType, setSelectedType] = useState('All');
@@ -56,13 +58,22 @@ export default function PropertiesSection() {
         e.preventDefault();
         setIsSubmitting(true);
 
+        const utmParams = {
+            utm_source: searchParams.get('utm_source') || '',
+            utm_medium: searchParams.get('utm_medium') || '',
+            utm_campaign: searchParams.get('utm_campaign') || '',
+            utm_term: searchParams.get('utm_term') || '',
+            utm_content: searchParams.get('utm_content') || '',
+        };
+
         const success = await submitInquiry({
             firstName: formData.firstName,
             lastName: formData.lastName,
             email: formData.email,
             phone: formData.phone,
             message: formData.message,
-            projectOrService: `Property Enquiry: ${selectedProperty?.title || "Unknown Property"}`
+            projectOrService: `Property Enquiry: ${selectedProperty?.title || "Unknown Property"}`,
+            ...utmParams
         });
 
         setIsSubmitting(false);
@@ -450,5 +461,12 @@ function PropertyCard({ property, index, onOpenModal }: { property: any, index: 
                 </div>
             </div>
         </motion.div>
+    );
+}
+export default function PropertiesSection() {
+    return (
+        <Suspense fallback={<div className="py-32 bg-[#F9F8F6] text-center">Loading Properties...</div>}>
+            <PropertiesSectionContent />
+        </Suspense>
     );
 }
