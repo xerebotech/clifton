@@ -369,14 +369,6 @@ function PropertiesSectionContent() {
                                             </p>
                                         </form>
 
-                                        <div className="pt-6 border-t border-[#23312D]/10">
-                                            <Link
-                                                href={`/properties/${selectedProperty.id}`}
-                                                className="flex items-center justify-center gap-2 text-[#23312D] text-xs font-bold uppercase tracking-widest hover:text-[#AE9573] transition-colors"
-                                            >
-                                                Explore Full Details <ArrowRight className="w-3 h-3" />
-                                            </Link>
-                                        </div>
                                     </div>
                                 )}
                             </div>
