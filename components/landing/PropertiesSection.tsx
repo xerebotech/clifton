@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { properties as staticProperties, Property } from '@/lib/propertiesData';
 import { fetchPropertiesFromSheet } from '@/lib/googleSheets';
 import { submitInquiry } from '@/lib/inquiryService';
-import { MapPin, Bed, Bath, Square, ArrowRight, X, User, Mail, Phone, Send, CheckCircle, Info, RefreshCw } from 'lucide-react';
+import { MapPin, Bed, Bath, Square, ArrowRight, X, User, Mail, Phone, Send, CheckCircle, Info, RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react';
 import PhoneInput from '../ui/PhoneInput';
 
 function PropertiesSectionContent() {
@@ -44,6 +44,31 @@ function PropertiesSectionContent() {
         return typeMatch && bedsMatch;
     });
 
+    const [currentPage, setCurrentPage] = useState(0);
+    const [itemsPerPage, setItemsPerPage] = useState(6);
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth >= 1024) setItemsPerPage(6);
+            else if (window.innerWidth >= 768) setItemsPerPage(4);
+            else setItemsPerPage(2);
+        };
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    // Reset page when filters change
+    useEffect(() => {
+        setCurrentPage(0);
+    }, [selectedType, selectedBeds]);
+
+    const totalPages = Math.ceil(filteredProperties.length / itemsPerPage);
+    const paginatedProperties = filteredProperties.slice(
+        currentPage * itemsPerPage,
+        (currentPage + 1) * itemsPerPage
+    );
+
     const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
@@ -58,31 +83,15 @@ function PropertiesSectionContent() {
     const handleInquiry = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
-
-        const utmParams = {
-            utm_source: searchParams.get('utm_source') || '',
-            utm_medium: searchParams.get('utm_medium') || '',
-            utm_campaign: searchParams.get('utm_campaign') || '',
-            utm_term: searchParams.get('utm_term') || '',
-            utm_content: searchParams.get('utm_content') || '',
-        };
-
-        const success = await submitInquiry({
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            email: formData.email,
-            phone: formData.phone,
-            message: formData.message,
-            projectOrService: `Property Enquiry: ${selectedProperty?.title || "Unknown Property"}`,
-            ...utmParams
-        });
-
-        setIsSubmitting(false);
-        if (success) {
+        try {
+            await submitInquiry({
+                ...formData,
+                projectOrService: `Property Inquiry: ${selectedProperty?.title || 'General'}`
+            });
             setSubmitted(true);
             setTimeout(() => {
-                setSubmitted(false);
                 setSelectedProperty(null);
+                setSubmitted(false);
                 setFormData({
                     firstName: '',
                     lastName: '',
@@ -91,111 +100,189 @@ function PropertiesSectionContent() {
                     message: "I'm interested in this property. Please provide more details."
                 });
             }, 3000);
+        } catch (error) {
+            console.error("Inquiry failed:", error);
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
     return (
-        <section id="properties" className="py-32 bg-[#F9F8F6]">
-            <div className="max-w-7xl mx-auto px-6">
-                <div className="mb-20 flex flex-col md:flex-row md:items-end justify-between gap-8">
+        <PropertiesSectionContentWrapper
+            propertyTypes={propertyTypes}
+            bedOptions={bedOptions}
+            selectedType={selectedType}
+            setSelectedType={setSelectedType}
+            selectedBeds={selectedBeds}
+            setSelectedBeds={setSelectedBeds}
+            isLoading={isLoading}
+            paginatedProperties={paginatedProperties}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            totalPages={totalPages}
+            onOpenModal={(property: Property) => setSelectedProperty(property)}
+            totalFiltered={filteredProperties.length}
+            selectedProperty={selectedProperty}
+            setSelectedProperty={setSelectedProperty}
+            isSubmitting={isSubmitting}
+            submitted={submitted}
+            formData={formData}
+            setFormData={setFormData}
+            handleInquiry={handleInquiry}
+        />
+    );
+}
+
+function PropertiesSectionContentWrapper({
+    propertyTypes,
+    bedOptions,
+    selectedType,
+    setSelectedType,
+    selectedBeds,
+    setSelectedBeds,
+    isLoading,
+    paginatedProperties,
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    onOpenModal,
+    totalFiltered,
+    selectedProperty,
+    setSelectedProperty,
+    isSubmitting,
+    submitted,
+    formData,
+    setFormData,
+    handleInquiry
+}: any) {
+    return (
+        <section id="properties" className="py-24 bg-white overflow-hidden">
+            <div className="container mx-auto px-4 md:px-6">
+                <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-16">
                     <div className="max-w-2xl">
-                        <span className="text-[#AE9573] text-sm tracking-[0.3em] uppercase block mb-4">Prime Selection</span>
-                        <h2
-                            className="text-5xl md:text-6xl text-[#23312D] leading-tight"
-                            style={{ fontFamily: 'var(--font-cinzel), serif' }}
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            className="flex items-center gap-4 mb-4"
                         >
-                            PROPERTY <span className="italic">PORTFOLIO</span>
+                            <span className="w-12 h-[1px] bg-[#AE9573]"></span>
+                            <span className="text-[#AE9573] text-sm tracking-[0.3em] font-bold uppercase">Featured Collection</span>
+                        </motion.div>
+                        <h2 className="text-4xl md:text-5xl text-[#23312D] mb-6" style={{ fontFamily: 'var(--font-cinzel), serif' }}>
+                            Exclusive <span className="text-[#AE9573] italic">Properties</span>
                         </h2>
-                        <p className="mt-6 text-[#5a5a5a] text-lg">
+                        <p className="text-[#5a5a5a] text-lg leading-relaxed max-w-xl">
                             Discover luxury living in Dubai with our curated selection of properties. Filter by type and size to find your perfect home.
                         </p>
                     </div>
-                    <Link
-                        href="/properties"
-                        className="group flex items-center gap-3 text-[#23312D] font-medium tracking-widest uppercase text-sm"
-                    >
-                        View Full Map
-                        <div className="w-10 h-10 rounded-full border border-[#23312D]/20 flex items-center justify-center group-hover:bg-[#23312D] group-hover:text-white transition-all duration-300">
-                            <ArrowRight className="w-4 h-4" />
-                        </div>
-                    </Link>
                 </div>
 
                 {/* Filter Bar */}
-                <div className="mb-12 flex flex-wrap gap-4 items-center bg-white p-6 rounded-sm shadow-sm border border-[#23312D]/5">
-                    <div className="flex flex-col gap-2 min-w-[200px]">
-                        <span className="text-[10px] tracking-widest uppercase text-[#5a5a5a] font-bold">Property Type</span>
-                        <select
-                            value={selectedType}
-                            onChange={(e) => setSelectedType(e.target.value)}
-                            className="h-12 bg-[#F9F8F6] border-none text-[#23312D] px-4 text-sm focus:ring-1 focus:ring-[#AE9573] outline-none"
-                        >
-                            {propertyTypes.map(type => (
-                                <option key={type} value={type}>{type}</option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className="flex flex-col gap-2 min-w-[150px]">
-                        <span className="text-[10px] tracking-widest uppercase text-[#5a5a5a] font-bold">Bedrooms</span>
-                        <div className="flex bg-[#F9F8F6] p-1 rounded-sm">
-                            {bedOptions.map(option => (
+                <div className="flex flex-wrap items-center gap-8 mb-16 pb-8 border-b border-[#23312D]/10">
+                    <div className="flex items-center gap-4">
+                        <span className="text-[10px] tracking-[0.2em] font-bold text-[#AE9573] uppercase">Type:</span>
+                        <div className="flex gap-4">
+                            {propertyTypes.map((type: string) => (
                                 <button
-                                    key={option}
-                                    onClick={() => setSelectedBeds(option)}
-                                    className={`flex-1 h-10 px-3 text-[10px] font-bold transition-all duration-300 ${selectedBeds === option
-                                        ? "bg-[#23312D] text-white shadow-lg"
-                                        : "text-[#23312D]/60 hover:text-[#23312D]"
+                                    key={type}
+                                    onClick={() => setSelectedType(type)}
+                                    className={`text-xs tracking-widest uppercase transition-all duration-300 pb-1 border-b ${selectedType === type ? 'text-[#23312D] border-[#AE9573] font-bold' : 'text-[#5a5a5a] border-transparent hover:text-[#23312D]'
                                         }`}
                                 >
-                                    {option}
+                                    {type}
                                 </button>
                             ))}
                         </div>
                     </div>
 
-                    <div className="ml-auto">
-                        <span className="text-xs text-[#5a5a5a] italic">Showing {filteredProperties.length} properties</span>
+                    <div className="flex items-center gap-4">
+                        <span className="text-[10px] tracking-[0.2em] font-bold text-[#AE9573] uppercase">Beds:</span>
+                        <div className="flex gap-4">
+                            {bedOptions.map((beds: string) => (
+                                <button
+                                    key={beds}
+                                    onClick={() => setSelectedBeds(beds)}
+                                    className={`text-xs tracking-widest uppercase transition-all duration-300 pb-1 border-b ${selectedBeds === beds ? 'text-[#23312D] border-[#AE9573] font-bold' : 'text-[#5a5a5a] border-transparent hover:text-[#23312D]'
+                                        }`}
+                                >
+                                    {beds === 'All' ? 'All' : beds}
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10 min-h-[400px]">
-                    {isLoading ? (
-                        <div className="col-span-full flex flex-col items-center justify-center py-20">
-                            <RefreshCw className="w-10 h-10 text-[#AE9573] animate-spin mb-4" />
-                            <p className="text-[#5a5a5a] tracking-widest uppercase text-sm">Loading Properties...</p>
-                        </div>
-                    ) : (
-                        <AnimatePresence mode="popLayout">
-                            {filteredProperties.length > 0 ? (
-                                filteredProperties.map((property, index) => (
-                                    <PropertyCard
-                                        key={property.id}
-                                        property={property}
-                                        index={index}
-                                        onOpenModal={() => setSelectedProperty(property)}
-                                    />
-                                ))
+                <div className="relative">
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={currentPage + selectedType + selectedBeds}
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            transition={{ duration: 0.5 }}
+                            className="grid md:grid-cols-2 lg:grid-cols-3 gap-10 min-h-[400px]"
+                        >
+                            {isLoading ? (
+                                <div className="col-span-full flex flex-col items-center justify-center py-20">
+                                    <RefreshCw className="w-10 h-10 text-[#AE9573] animate-spin mb-4" />
+                                    <p className="text-[#5a5a5a] tracking-widest uppercase text-sm">Loading Properties...</p>
+                                </div>
                             ) : (
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    className="col-span-full flex flex-col items-center justify-center py-20 text-center"
-                                >
-                                    <div className="w-16 h-16 rounded-full bg-[#23312D]/5 flex items-center justify-center mb-6">
-                                        <Info className="w-8 h-8 text-[#AE9573]" />
+                                paginatedProperties.length > 0 ? (
+                                    paginatedProperties.map((property: any, index: number) => (
+                                        <PropertyCard
+                                            key={property.id}
+                                            property={property}
+                                            index={index}
+                                            onOpenModal={() => onOpenModal(property)}
+                                        />
+                                    ))
+                                ) : (
+                                    <div className="col-span-full flex flex-col items-center justify-center py-20 text-center">
+                                        <div className="w-16 h-16 rounded-full bg-[#23312D]/5 flex items-center justify-center mb-6">
+                                            <Info className="w-8 h-8 text-[#AE9573]" />
+                                        </div>
+                                        <h3 className="text-xl text-[#23312D] mb-2" style={{ fontFamily: 'var(--font-cinzel), serif' }}>No matching properties</h3>
+                                        <p className="text-[#5a5a5a]">Try adjusting your filters to see more results.</p>
                                     </div>
-                                    <h3 className="text-xl text-[#23312D] mb-2" style={{ fontFamily: 'var(--font-cinzel), serif' }}>No matching properties</h3>
-                                    <p className="text-[#5a5a5a]">Try adjusting your filters to see more results.</p>
-                                    <button
-                                        onClick={() => { setSelectedType('All'); setSelectedBeds('All'); }}
-                                        className="mt-6 text-[#AE9573] text-xs font-bold uppercase tracking-widest border-b border-[#AE9573] pb-1"
-                                    >
-                                        Reset Filters
-                                    </button>
-                                </motion.div>
+                                )
                             )}
-                        </AnimatePresence>
+                        </motion.div>
+                    </AnimatePresence>
+
+                    {/* Pagination Controls */}
+                    {totalPages > 1 && (
+                        <div className="flex justify-center items-center gap-6 mt-16">
+                            <button
+                                onClick={() => setCurrentPage((prev: number) => Math.max(0, prev - 1))}
+                                disabled={currentPage === 0}
+                                className={`w-12 h-12 rounded-full border border-[#23312D]/10 flex items-center justify-center transition-all duration-300 ${currentPage === 0 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[#23312D] hover:text-white'
+                                    }`}
+                            >
+                                <ChevronLeft className="w-5 h-5" />
+                            </button>
+
+                            <div className="flex gap-2">
+                                {[...Array(totalPages)].map((_, i) => (
+                                    <button
+                                        key={i}
+                                        onClick={() => setCurrentPage(i)}
+                                        className={`w-2.5 h-2.5 rounded-full transition-all duration-500 ${currentPage === i ? 'bg-[#AE9573] w-8' : 'bg-[#23312D]/20 hover:bg-[#23312D]/40'
+                                            }`}
+                                    />
+                                ))}
+                            </div>
+
+                            <button
+                                onClick={() => setCurrentPage((prev: number) => Math.min(totalPages - 1, prev + 1))}
+                                disabled={currentPage === totalPages - 1}
+                                className={`w-12 h-12 rounded-full border border-[#23312D]/10 flex items-center justify-center transition-all duration-300 ${currentPage === totalPages - 1 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[#23312D] hover:text-white'
+                                    }`}
+                            >
+                                <ChevronRight className="w-5 h-5" />
+                            </button>
+                        </div>
                     )}
                 </div>
             </div>
