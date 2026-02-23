@@ -5,6 +5,7 @@ import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
 import { submitInquiry } from '@/lib/inquiryService';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle, RefreshCw } from 'lucide-react';
+import PhoneInput from './ui/PhoneInput';
 
 function ContactSectionContent() {
     const searchParams = useSearchParams();
@@ -207,21 +208,10 @@ function ContactSectionContent() {
                                                 required
                                                 className="w-full h-14 px-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-transparent text-[#23312D] placeholder:text-[#23312D]/50"
                                             />
-                                            <input
-                                                id="contact-phone"
-                                                name="phone"
-                                                type="tel"
-                                                placeholder="+971 XX XXX XXXX"
+                                            <PhoneInput
                                                 value={formData.phone}
-                                                onChange={(e) => {
-                                                    const val = e.target.value;
-                                                    const cleaned = val.replace(/[^\d+]/g, '');
-                                                    if (val !== cleaned) {
-                                                        alert("Please enter numbers only");
-                                                    }
-                                                    setFormData({ ...formData, phone: cleaned });
-                                                }}
-                                                className="w-full h-14 px-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-transparent text-[#23312D] placeholder:text-[#23312D]/50"
+                                                onChange={(phone) => setFormData({ ...formData, phone })}
+                                                className="w-full h-14 border border-[#e8e6e3] focus-within:border-[#00594F] transition-all bg-white"
                                             />
                                         </div>
                                         <select

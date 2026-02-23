@@ -1,10 +1,12 @@
 "use client";
+// Forced rebuild - PhoneInput integration
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle, RefreshCw } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { submitInquiry } from '@/lib/inquiryService';
+import PhoneInput from '../../components/ui/PhoneInput';
 
 const contactInfo = [
     {
@@ -246,18 +248,10 @@ function ContactContent() {
                                         </div>
                                         <div>
                                             <label className="text-sm text-[#23312D] mb-2 block font-medium">Phone Number</label>
-                                            <input
-                                                placeholder="+971 XX XXX XXXX"
+                                            <PhoneInput
                                                 value={formData.phone}
-                                                onChange={(e) => {
-                                                    const val = e.target.value;
-                                                    const cleaned = val.replace(/[^\d+]/g, '');
-                                                    if (val !== cleaned) {
-                                                        alert("Please enter numbers only");
-                                                    }
-                                                    setFormData({ ...formData, phone: cleaned });
-                                                }}
-                                                className="w-full h-14 px-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D] placeholder:text-[#23312D]/50"
+                                                onChange={(phone) => setFormData({ ...formData, phone })}
+                                                className="w-full h-14 border border-[#e8e6e3] focus-within:border-[#00594F] transition-all bg-white"
                                             />
                                         </div>
                                     </div>

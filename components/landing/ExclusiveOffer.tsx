@@ -6,6 +6,7 @@ import { ArrowRight, Mail } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { submitInquiry } from '@/lib/inquiryService';
 import Link from 'next/link';
+import PhoneInput from '../ui/PhoneInput';
 
 function ExclusiveOfferContent() {
     const searchParams = useSearchParams();
@@ -155,20 +156,11 @@ function ExclusiveOfferContent() {
                                                             placeholder="Last Name"
                                                             className="w-full h-16 bg-white/5 border border-white/10 rounded-sm px-6 text-white outline-none focus:border-[#AE9573] transition-colors font-light placeholder:text-white/50"
                                                         />
-                                                        <input
-                                                            required
-                                                            type="tel"
+                                                        <PhoneInput
                                                             value={phone}
-                                                            onChange={(e) => {
-                                                                const val = e.target.value;
-                                                                const cleaned = val.replace(/[^\d+]/g, '');
-                                                                if (val !== cleaned) {
-                                                                    alert("Please enter numbers only");
-                                                                }
-                                                                setPhone(cleaned);
-                                                            }}
-                                                            placeholder="+971 XX XXX XXXX"
-                                                            className="w-full h-16 bg-white/5 border border-white/10 rounded-sm px-6 text-white outline-none focus:border-[#AE9573] transition-colors font-light placeholder:text-white/50"
+                                                            onChange={(val) => setPhone(val)}
+                                                            dark={true}
+                                                            className="w-full h-16 bg-white/5 border border-white/10 rounded-sm focus-within:border-[#AE9573] transition-colors text-white"
                                                         />
                                                         <button
                                                             type="submit"

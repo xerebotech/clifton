@@ -24,6 +24,7 @@ import {
     Send,
     RefreshCw
 } from 'lucide-react';
+import PhoneInput from '../../../components/ui/PhoneInput';
 
 function PropertyDetailPageContent() {
     const params = useParams();
@@ -341,23 +342,11 @@ function PropertyDetailPageContent() {
                                                         className="w-full h-14 pl-12 pr-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D] placeholder:text-[#23312D]/50"
                                                     />
                                                 </div>
-                                                <div className="relative">
-                                                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                                    <input
-                                                        type="tel"
-                                                        placeholder="+971 XX XXX XXXX"
-                                                        value={formData.phone}
-                                                        onChange={(e) => {
-                                                            const val = e.target.value;
-                                                            const cleaned = val.replace(/[^\d+]/g, '');
-                                                            if (val !== cleaned) {
-                                                                alert("Please enter numbers only");
-                                                            }
-                                                            setFormData({ ...formData, phone: cleaned });
-                                                        }}
-                                                        className="w-full h-14 pl-12 pr-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D] placeholder:text-[#23312D]/50"
-                                                    />
-                                                </div>
+                                                <PhoneInput
+                                                    value={formData.phone}
+                                                    onChange={(phone) => setFormData({ ...formData, phone })}
+                                                    className="w-full h-14 bg-white border border-[#e8e6e3] focus-within:border-[#00594F] transition-all"
+                                                />
                                                 <textarea
                                                     required
                                                     placeholder="Your Message"
