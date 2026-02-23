@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Phone, Mail, Facebook, Instagram, Linkedin, Twitter, ChevronDown, ChevronUp } from 'lucide-react';
+import { Menu, X, Phone, Mail, MapPin, Facebook, Instagram, Linkedin, Twitter, ChevronDown, ChevronUp } from 'lucide-react';
 
 const routeMap: Record<string, string> = {
     'Home': '/',

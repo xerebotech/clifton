@@ -97,7 +97,6 @@ function parseCSV(csvText: string): Property[] {
     if (rows.length < 2) return [];
 
     const headers = rows[0].map(h => h.trim().toLowerCase());
-    console.log("CSV Headers found:", headers);
 
     const properties = rows.slice(1)
         .filter(row => row.some(cell => cell.trim() !== ""))
@@ -121,16 +120,9 @@ function parseCSV(csvText: string): Property[] {
                 }
             });
 
-            // Debug first property to check alignment
-            if (rowIndex === 0) {
-                console.log("--- DEBUG: First Row Mapping ---");
-                headers.forEach((h, i) => console.log(`[${i}] ${h}: ${row[i]}`));
-                console.log("--------------------------------");
-            }
 
             return entry as Property;
         });
 
-    console.log(`Parsed ${properties.length} properties from Google Sheet.`);
     return properties;
 }

@@ -1,18 +1,33 @@
 "use client";
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Mail } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 import { submitInquiry } from '@/lib/inquiryService';
 import Link from 'next/link';
+import PhoneInput from '../ui/PhoneInput';
 
-export default function ExclusiveOffer() {
+function ExclusiveOfferContent() {
+    const searchParams = useSearchParams();
     const [step, setStep] = React.useState(1);
     const [email, setEmail] = React.useState('');
-    const [name, setName] = React.useState('');
+    const [firstName, setFirstName] = React.useState('');
+    const [lastName, setLastName] = React.useState('');
     const [phone, setPhone] = React.useState('');
     const [isSubmitting, setIsSubmitting] = React.useState(false);
     const [submitted, setSubmitted] = React.useState(false);
+
+    // GTM tracking function
+    const trackClick = (type: string, value: string) => {
+        if (typeof window !== 'undefined' && (window as any).dataLayer) {
+            (window as any).dataLayer.push({
+                event: 'contact_link_click',
+                link_type: type,
+                link_value: value
+            });
+        }
+    };
 
     const handleNextStep = (e: React.FormEvent) => {
         e.preventDefault();
@@ -23,12 +38,22 @@ export default function ExclusiveOffer() {
         e.preventDefault();
         setIsSubmitting(true);
 
+        const utmParams = {
+            utm_source: searchParams.get('utm_source') || '',
+            utm_medium: searchParams.get('utm_medium') || '',
+            utm_campaign: searchParams.get('utm_campaign') || '',
+            utm_term: searchParams.get('utm_term') || '',
+            utm_content: searchParams.get('utm_content') || '',
+        };
+
         const success = await submitInquiry({
-            name,
+            firstName,
+            lastName,
             email,
             phone,
             message: "Exclusive Offer Access Request",
-            projectOrService: "Exclusive Offer"
+            projectOrService: "Exclusive Offer",
+            ...utmParams
         });
 
         setIsSubmitting(false);
@@ -78,7 +103,7 @@ export default function ExclusiveOffer() {
                                 </motion.div>
                             ) : (
                                 <div className="w-full max-w-xl">
-                                    <form onSubmit={step === 1 ? handleNextStep : handleSubmit} className="flex flex-col gap-6">
+                                    <form id="exclusive-offer-form" onSubmit={step === 1 ? handleNextStep : handleSubmit} className="flex flex-col gap-6">
                                         <div className="relative overflow-hidden">
                                             <AnimatePresence mode="wait">
                                                 {step === 1 ? (
@@ -118,23 +143,29 @@ export default function ExclusiveOffer() {
                                                         <input
                                                             required
                                                             type="text"
-                                                            value={name}
-                                                            onChange={(e) => setName(e.target.value)}
-                                                            placeholder="Your Full Name"
+                                                            value={firstName}
+                                                            onChange={(e) => setFirstName(e.target.value)}
+                                                            placeholder="First Name"
                                                             className="w-full h-16 bg-white/5 border border-white/10 rounded-sm px-6 text-white outline-none focus:border-[#AE9573] transition-colors font-light placeholder:text-white/50"
                                                         />
                                                         <input
                                                             required
-                                                            type="tel"
-                                                            value={phone}
-                                                            onChange={(e) => setPhone(e.target.value)}
-                                                            placeholder="Mobile Number"
+                                                            type="text"
+                                                            value={lastName}
+                                                            onChange={(e) => setLastName(e.target.value)}
+                                                            placeholder="Last Name"
                                                             className="w-full h-16 bg-white/5 border border-white/10 rounded-sm px-6 text-white outline-none focus:border-[#AE9573] transition-colors font-light placeholder:text-white/50"
+                                                        />
+                                                        <PhoneInput
+                                                            value={phone}
+                                                            onChange={(val) => setPhone(val)}
+                                                            dark={true}
+                                                            className="w-full h-16 bg-white/5 border border-white/10 rounded-sm focus-within:border-[#AE9573] transition-colors text-white"
                                                         />
                                                         <button
                                                             type="submit"
                                                             disabled={isSubmitting}
-                                                            className="md:col-span-2 h-16 bg-[#AE9573] text-white hover:bg-[#c4a982] transition-colors tracking-widest uppercase font-bold text-sm rounded-sm flex items-center justify-center gap-3 disabled:opacity-50"
+                                                            className="md:col-span-1 h-16 bg-[#AE9573] text-white hover:bg-[#c4a982] transition-colors tracking-widest uppercase font-bold text-sm rounded-sm flex items-center justify-center gap-3 disabled:opacity-50"
                                                         >
                                                             {isSubmitting ? "Processing..." : "Submit Details"} <ArrowRight className="w-5 h-5" />
                                                         </button>
@@ -147,12 +178,26 @@ export default function ExclusiveOffer() {
                             )}
 
                             <p className="text-white/30 text-xs tracking-wider">
-                                Or contact our private office directly at <span className="text-white/60 underline cursor-pointer">+971 (0) 4 123 4567</span>
+                                Or contact our private office directly at <a
+                                    href="tel:+971559304697"
+                                    className="text-white/60 underline hover:text-[#AE9573] transition-colors"
+                                    onClick={() => trackClick('phone', '+971 55 930 4697')}
+                                >
+                                    +971 55 930 4697
+                                </a>
                             </p>
                         </div>
                     </motion.div>
                 </div>
             </div>
         </section>
+    );
+}
+
+export default function ExclusiveOffer() {
+    return (
+        <Suspense fallback={<div className="py-20 bg-[#23312D] text-center text-[#AE9573]">Loading Exclusive Offer...</div>}>
+            <ExclusiveOfferContent />
+        </Suspense>
     );
 }

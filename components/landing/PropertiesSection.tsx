@@ -1,14 +1,17 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { properties as staticProperties, Property } from '@/lib/propertiesData';
 import { fetchPropertiesFromSheet } from '@/lib/googleSheets';
 import { submitInquiry } from '@/lib/inquiryService';
 import { MapPin, Bed, Bath, Square, ArrowRight, X, User, Mail, Phone, Send, CheckCircle, Info, RefreshCw } from 'lucide-react';
+import PhoneInput from '../ui/PhoneInput';
 
-export default function PropertiesSection() {
+function PropertiesSectionContent() {
+    const searchParams = useSearchParams();
     const [properties, setProperties] = useState<Property[]>(staticProperties);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedType, setSelectedType] = useState('All');
@@ -45,7 +48,8 @@ export default function PropertiesSection() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [formData, setFormData] = useState({
-        name: '',
+        firstName: '',
+        lastName: '',
         email: '',
         phone: '',
         message: "I'm interested in this property. Please provide more details."
@@ -55,12 +59,22 @@ export default function PropertiesSection() {
         e.preventDefault();
         setIsSubmitting(true);
 
+        const utmParams = {
+            utm_source: searchParams.get('utm_source') || '',
+            utm_medium: searchParams.get('utm_medium') || '',
+            utm_campaign: searchParams.get('utm_campaign') || '',
+            utm_term: searchParams.get('utm_term') || '',
+            utm_content: searchParams.get('utm_content') || '',
+        };
+
         const success = await submitInquiry({
-            name: formData.name,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
             email: formData.email,
             phone: formData.phone,
             message: formData.message,
-            projectOrService: `Property Enquiry: ${selectedProperty?.title || "Unknown Property"}`
+            projectOrService: `Property Enquiry: ${selectedProperty?.title || "Unknown Property"}`,
+            ...utmParams
         });
 
         setIsSubmitting(false);
@@ -70,7 +84,8 @@ export default function PropertiesSection() {
                 setSubmitted(false);
                 setSelectedProperty(null);
                 setFormData({
-                    name: '',
+                    firstName: '',
+                    lastName: '',
                     email: '',
                     phone: '',
                     message: "I'm interested in this property. Please provide more details."
@@ -271,17 +286,30 @@ export default function PropertiesSection() {
                                             <p className="text-[#5a5a5a] text-sm">Please fill out the form below and we&apos;ll get back to you with exclusive information about this property.</p>
                                         </div>
 
-                                        <form onSubmit={handleInquiry} className="space-y-4">
-                                            <div className="relative">
-                                                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                                <input
-                                                    required
-                                                    type="text"
-                                                    placeholder="Full Name"
-                                                    value={formData.name}
-                                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                                    className="w-full h-14 pl-12 pr-4 bg-white border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none text-[#23312D] placeholder:text-[#23312D]/50 transition-all font-medium"
-                                                />
+                                        <form id="property-modal-inquiry-form" onSubmit={handleInquiry} className="space-y-4">
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="relative">
+                                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                                    <input
+                                                        required
+                                                        type="text"
+                                                        placeholder="First Name"
+                                                        value={formData.firstName}
+                                                        onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                                                        className="w-full h-14 pl-12 pr-4 bg-white border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none text-[#23312D] placeholder:text-[#23312D]/50 transition-all font-medium"
+                                                    />
+                                                </div>
+                                                <div className="relative">
+                                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                                    <input
+                                                        required
+                                                        type="text"
+                                                        placeholder="Last Name"
+                                                        value={formData.lastName}
+                                                        onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                                                        className="w-full h-14 pl-12 pr-4 bg-white border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none text-[#23312D] placeholder:text-[#23312D]/50 transition-all font-medium"
+                                                    />
+                                                </div>
                                             </div>
                                             <div className="relative">
                                                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -294,17 +322,11 @@ export default function PropertiesSection() {
                                                     className="w-full h-14 pl-12 pr-4 bg-white border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none text-[#23312D] placeholder:text-[#23312D]/50 transition-all font-medium"
                                                 />
                                             </div>
-                                            <div className="relative">
-                                                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                                <input
-                                                    required
-                                                    type="tel"
-                                                    placeholder="Phone Number"
-                                                    value={formData.phone}
-                                                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                                    className="w-full h-14 pl-12 pr-4 bg-white border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none text-[#23312D] placeholder:text-[#23312D]/50 transition-all font-medium"
-                                                />
-                                            </div>
+                                            <PhoneInput
+                                                value={formData.phone}
+                                                onChange={(phone) => setFormData({ ...formData, phone })}
+                                                className="w-full h-14 bg-white border border-[#e8e6e3] focus-within:border-[#00594F] transition-all"
+                                            />
                                             <textarea
                                                 rows={4}
                                                 placeholder="Message"
@@ -335,14 +357,6 @@ export default function PropertiesSection() {
                                             </p>
                                         </form>
 
-                                        <div className="pt-6 border-t border-[#23312D]/10">
-                                            <Link
-                                                href={`/properties/${selectedProperty.id}`}
-                                                className="flex items-center justify-center gap-2 text-[#23312D] text-xs font-bold uppercase tracking-widest hover:text-[#AE9573] transition-colors"
-                                            >
-                                                Explore Full Details <ArrowRight className="w-3 h-3" />
-                                            </Link>
-                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -362,70 +376,74 @@ function PropertyCard({ property, index, onOpenModal }: { property: any, index: 
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.5 }}
-            className="group cursor-pointer"
+            className="group cursor-pointer relative"
             onClick={onOpenModal}
         >
-            <div className="relative aspect-[4/5] overflow-hidden rounded-sm mb-6 shadow-md">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-sm shadow-md mb-0">
                 <img
                     src={property.image}
                     alt={property.title}
                     className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-[#23312D]/60 transition-colors duration-500 flex items-center justify-center">
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        whileHover={{ scale: 1.05 }}
-                        className="opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0"
-                    >
-                        <div className="bg-[#AE9573] text-white text-[10px] tracking-[0.2em] font-bold px-8 py-3 uppercase shadow-xl flex items-center gap-2">
-                            Enquire Now <ArrowRight className="w-3 h-3" />
-                        </div>
-                    </motion.div>
-                </div>
 
-                <div className="absolute top-6 left-6">
+                {/* Default Status Tag */}
+                <div className="absolute top-6 left-6 z-10 transition-opacity duration-300 group-hover:opacity-0">
                     <span className="bg-white/90 backdrop-blur-md text-[#23312D] text-[10px] tracking-[0.2em] font-bold px-4 py-2 uppercase">
                         {property.type}
                     </span>
                 </div>
 
-                <div className="absolute bottom-0 left-0 right-0 p-8 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                    <div className="flex flex-col gap-2">
-                        <span className="text-white text-lg font-bold" style={{ fontFamily: 'var(--font-cinzel), serif' }}>
-                            {property.price}
-                        </span>
+                {/* Default Bottom info overlay (fades out on hover) */}
+                <div className="absolute inset-x-0 bottom-0 p-8 pt-24 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity duration-300 group-hover:opacity-0">
+                    <div className="text-[#AE9573] text-sm tracking-widest uppercase mb-1 font-bold">
+                        {property.price}
+                    </div>
+                    <div className="text-white text-lg font-medium leading-tight" style={{ fontFamily: 'var(--font-cinzel), serif' }}>
+                        {property.title}
                     </div>
                 </div>
-            </div>
 
-            <div className="space-y-4">
-                <h3
-                    className="text-2xl text-[#23312D] group-hover:text-[#AE9573] transition-colors duration-300"
-                    style={{ fontFamily: 'var(--font-cinzel), serif' }}
-                >
-                    {property.title}
-                </h3>
+                {/* Hover Overlay */}
+                <div className="absolute inset-0 bg-[#23312D]/90 opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col items-center justify-center p-8 text-center">
+                    <motion.div
+                        className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 flex flex-col items-center gap-6"
+                    >
+                        {/* GET INFO Button */}
+                        <div className="bg-[#AE9573] text-white text-[10px] tracking-[0.2em] font-bold px-10 py-4 uppercase shadow-xl flex items-center gap-2 transform group-hover:scale-105 transition-all">
+                            GET INFO <ArrowRight className="w-4 h-4" />
+                        </div>
 
-                <div className="flex items-center text-[#5a5a5a] text-sm">
-                    <MapPin className="w-4 h-4 mr-2 text-[#AE9573]" />
-                    {property.location}
-                </div>
-
-                <div className="flex items-center gap-6 pt-4 border-t border-[#23312D]/10 text-[#5a5a5a] text-xs tracking-widest uppercase">
-                    <div className="flex items-center gap-2">
-                        <Bed className="w-4 h-4 text-[#AE9573]" />
-                        {property.beds} Beds
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <Bath className="w-4 h-4 text-[#AE9573]" />
-                        {property.baths} Baths
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <Square className="w-4 h-4 text-[#AE9573]" />
-                        {property.area} Sq.Ft
-                    </div>
+                        {/* Title and Details inside Overlay */}
+                        <div className="space-y-4">
+                            <h3 className="text-2xl text-white leading-tight" style={{ fontFamily: 'var(--font-cinzel), serif' }}>
+                                {property.title}
+                            </h3>
+                            <div className="flex items-center justify-center gap-2 text-[#AE9573] text-xs">
+                                <MapPin className="w-3 h-3" />
+                                {property.location}
+                            </div>
+                            <div className="flex items-center justify-center gap-6 text-[10px] tracking-[0.2em] text-white/60 uppercase pt-4 border-t border-white/10 mt-2">
+                                <div className="flex items-center gap-2">
+                                    <Bed className="w-3 h-3" /> {property.beds}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Bath className="w-3 h-3" /> {property.baths}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Square className="w-3 h-3" /> {property.area}
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
                 </div>
             </div>
         </motion.div>
+    );
+}
+export default function PropertiesSection() {
+    return (
+        <Suspense fallback={<div className="py-32 bg-[#F9F8F6] text-center">Loading Properties...</div>}>
+            <PropertiesSectionContent />
+        </Suspense>
     );
 }

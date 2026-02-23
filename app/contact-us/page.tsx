@@ -1,15 +1,38 @@
 "use client";
+// Forced rebuild - PhoneInput integration
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle, RefreshCw } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { submitInquiry } from '@/lib/inquiryService';
+import PhoneInput from '../../components/ui/PhoneInput';
 
 const contactInfo = [
-    { icon: MapPin, title: "Visit Us", content: "508, Sultan business centre, Oud metha, Dubai", subtext: "Dubai, UAE" },
-    { icon: Phone, title: "Call Us", content: "+971 55 930 4697", subtext: "24/7 Support Available" },
-    { icon: Mail, title: "Email Us", content: "realestate@cliftonuae.com", subtext: "We reply within 24 hours" },
+    {
+        icon: MapPin,
+        title: "Visit Us",
+        content: "508, Sultan business centre, Oud metha, Dubai",
+        subtext: "Dubai, UAE",
+        link: "https://maps.app.goo.gl/A8C2Rnh5k1rqJkmdA",
+        type: "address"
+    },
+    {
+        icon: Phone,
+        title: "Call Us",
+        content: "+971 55 930 4697",
+        subtext: "24/7 Support Available",
+        link: "tel:+971559304697",
+        type: "phone"
+    },
+    {
+        icon: Mail,
+        title: "Email Us",
+        content: "realestate@cliftonuae.com",
+        subtext: "We reply within 24 hours",
+        link: "mailto:realestate@cliftonuae.com",
+        type: "email"
+    },
     { icon: Clock, title: "Working Hours", content: "Sun - Thu: 9AM - 6PM", subtext: "Fri - Sat: Closed" }
 ];
 
@@ -25,12 +48,23 @@ function ContactContent() {
     const searchParams = useSearchParams();
     const serviceParam = searchParams.get('service');
 
+    // GTM tracking function
+    const trackClick = (type: string, value: string) => {
+        if (typeof window !== 'undefined' && (window as any).dataLayer) {
+            (window as any).dataLayer.push({
+                event: 'contact_link_click',
+                link_type: type,
+                link_value: value
+            });
+        }
+    };
+
     const [formData, setFormData] = useState({
-        name: '',
+        firstName: '',
+        lastName: '',
         email: '',
         phone: '',
         service: '',
-        subject: '',
         message: ''
     });
 
@@ -47,19 +81,29 @@ function ContactContent() {
         e.preventDefault();
         setIsSubmitting(true);
 
+        const utmParams = {
+            utm_source: searchParams.get('utm_source') || '',
+            utm_medium: searchParams.get('utm_medium') || '',
+            utm_campaign: searchParams.get('utm_campaign') || '',
+            utm_term: searchParams.get('utm_term') || '',
+            utm_content: searchParams.get('utm_content') || '',
+        };
+
         const success = await submitInquiry({
-            name: formData.name,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
             email: formData.email,
             phone: formData.phone,
-            message: `Subject: ${formData.subject}\n\n${formData.message}`,
-            projectOrService: formData.service || "General Inquiry (Contact Page)"
+            message: formData.message,
+            projectOrService: formData.service || "General Inquiry (Contact Page)",
+            ...utmParams
         });
 
         setIsSubmitting(false);
         if (success) {
             setSubmitted(true);
             setTimeout(() => setSubmitted(false), 3000);
-            setFormData({ name: '', email: '', phone: '', service: '', subject: '', message: '' });
+            setFormData({ firstName: '', lastName: '', email: '', phone: '', service: '', message: '' });
         }
     };
 
@@ -112,7 +156,19 @@ function ContactContent() {
                                     >
                                         {info.title}
                                     </h3>
-                                    <p className="text-[#3B5B5D] font-medium">{info.content}</p>
+                                    {info.link ? (
+                                        <a
+                                            href={info.link}
+                                            target={info.type === 'address' ? "_blank" : undefined}
+                                            rel={info.type === 'address' ? "noopener noreferrer" : undefined}
+                                            className="text-[#3B5B5D] font-medium hover:text-[#AE9573] transition-colors duration-300 truncate block w-full"
+                                            onClick={() => trackClick(info.type || 'link', info.content)}
+                                        >
+                                            {info.content}
+                                        </a>
+                                    ) : (
+                                        <p className="text-[#3B5B5D] font-medium">{info.content}</p>
+                                    )}
                                     <p className="text-[#A5A19D] text-sm mt-1">{info.subtext}</p>
                                 </motion.div>
                             );
@@ -151,18 +207,34 @@ function ContactContent() {
                                     <p className="text-[#A5A19D] mt-2">We&apos;ll get back to you shortly.</p>
                                 </motion.div>
                             ) : (
-                                <form onSubmit={handleSubmit} className="bg-white p-10 shadow-lg space-y-6">
+                                <form id="contact-page-form" onSubmit={handleSubmit} className="bg-white p-10 shadow-lg space-y-6">
                                     <div className="grid md:grid-cols-2 gap-6">
                                         <div>
-                                            <label className="text-sm text-[#23312D] mb-2 block font-medium">Your Name *</label>
+                                            <label className="text-sm text-[#23312D] mb-2 block font-medium">First Name *</label>
                                             <input
-                                                placeholder="John Doe"
-                                                value={formData.name}
-                                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                                id="contact-page-first-name"
+                                                name="firstName"
+                                                placeholder="John"
+                                                value={formData.firstName}
+                                                onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                                                 required
                                                 className="w-full h-14 px-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D] placeholder:text-[#23312D]/50"
                                             />
                                         </div>
+                                        <div>
+                                            <label className="text-sm text-[#23312D] mb-2 block font-medium">Last Name *</label>
+                                            <input
+                                                id="contact-page-last-name"
+                                                name="lastName"
+                                                placeholder="Doe"
+                                                value={formData.lastName}
+                                                onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                                                required
+                                                className="w-full h-14 px-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D] placeholder:text-[#23312D]/50"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="grid md:grid-cols-2 gap-6">
                                         <div>
                                             <label className="text-sm text-[#23312D] mb-2 block font-medium">Your Email *</label>
                                             <input
@@ -174,45 +246,30 @@ function ContactContent() {
                                                 className="w-full h-14 px-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D] placeholder:text-[#23312D]/50"
                                             />
                                         </div>
-                                    </div>
-                                    <div className="grid md:grid-cols-2 gap-6">
                                         <div>
                                             <label className="text-sm text-[#23312D] mb-2 block font-medium">Phone Number</label>
-                                            <input
-                                                placeholder="+971 XX XXX XXXX"
+                                            <PhoneInput
                                                 value={formData.phone}
-                                                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                                className="w-full h-14 px-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D] placeholder:text-[#23312D]/50"
+                                                onChange={(phone) => setFormData({ ...formData, phone })}
+                                                className="w-full h-14 border border-[#e8e6e3] focus-within:border-[#00594F] transition-all bg-white"
                                             />
-                                        </div>
-                                        <div>
-                                            <label className="text-sm text-[#23312D] mb-2 block font-medium">Service of Interest</label>
-                                            <select
-                                                value={formData.service}
-                                                onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-                                                className="w-full h-14 px-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D]"
-                                            >
-                                                <option value="" disabled>Select Service</option>
-                                                <option value="Buying">Buying a Property</option>
-                                                <option value="Selling">Selling a Property</option>
-                                                <option value="Renting">Renting</option>
-                                                <option value="Management">Property Management</option>
-                                                <option value="Investment">Investment Consultation</option>
-                                                <option value="Other">General Inquiry</option>
-                                            </select>
                                         </div>
                                     </div>
-                                    <div className="grid md:grid-cols-1 gap-6">
-                                        <div>
-                                            <label className="text-sm text-[#23312D] mb-2 block font-medium">Subject *</label>
-                                            <input
-                                                placeholder="How can we help?"
-                                                value={formData.subject}
-                                                onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                                                required
-                                                className="w-full h-14 px-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D] placeholder:text-[#23312D]/50"
-                                            />
-                                        </div>
+                                    <div>
+                                        <label className="text-sm text-[#23312D] mb-2 block font-medium">Service of Interest</label>
+                                        <select
+                                            value={formData.service}
+                                            onChange={(e) => setFormData({ ...formData, service: e.target.value })}
+                                            className="w-full h-14 px-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D]"
+                                        >
+                                            <option value="" disabled>Select Service</option>
+                                            <option value="Buying">Buying a Property</option>
+                                            <option value="Selling">Selling a Property</option>
+                                            <option value="Renting">Renting</option>
+                                            <option value="Management">Property Management</option>
+                                            <option value="Investment">Investment Consultation</option>
+                                            <option value="Other">General Inquiry</option>
+                                        </select>
                                     </div>
                                     <div>
                                         <label className="text-sm text-[#23312D] mb-2 block font-medium">Your Message *</label>
@@ -245,15 +302,22 @@ function ContactContent() {
                             )}
                         </motion.div>
 
-                        {/* Map Placeholder */}
                         <motion.div
                             initial={{ opacity: 0, x: 50 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.8 }}
                             viewport={{ once: true }}
                             className="relative"
+                            onClick={() => {
+                                if (typeof window !== 'undefined' && (window as any).dataLayer) {
+                                    (window as any).dataLayer.push({
+                                        event: 'map_interaction',
+                                        map_location: 'Sultan Business Centre, Dubai'
+                                    });
+                                }
+                            }}
                         >
-                            <div className="h-full min-h-[500px] w-full bg-[#f2f0eb] rounded-xl overflow-hidden shadow-lg">
+                            <div className="h-full min-h-[500px] w-full bg-[#f2f0eb] rounded-xl overflow-hidden shadow-lg border-4 border-transparent hover:border-[#3B5B5D]/10 transition-colors">
                                 <iframe
                                     src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3609.1000183593183!2d55.30871200000001!3d25.233556!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f42cc28ba49af%3A0x57bbd7cd1311987e!2sSultan%20Business%20Centre!5e0!3m2!1sen!2sin!4v1769682109943!5m2!1sen!2sin"
                                     width="100%"
@@ -267,7 +331,7 @@ function ContactContent() {
                         </motion.div>
                     </div>
                 </div>
-            </section>
-        </div>
+            </section >
+        </div >
     );
 }

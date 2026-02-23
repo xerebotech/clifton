@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { Property } from '@/lib/propertiesData';
 import { fetchPropertiesFromSheet } from '@/lib/googleSheets';
 import { submitInquiry } from '@/lib/inquiryService';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import {
     MapPin,
@@ -24,22 +24,36 @@ import {
     Send,
     RefreshCw
 } from 'lucide-react';
+import PhoneInput from '../../../components/ui/PhoneInput';
 
-export default function PropertyDetailPage() {
+function PropertyDetailPageContent() {
     const params = useParams();
+    const searchParams = useSearchParams();
     const id = params?.id as string;
     const [property, setProperty] = useState<Property | null>(null);
     const [loading, setLoading] = useState(true);
 
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [formData, setFormData] = useState({
-        name: "",
+        firstName: "",
+        lastName: "",
         email: "",
         phone: "",
         message: "I'm interested in this property. Please contact me with more details."
     });
     const [submitted, setSubmitted] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // GTM tracking function
+    const trackClick = (type: string, value: string) => {
+        if (typeof window !== 'undefined' && (window as any).dataLayer) {
+            (window as any).dataLayer.push({
+                event: 'contact_link_click',
+                link_type: type,
+                link_value: value
+            });
+        }
+    };
 
     useEffect(() => {
         const loadProperty = async () => {
@@ -59,12 +73,22 @@ export default function PropertyDetailPage() {
         e.preventDefault();
         setIsSubmitting(true);
 
+        const utmParams = {
+            utm_source: searchParams.get('utm_source') || '',
+            utm_medium: searchParams.get('utm_medium') || '',
+            utm_campaign: searchParams.get('utm_campaign') || '',
+            utm_term: searchParams.get('utm_term') || '',
+            utm_content: searchParams.get('utm_content') || '',
+        };
+
         const success = await submitInquiry({
-            name: formData.name,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
             email: formData.email,
             phone: formData.phone,
             message: formData.message,
-            projectOrService: `Property Enquiry: ${property?.title || id}`
+            projectOrService: `Property Enquiry: ${property?.title || id}`,
+            ...utmParams
         });
 
         setIsSubmitting(false);
@@ -72,7 +96,8 @@ export default function PropertyDetailPage() {
             setSubmitted(true);
             setTimeout(() => setSubmitted(false), 3000);
             setFormData({
-                name: "",
+                firstName: "",
+                lastName: "",
                 email: "",
                 phone: "",
                 message: "I'm interested in this property. Please contact me with more details."
@@ -209,7 +234,7 @@ export default function PropertyDetailPage() {
                             </div>
 
                             {/* Key Features */}
-                            <div className="grid grid-cols-4 gap-4 p-6 bg-[#F2F0EB] rounded-xl mb-8">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 bg-[#F2F0EB] rounded-xl mb-8">
                                 <div className="text-center">
                                     <Bed className="w-6 h-6 text-[#AE9573] mx-auto mb-2" />
                                     <div className="text-2xl font-bold text-[#23312D]">{property.beds}</div>
@@ -281,17 +306,30 @@ export default function PropertyDetailPage() {
                                             <h3 className="text-2xl text-[#23312D] mb-8" style={{ fontFamily: 'var(--font-cinzel), serif' }}>
                                                 Enquire About This Property
                                             </h3>
-                                            <form onSubmit={handleSubmit} className="space-y-6">
-                                                <div className="relative">
-                                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                                    <input
-                                                        required
-                                                        type="text"
-                                                        placeholder="Your Name"
-                                                        value={formData.name}
-                                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                                        className="w-full h-14 pl-12 pr-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D] placeholder:text-[#23312D]/50"
-                                                    />
+                                            <form id="property-detail-inquiry-form" onSubmit={handleSubmit} className="space-y-6">
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div className="relative">
+                                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                                        <input
+                                                            required
+                                                            type="text"
+                                                            placeholder="First Name"
+                                                            value={formData.firstName}
+                                                            onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                                                            className="w-full h-14 pl-12 pr-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D] placeholder:text-[#23312D]/50"
+                                                        />
+                                                    </div>
+                                                    <div className="relative">
+                                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                                        <input
+                                                            required
+                                                            type="text"
+                                                            placeholder="Last Name"
+                                                            value={formData.lastName}
+                                                            onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                                                            className="w-full h-14 pl-12 pr-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D] placeholder:text-[#23312D]/50"
+                                                        />
+                                                    </div>
                                                 </div>
                                                 <div className="relative">
                                                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -304,16 +342,11 @@ export default function PropertyDetailPage() {
                                                         className="w-full h-14 pl-12 pr-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D] placeholder:text-[#23312D]/50"
                                                     />
                                                 </div>
-                                                <div className="relative">
-                                                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                                    <input
-                                                        type="tel"
-                                                        placeholder="Phone Number"
-                                                        value={formData.phone}
-                                                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                                        className="w-full h-14 pl-12 pr-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white text-[#23312D] placeholder:text-[#23312D]/50"
-                                                    />
-                                                </div>
+                                                <PhoneInput
+                                                    value={formData.phone}
+                                                    onChange={(phone) => setFormData({ ...formData, phone })}
+                                                    className="w-full h-14 bg-white border border-[#e8e6e3] focus-within:border-[#00594F] transition-all"
+                                                />
                                                 <textarea
                                                     required
                                                     placeholder="Your Message"
@@ -348,6 +381,7 @@ export default function PropertyDetailPage() {
                                 <div className="mt-6 space-y-3">
                                     <a
                                         href="tel:+971559304697"
+                                        onClick={() => trackClick('phone', '+971 55 930 4697')}
                                         className="flex items-center justify-center gap-3 w-full py-4 border-2 border-[#00594F] text-[#00594F] font-semibold rounded-xl hover:bg-[#00594F] hover:text-white transition-colors"
                                     >
                                         <Phone className="w-5 h-5" />
@@ -355,6 +389,7 @@ export default function PropertyDetailPage() {
                                     </a>
                                     <a
                                         href="mailto:realestate@cliftonuae.com"
+                                        onClick={() => trackClick('email', 'realestate@cliftonuae.com')}
                                         className="flex items-center justify-center gap-3 w-full py-4 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:border-[#3B5B5D] hover:text-[#3B5B5D] transition-colors"
                                     >
                                         <Mail className="w-5 h-5" />
@@ -367,5 +402,13 @@ export default function PropertyDetailPage() {
                 </div>
             </section>
         </div>
+    );
+}
+
+export default function PropertyDetailPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading property details...</div>}>
+            <PropertyDetailPageContent />
+        </Suspense>
     );
 }
