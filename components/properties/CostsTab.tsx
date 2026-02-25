@@ -46,9 +46,9 @@ export default function CostsTab({ calcValues, currency }: CostsTabProps) {
     const netPos = calcValues.baseMonthlyRent - (calcValues.baseEmi + calcValues.sc / 12 + calcValues.mgmtFee / 12);
 
     return (
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-12 gap-y-10 py-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 sm:gap-x-12 gap-y-8 sm:gap-y-10 py-2">
             {sections.map((section, i) => (
-                <div key={i} className={`group ${i === 2 ? 'xl:col-span-2' : ''}`}>
+                <div key={i} className={`group ${i === 2 ? 'sm:col-span-2' : ''}`}>
                     <div className="flex justify-between items-end mb-5 pb-2 border-b border-gray-100">
                         <div className="flex items-center gap-2">
                             <span className="text-copper">{(section as any).icon}</span>
@@ -60,9 +60,9 @@ export default function CostsTab({ calcValues, currency }: CostsTabProps) {
                     </div>
                     <div className="space-y-3.5">
                         {section.items.map((item, j) => (
-                            <div key={j} className="flex justify-between text-xs font-medium">
-                                <span className="text-gray-500 font-sans">{item.l}</span>
-                                <span className={`font-sans ${(item as { v: string; color?: string }).color || 'text-navy'}`}>
+                            <div key={j} className="flex justify-between gap-2 text-xs font-medium">
+                                <span className="text-gray-500 font-sans shrink-0 min-w-0 flex-[1_1_auto] pr-1 leading-tight">{item.l}</span>
+                                <span className={`font-sans shrink-0 text-right ${(item as { v: string; color?: string }).color || 'text-navy'}`}>
                                     {item.v}
                                 </span>
                             </div>

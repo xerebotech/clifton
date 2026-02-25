@@ -94,7 +94,7 @@ export default function PropertyPopup({ p, allProperties, onClose, onPrev, onNex
 
     return (
         <div className="fixed inset-0 z-[1000] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-navy/80 backdrop-blur-md animate-in fade-in duration-300" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
-            <div className="relative w-full sm:max-w-2xl max-h-[98vh] sm:max-h-[92vh] bg-white sm:rounded-[32px] overflow-hidden flex flex-col shadow-[0_40px_100px_rgba(0,0,0,0.4)] animate-in slide-in-from-bottom-8 sm:zoom-in-95 duration-400">
+            <div className="relative w-full sm:max-w-xl md:max-w-2xl max-h-[98vh] sm:max-h-[92vh] bg-white sm:rounded-[32px] overflow-hidden flex flex-col shadow-[0_40px_100px_rgba(0,0,0,0.4)] animate-in slide-in-from-bottom-8 sm:zoom-in-95 duration-400">
 
                 {/* Gallery Header */}
                 <div className="relative h-56 sm:h-72 flex-shrink-0">
@@ -162,11 +162,11 @@ export default function PropertyPopup({ p, allProperties, onClose, onPrev, onNex
                     >
                         {/* Property info */}
                         <div className="px-6 pt-6 pb-5 border-b border-gray-100">
-                            <div className="flex flex-col md:flex-row items-start justify-between gap-6">
+                            <div className="flex flex-col gap-4">
                                 <div className="flex-1">
-                                    <h2 className="font-cinzel font-bold text-navy text-xl md:text-2xl leading-[1.15] mb-2">{p.title}</h2>
-                                    <div className="text-xs font-bold text-copper tracking-[0.1em] uppercase mb-4 italic">{p.developer ? `${p.developer} · ` : ''}{p.location}</div>
-                                    <div className="flex flex-wrap gap-4 text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+                                    <h2 className="font-cinzel font-bold text-navy text-lg sm:text-xl md:text-2xl leading-[1.15] mb-2">{p.title}</h2>
+                                    <div className="text-xs font-bold text-copper tracking-[0.1em] uppercase mb-3 italic">{p.developer ? `${p.developer} · ` : ''}{p.location}</div>
+                                    <div className="flex flex-wrap gap-x-3 gap-y-1.5 text-[10px] text-gray-400 font-bold uppercase tracking-widest">
                                         <span className="flex items-center gap-1.5">🛏 {p.beds === 0 ? 'Studio' : p.beds} Bed</span>
                                         <span className="w-1 h-1 bg-gray-200 rounded-full my-auto" />
                                         <span className="flex items-center gap-1.5">🚿 {p.baths} Bath</span>
@@ -175,21 +175,23 @@ export default function PropertyPopup({ p, allProperties, onClose, onPrev, onNex
                                         {p.handover && <><span className="w-1 h-1 bg-gray-200 rounded-full my-auto" /><span>🗝 {p.handover}</span></>}
                                     </div>
                                 </div>
-                                <div className="text-right shrink-0 bg-gray-50 p-4 rounded-2xl border border-gray-100 min-w-[140px] shadow-sm">
-                                    <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Monthly From</div>
-                                    <div className="text-2xl font-bold font-cinzel text-navy leading-none mb-1">{f(Math.round(cv.baseEmi))}<span className="text-xs font-normal text-gray-400">/mo</span></div>
-                                    <div className="text-[11px] font-bold text-copper">{f(cv.price)} total</div>
+                                <div className="flex items-center justify-between bg-gray-50 p-4 rounded-2xl border border-gray-100 shadow-sm">
+                                    <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Monthly From</div>
+                                    <div className="text-right">
+                                        <div className="text-xl sm:text-2xl font-bold font-cinzel text-navy leading-none mb-0.5">{f(Math.round(cv.baseEmi))}<span className="text-xs font-normal text-gray-400">/mo</span></div>
+                                        <div className="text-[11px] font-bold text-copper">{f(cv.price)} total</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         {/* Navigation Tabs */}
-                        <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-md px-6 py-4 flex gap-2 overflow-x-auto no-scrollbar border-b border-gray-50">
+                        <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-md px-3 sm:px-6 py-3 sm:py-4 flex gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar border-b border-gray-50">
                             {TABS.map(tab => (
                                 <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                                    className={`flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${activeTab === tab.id ? 'bg-navy text-white shadow-xl shadow-navy/20' : 'bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-navy'}`}>
+                                    className={`flex-shrink-0 flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${activeTab === tab.id ? 'bg-navy text-white shadow-xl shadow-navy/20' : 'bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-navy'}`}>
                                     <span>{tab.icon}</span>
-                                    <span>{tab.label}</span>
+                                    <span className="hidden sm:inline">{tab.label}</span>
                                 </button>
                             ))}
                         </div>
@@ -205,9 +207,9 @@ export default function PropertyPopup({ p, allProperties, onClose, onPrev, onNex
                     </div>
 
                     {/* Action Footer */}
-                    <div className="sticky bottom-0 bg-white border-t border-gray-100 px-6 py-6 w-full z-30 shadow-[0_-20px_50px_rgba(0,0,0,0.05)]">
-                        <div className="flex flex-col sm:flex-row gap-4 mb-4">
-                            <button onClick={() => setStrategyOpen(true)} className="flex-1 flex items-center justify-center gap-2.5 bg-navy hover:bg-[#1a2622] text-white font-bold py-5 rounded-2xl transition-all text-xs uppercase tracking-widest shadow-lg shadow-navy/20 active:scale-[0.98]">
+                    <div className="sticky bottom-0 bg-white border-t border-gray-100 px-4 sm:px-6 py-4 sm:py-6 w-full z-30 shadow-[0_-20px_50px_rgba(0,0,0,0.05)]">
+                        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-3 sm:mb-4">
+                            <button onClick={() => setStrategyOpen(true)} className="flex-1 flex items-center justify-center gap-2.5 bg-navy hover:bg-[#1a2622] text-white font-bold py-3.5 sm:py-5 rounded-2xl transition-all text-xs uppercase tracking-widest shadow-lg shadow-navy/20 active:scale-[0.98]">
                                 <Calendar className="w-4 h-4" /> Book Free Strategy Session
                             </button>
                         </div>

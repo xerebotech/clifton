@@ -22,7 +22,7 @@ export function LocationTab({ p }: { p: Property; price: number; currency: strin
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                 {[
                     { label: 'Proximity to Metro', val: '7 min walk', icon: <Clock className="w-3 h-3" /> },
                     { label: 'Airport Drive', val: '18 min', icon: <Clock className="w-3 h-3" /> },

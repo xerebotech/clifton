@@ -57,7 +57,7 @@ export default function ROITab({
             </div>
 
             {/* Inputs Grid */}
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 xl:gap-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-12">
                 <div className={calcMode === 'cash' ? 'opacity-30 pointer-events-none' : ''}>
                     <h4 className="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-5 italic">Financing Parameters</h4>
                     {[
@@ -106,7 +106,7 @@ export default function ROITab({
             </div>
 
             {/* Results Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pt-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 pt-4">
                 {[
                     { label: calcValues.dpVal >= 100 ? 'Purchase Price' : 'Monthly EMI', val: calcValues.dpVal >= 100 ? f(calcValues.price) : f(Math.round(calcValues.emi)), color: 'text-navy' },
                     { label: 'Monthly Rent', val: f(Math.round(calcValues.monthlyRent)), color: 'text-deep-teal' },
@@ -125,7 +125,7 @@ export default function ROITab({
             <div className="p-5 bg-navy rounded-2xl text-white relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-copper/10 rounded-full -mr-16 -mt-16 blur-2xl" />
                 <div className="text-[10px] uppercase tracking-[0.25em] text-white/30 font-bold mb-4 text-center">Global Benchmark Comparison</div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 relative z-10">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 relative z-10">
                     {[
                         { name: 'S&P 500 Index', val: '7-10%' },
                         { name: 'Dubai Average', val: '6.5%' },
