@@ -96,10 +96,13 @@ function ContactSectionContent() {
                             className="text-4xl md:text-5xl text-[#23312D] mt-4 mb-8"
                             style={{ fontFamily: 'var(--font-cinzel), serif' }}
                         >
-                            Contact Us
+                            Book Your Private
+                            Consultation
+
                         </h2>
                         <p className="text-[#5a5a5a] leading-relaxed mb-12">
-                            Ready to start your real estate journey in Dubai? Our team of experts is here to guide you every step of the way. Reach out to us today.
+                            Our investment advisors will provide a personalized analysis based on your goals, budget, and timeline.
+
                         </p>
 
                         <div className="space-y-8">

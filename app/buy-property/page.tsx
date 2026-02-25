@@ -76,9 +76,9 @@ export default function BuyProperty() {
                     <p className="text-white/80 text-lg max-w-2xl mx-auto mb-8">
                         Find your dream home with our curated selection of premium properties. We make the buying process seamless and stress-free.
                     </p>
-                    <Link href="/contact-us">
-                        <button className="bg-[#B4A68C] hover:bg-[#9a8d77] text-white px-10 py-6 tracking-widest uppercase transition-colors duration-300">
-                            Start Your Search
+                    <Link href="/properties">
+                        <button className="bg-[#B4A68C] hover:bg-[#1a2622] text-white px-10 py-6 tracking-widest uppercase transition-all duration-300 shadow-xl shadow-[#B4A68C]/20 active:scale-[0.98]">
+                            View Property Collection
                         </button>
                     </Link>
                 </motion.div>
@@ -163,35 +163,41 @@ export default function BuyProperty() {
 
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {propertyTypes.map((type, index) => (
-                            <motion.div
-                                key={index}
-                                className="group cursor-pointer"
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.6, delay: index * 0.1 }}
-                                viewport={{ once: true }}
-                            >
-                                <div className="relative h-72 overflow-hidden">
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img
-                                        src={type.image}
-                                        alt={type.title}
-                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                                    <div className="absolute bottom-0 left-0 right-0 p-6">
-                                        <h3
-                                            className="text-xl text-white mb-2"
-                                            style={{ fontFamily: 'var(--font-cinzel), serif' }}
-                                        >
-                                            {type.title}
-                                        </h3>
-                                        <p className="text-white/70 text-sm opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">
-                                            {type.description}
-                                        </p>
+                            <Link href="/properties" key={index}>
+                                <motion.div
+                                    className="group cursor-pointer"
+                                    initial={{ opacity: 0, y: 30 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                                    viewport={{ once: true }}
+                                >
+                                    <div className="relative h-72 overflow-hidden">
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img
+                                            src={type.image}
+                                            alt={type.title}
+                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                                        <div className="absolute inset-0 bg-navy/0 group-hover:bg-navy/20 transition-all duration-500 flex items-center justify-center">
+                                            <div className="opacity-0 group-hover:opacity-100 bg-white/90 backdrop-blur-md px-6 py-3 text-[10px] font-bold text-navy uppercase tracking-widest translate-y-4 group-hover:translate-y-0 transition-all duration-500">
+                                                Discover Properties
+                                            </div>
+                                        </div>
+                                        <div className="absolute bottom-0 left-0 right-0 p-6 z-10 transition-transform duration-500 group-hover:-translate-y-2">
+                                            <h3
+                                                className="text-xl text-white mb-2"
+                                                style={{ fontFamily: 'var(--font-cinzel), serif' }}
+                                            >
+                                                {type.title}
+                                            </h3>
+                                            <p className="text-white/70 text-xs opacity-0 group-hover:opacity-100 transition-all duration-500">
+                                                {type.description}
+                                            </p>
+                                        </div>
                                     </div>
-                                </div>
-                            </motion.div>
+                                </motion.div>
+                            </Link>
                         ))}
                     </div>
                 </div>

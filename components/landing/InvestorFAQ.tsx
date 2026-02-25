@@ -3,27 +3,36 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Minus } from 'lucide-react';
-
 const faqs = [
     {
         question: "How do I qualify for the UAE Golden Visa through Real Estate?",
-        answer: "To qualify for the 10-year Golden Visa, you need to invest in a property with a value of at least AED 2 Million. This can be a single property or a portfolio, and it includes off-plan properties provided the investment meets the minimum threshold."
+        answer: "Invest in property worth at least AED 2 Million for a 10-year Golden Visa. All 10 properties in our portfolio qualify. Clifton Capital handles the entire process — purchase, title deed, and visa application."
     },
     {
         question: "Is there any property or income tax in Dubai?",
-        answer: "Dubai offers a 100% tax-free environment for real estate. There is no personal income tax, no capital gains tax, and no annual property taxes. You only pay a one-time 4% DLD (Dubai Land Department) transfer fee at the time of purchase."
+        answer: "No. Zero personal income tax, zero capital gains tax, zero property tax. Only a one-time 4% DLD registration fee at purchase. Rental income is 100% yours."
     },
     {
-        question: "What kind of ROI can I expect from luxury rentals?",
-        answer: "Prime areas in Dubai currently offer some of the highest yields globally, typically ranging between 6% to 10% net ROI. Short-term holiday rentals (Airbnb model) can often exceed this during peak seasons."
+        question: "What ROI can I expect from off-plan property?",
+        answer: "Our portfolio offers gross yields from 4.2% to 6.5%, with expected appreciation of 7-10% annually. On 20% down payment, cash-on-cash returns can exceed 20%. Use our ROI calculator on each property card."
     },
     {
         question: "Can foreigners 100% own property in Dubai?",
-        answer: "Yes, in designated 'Freehold' areas, foreigners (non-GCC nationals) have 100% ownership rights of the property and the land it sits on forever. Most of the popular luxury areas like Downtown, Dubai Marina, and Palm Jumeirah are freehold."
+        answer: "Yes. Foreigners can own freehold property in designated areas. All 10 of our properties are in freehold zones. Full ownership and title deed in your name."
+    },
+    {
+        question: "What payment plans are available?",
+        answer: "Emaar 80/20, Meraas 60/40, Ellington 70/30, Rove 50/50. Down payments from 20% (AED 440K). No mortgage needed during construction. Developer-direct pricing."
+    },
+    {
+        question: "What does Clifton Capital handle after purchase?",
+        answer: "Everything. Tenant finding, property management referral, Golden Visa processing, DEWA setup, Power of Attorney, and annual PRO services."
     }
 ];
 
 export default function InvestorFAQ() {
+    const [openIndex, setOpenIndex] = useState<number | null>(0);
+
     return (
         <section id="faq" className="py-32 bg-[#F9F8F6]">
             <div className="max-w-4xl mx-auto px-6">
@@ -39,7 +48,13 @@ export default function InvestorFAQ() {
 
                 <div className="space-y-4">
                     {faqs.map((faq, index) => (
-                        <FAQItem key={index} faq={faq} index={index} />
+                        <FAQItem
+                            key={index}
+                            faq={faq}
+                            index={index}
+                            isOpen={openIndex === index}
+                            onToggle={() => setOpenIndex(openIndex === index ? null : index)}
+                        />
                     ))}
                 </div>
             </div>
@@ -47,9 +62,7 @@ export default function InvestorFAQ() {
     );
 }
 
-function FAQItem({ faq, index }: { faq: any, index: number }) {
-    const [isOpen, setIsOpen] = useState(index === 0);
-
+function FAQItem({ faq, index, isOpen, onToggle }: { faq: any, index: number, isOpen: boolean, onToggle: () => void }) {
     return (
         <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -58,7 +71,7 @@ function FAQItem({ faq, index }: { faq: any, index: number }) {
             className="border-b border-[#23312D]/10 bg-white shadow-sm overflow-hidden"
         >
             <button
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={onToggle}
                 className="w-full py-8 px-8 flex items-center justify-between text-left group transition-colors"
             >
                 <span

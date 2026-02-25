@@ -91,9 +91,9 @@ export default function InvestInDubai() {
                     <p className="text-white/80 text-lg max-w-2xl mx-auto mb-8">
                         Dubai offers exceptional opportunities for real estate investors, boasting substantial potential for capital appreciation and rental yields.
                     </p>
-                    <Link href="/contact-us">
-                        <button className="bg-[#B4A68C] hover:bg-[#9a8d77] text-white px-10 py-6 tracking-widest uppercase transition-all duration-300">
-                            Start Investing
+                    <Link href="/properties">
+                        <button className="bg-[#B4A68C] hover:bg-[#1a2622] text-white px-10 py-6 tracking-widest uppercase transition-all duration-300 shadow-xl shadow-[#B4A68C]/20 active:scale-[0.98]">
+                            View Investment Properties
                         </button>
                     </Link>
                 </motion.div>
@@ -170,33 +170,40 @@ export default function InvestInDubai() {
 
                     <div className="grid md:grid-cols-3 gap-8">
                         {investmentTypes.map((type, index) => (
-                            <motion.div
-                                key={index}
-                                className="group"
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.6, delay: index * 0.15 }}
-                                viewport={{ once: true }}
-                            >
-                                <div className="relative h-64 overflow-hidden mb-6">
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img
-                                        src={type.image}
-                                        alt={type.title}
-                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                    />
-                                    <div className="absolute inset-0 bg-[#3B5B5D]/0 group-hover:bg-[#3B5B5D]/20 transition-all duration-500" />
-                                </div>
-                                <h3
-                                    className="text-2xl text-[#3B5B5D] mb-3"
-                                    style={{ fontFamily: 'var(--font-cinzel), serif' }}
+                            <Link href="/properties" key={index}>
+                                <motion.div
+                                    className="group cursor-pointer bg-white p-2 shadow-sm hover:shadow-2xl transition-all duration-500"
+                                    initial={{ opacity: 0, y: 30 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.6, delay: index * 0.15 }}
+                                    viewport={{ once: true }}
                                 >
-                                    {type.title}
-                                </h3>
-                                <p className="text-[#5a5a5a] leading-relaxed">
-                                    {type.description}
-                                </p>
-                            </motion.div>
+                                    <div className="relative h-64 overflow-hidden mb-6">
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img
+                                            src={type.image}
+                                            alt={type.title}
+                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        />
+                                        <div className="absolute inset-0 bg-[#3B5B5D]/0 group-hover:bg-[#3B5B5D]/20 transition-all duration-500 flex items-center justify-center">
+                                            <div className="opacity-0 group-hover:opacity-100 bg-white/90 backdrop-blur-md px-6 py-3 text-[10px] font-bold text-navy uppercase tracking-widest translate-y-4 group-hover:translate-y-0 transition-all duration-500">
+                                                Explore Collection
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="px-6 pb-8">
+                                        <h3
+                                            className="text-2xl text-[#3B5B5D] mb-3"
+                                            style={{ fontFamily: 'var(--font-cinzel), serif' }}
+                                        >
+                                            {type.title}
+                                        </h3>
+                                        <p className="text-[#5a5a5a] text-sm leading-relaxed">
+                                            {type.description}
+                                        </p>
+                                    </div>
+                                </motion.div>
+                            </Link>
                         ))}
                     </div>
                 </div>

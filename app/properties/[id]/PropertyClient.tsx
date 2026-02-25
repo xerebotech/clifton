@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense, useMemo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Property } from '@/lib/propertiesData';
 import { fetchPropertiesFromSheet } from '@/lib/googleSheets';
@@ -22,9 +22,30 @@ import {
     Building,
     User,
     Send,
-    RefreshCw
+    RefreshCw,
+    BarChart3,
+    Wallet,
+    Scale,
+    ShieldCheck,
+    Calendar,
+    ArrowRight,
+    ChevronDown,
+    X,
 } from 'lucide-react';
 import PhoneInput from '../../../components/ui/PhoneInput';
+import { fmt, calcValues } from '../../../components/properties/utils';
+import ROITab from '../../../components/properties/ROITab';
+import CostsTab from '../../../components/properties/CostsTab';
+import { LocationTab, CompareTab, TrustTab } from '../../../components/properties/OtherTabs';
+import StrategySessionModal from '../../../components/properties/StrategySessionModal';
+
+const TABS = [
+    { id: 'roi', label: 'ROI Calculator', icon: <BarChart3 className="w-3.5 h-3.5" /> },
+    { id: 'costs', label: 'Full Costs', icon: <Wallet className="w-3.5 h-3.5" /> },
+    { id: 'location', label: 'Location', icon: <MapPin className="w-3.5 h-3.5" /> },
+    { id: 'compare', label: 'Compare', icon: <Scale className="w-3.5 h-3.5" /> },
+    { id: 'trust', label: 'Trust & Details', icon: <ShieldCheck className="w-3.5 h-3.5" /> },
+];
 
 function PropertyDetailPageContent() {
     const params = useParams();
@@ -32,6 +53,7 @@ function PropertyDetailPageContent() {
     const id = params?.id as string;
     const [property, setProperty] = useState<Property | null>(null);
     const [loading, setLoading] = useState(true);
+    const [allProperties, setAllProperties] = useState<Property[]>([]);
 
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [formData, setFormData] = useState({
@@ -43,6 +65,28 @@ function PropertyDetailPageContent() {
     });
     const [submitted, setSubmitted] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Financial calculations state
+    const [activeTab, setActiveTab] = useState('roi');
+    const [currency, setCurrency] = useState('AED');
+    const [dp, setDp] = useState(20);
+    const [rate, setRate] = useState(4.5);
+    const [term, setTerm] = useState(25);
+    const [app, setApp] = useState(8);
+    const [vac, setVac] = useState(5);
+    const [calcMode, setCalcMode] = useState<'mortgage' | 'cash'>('mortgage');
+
+    // Analysis PDF Flow state
+    const [emailOpen, setEmailOpen] = useState(false);
+    const [strategyOpen, setStrategyOpen] = useState(false);
+    const [analysisSubmitted, setAnalysisSubmitted] = useState(false);
+    const [analysisIsSubmitting, setAnalysisIsSubmitting] = useState(false);
+    const [analysisForm, setAnalysisForm] = useState({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: ""
+    });
 
     // GTM tracking function
     const trackClick = (type: string, value: string) => {
@@ -59,15 +103,19 @@ function PropertyDetailPageContent() {
         const loadProperty = async () => {
             setLoading(true);
             const data = await fetchPropertiesFromSheet();
+            setAllProperties(data);
             const found = data.find(p => p.id === id);
             if (found) {
                 setProperty(found);
                 setCurrentImageIndex(0);
+                if (found.appreciation) setApp(found.appreciation);
             }
             setLoading(false);
         };
         loadProperty();
     }, [id]);
+
+    const cv = useMemo(() => property ? calcValues(property, dp, rate, term, app, vac, calcMode) : null, [property, dp, rate, term, app, vac, calcMode]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -102,6 +150,29 @@ function PropertyDetailPageContent() {
                 phone: "",
                 message: "I'm interested in this property. Please contact me with more details."
             });
+        }
+    };
+
+    const handleAnalysisSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setAnalysisIsSubmitting(true);
+
+        const success = await submitInquiry({
+            firstName: analysisForm.firstName,
+            lastName: analysisForm.lastName,
+            email: analysisForm.email,
+            phone: analysisForm.phone,
+            message: `Send Full Investment Analysis (PDF) for ${property?.title}`,
+            projectOrService: "Investment Analysis Request"
+        });
+
+        setAnalysisIsSubmitting(false);
+        if (success) {
+            setAnalysisSubmitted(true);
+            setTimeout(() => {
+                setEmailOpen(false);
+                setAnalysisSubmitted(false);
+            }, 3000);
         }
     };
 
@@ -257,28 +328,53 @@ function PropertyDetailPageContent() {
                                 </div>
                             </div>
 
-                            {/* Description */}
-                            <div className="mb-8">
-                                <h2 className="text-xl font-medium text-[#23312D] mb-4" style={{ fontFamily: 'var(--font-cinzel), serif' }}>Description</h2>
-                                <p className="text-gray-600 leading-relaxed">
-                                    {property.description}
-                                </p>
+                            {/* Financial Tabs */}
+                            <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden mb-8 shadow-sm">
+                                <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-md px-6 py-4 flex gap-2 overflow-x-auto no-scrollbar border-b border-gray-50">
+                                    {TABS.map(tab => (
+                                        <button key={tab.id} onClick={() => setActiveTab(tab.id)}
+                                            className={`flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${activeTab === tab.id ? 'bg-[#00594F] text-white shadow-xl shadow-[#00594F]/20' : 'bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-navy'}`}>
+                                            <span>{tab.icon}</span>
+                                            <span>{tab.label}</span>
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <div className="p-8">
+                                    {cv && (
+                                        <>
+                                            {activeTab === 'roi' && <ROITab calcValues={cv} currency={currency} onCurrencyChange={setCurrency} calcMode={calcMode} setCalcMode={setCalcMode} dp={dp} setDp={setDp} rate={rate} setRate={setRate} term={term} setTerm={setTerm} app={app} setApp={setApp} vac={vac} setVac={setVac} />}
+                                            {activeTab === 'costs' && <CostsTab calcValues={cv} currency={currency} />}
+                                            {activeTab === 'location' && <LocationTab p={property} price={cv.price} currency={currency} />}
+                                            {activeTab === 'compare' && <CompareTab currentProp={property} allProperties={allProperties} currency={currency} />}
+                                            {activeTab === 'trust' && <TrustTab p={property} calcValues={cv} currency={currency} />}
+                                        </>
+                                    )}
+                                </div>
                             </div>
 
-                            {/* Amenities */}
-                            {property.amenities.length > 0 && (
-                                <div className="mb-8">
-                                    <h2 className="text-xl font-medium text-[#23312D] mb-4" style={{ fontFamily: 'var(--font-cinzel), serif' }}>Amenities & Features</h2>
-                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                        {property.amenities.map((amenity, index) => (
-                                            <div key={index} className="flex items-center gap-2">
-                                                <CheckCircle className="w-5 h-5 text-[#AE9573]" />
-                                                <span className="text-gray-700">{amenity}</span>
-                                            </div>
-                                        ))}
-                                    </div>
+                            {/* Description & Amenities (Integrated/Secondary) */}
+                            <div className="grid md:grid-cols-2 gap-8 mb-8">
+                                <div>
+                                    <h2 className="text-xl font-medium text-[#23312D] mb-4" style={{ fontFamily: 'var(--font-cinzel), serif' }}>Description</h2>
+                                    <p className="text-gray-600 leading-relaxed text-sm">
+                                        {property.description}
+                                    </p>
                                 </div>
-                            )}
+                                {property.amenities.length > 0 && (
+                                    <div>
+                                        <h2 className="text-xl font-medium text-[#23312D] mb-4" style={{ fontFamily: 'var(--font-cinzel), serif' }}>Amenities</h2>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            {property.amenities.slice(0, 8).map((amenity, index) => (
+                                                <div key={index} className="flex items-center gap-2">
+                                                    <CheckCircle className="w-4 h-4 text-[#AE9573]" />
+                                                    <span className="text-gray-700 text-xs">{amenity}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         {/* Right Column - Contact Form */}
@@ -377,6 +473,16 @@ function PropertyDetailPageContent() {
                                     )}
                                 </div>
 
+                                {/* Action Sidebar integration */}
+                                <div className="mt-8 space-y-4 pt-8 border-t border-[#e8e6e3]">
+                                    <button onClick={() => setStrategyOpen(true)} className="w-full flex items-center justify-center gap-3 bg-[#1a2622] hover:bg-[#00594F] text-white font-bold py-5 rounded-none transition-all text-xs uppercase tracking-widest shadow-lg active:scale-[0.98]">
+                                        <Calendar className="w-4 h-4" /> Book Strategy Session
+                                    </button>
+                                    <button onClick={() => setEmailOpen(true)} className="w-full text-[10px] font-bold text-[#AE9573] uppercase tracking-widest hover:text-[#00594F] transition-all flex items-center justify-center gap-2 group py-2">
+                                        <Mail className="w-3.5 h-3.5" /> Send Full Investment Analysis (PDF) <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                                    </button>
+                                </div>
+
                                 {/* Contact Options */}
                                 <div className="mt-6 space-y-3">
                                     <a
@@ -401,6 +507,70 @@ function PropertyDetailPageContent() {
                     </div>
                 </div>
             </section>
+
+            {/* Email Analysis Modal */}
+            {emailOpen && (
+                <div className="fixed inset-0 z-[1100] flex items-center justify-center p-4 bg-[#23312D]/60 backdrop-blur-xl animate-in fade-in duration-300" onClick={e => { if (e.target === e.currentTarget) setEmailOpen(false); }}>
+                    <div className="bg-white rounded-none p-8 w-full max-w-sm shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-400">
+                        <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#1a2622] via-[#AE9573] to-[#1a2622]" />
+                        <div className="absolute top-6 right-6 p-2 text-gray-400 hover:text-navy transition-colors cursor-pointer" onClick={() => setEmailOpen(false)}>
+                            <X className="w-5 h-5" />
+                        </div>
+
+                        {analysisSubmitted ? (
+                            <div className="text-center py-6">
+                                <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <CheckCircle className="w-8 h-8 text-[#00594F]" />
+                                </div>
+                                <h3 className="font-cinzel text-xl font-bold text-navy mb-4 uppercase tracking-tight">Report Requested</h3>
+                                <p className="text-[11px] text-gray-500 mb-8 font-medium leading-relaxed">
+                                    Thank you. Your investment analysis report is being generated and will be sent to <strong>{analysisForm.email}</strong> shortly.
+                                </p>
+                                <button onClick={() => { setEmailOpen(false); setAnalysisSubmitted(false); }} className="w-full bg-[#1a2622] text-white text-[10px] font-bold py-4 rounded-none uppercase tracking-widest shadow-lg">
+                                    Close Window
+                                </button>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="text-4xl mb-6 text-center text-navy"><BarChart3 className="w-12 h-12 mx-auto" strokeWidth={1.5} /></div>
+                                <h3 className="font-cinzel text-xl font-bold text-navy text-center mb-2 uppercase tracking-tight">Investment Analysis</h3>
+                                <p className="text-[11px] text-gray-500 text-center mb-8 font-medium leading-relaxed">
+                                    A detailed breakdown including ROI projections, cost analysis, and area intelligence for <strong>{property?.title}</strong>.
+                                </p>
+                                <form onSubmit={handleAnalysisSubmit} className="space-y-4">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-1">
+                                            <label className="text-[9px] font-bold text-gray-400 uppercase tracking-widest ml-1">First Name</label>
+                                            <input required type="text" placeholder="John" value={analysisForm.firstName} onChange={e => setAnalysisForm({ ...analysisForm, firstName: e.target.value })} className="w-full px-4 py-3 border border-gray-100 bg-gray-50 text-[11px] font-bold uppercase tracking-widest focus:outline-none focus:border-[#AE9573] transition-all" />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label className="text-[9px] font-bold text-gray-400 uppercase tracking-widest ml-1">Last Name</label>
+                                            <input required type="text" placeholder="Doe" value={analysisForm.lastName} onChange={e => setAnalysisForm({ ...analysisForm, lastName: e.target.value })} className="w-full px-4 py-3 border border-gray-100 bg-gray-50 text-[11px] font-bold uppercase tracking-widest focus:outline-none focus:border-[#AE9573] transition-all" />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <label className="text-[9px] font-bold text-gray-400 uppercase tracking-widest ml-1">Email Address</label>
+                                        <input required type="email" placeholder="john@example.com" value={analysisForm.email} onChange={e => setAnalysisForm({ ...analysisForm, email: e.target.value })} className="w-full px-4 py-3 border border-gray-100 bg-gray-50 text-[11px] font-bold uppercase tracking-widest focus:outline-none focus:border-[#AE9573] transition-all" />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <label className="text-[9px] font-bold text-gray-400 uppercase tracking-widest ml-1">Phone Number</label>
+                                        <PhoneInput value={analysisForm.phone} onChange={val => setAnalysisForm({ ...analysisForm, phone: val })} className="w-full h-11 bg-gray-50 border border-gray-100 rounded-none focus-within:border-[#AE9573] transition-colors text-xs" />
+                                    </div>
+                                    <button disabled={analysisIsSubmitting} type="submit" className="w-full bg-[#1a2622] hover:bg-black text-white font-bold py-4 rounded-none text-xs uppercase tracking-[0.2em] transition-all shadow-xl mt-2 flex items-center justify-center gap-3">
+                                        {analysisIsSubmitting ? <><RefreshCw className="w-4 h-4 animate-spin" /> Sending...</> : 'Send My Report'}
+                                    </button>
+                                </form>
+                            </>
+                        )}
+                    </div>
+                </div>
+            )}
+
+            <StrategySessionModal
+                isOpen={strategyOpen}
+                onClose={() => setStrategyOpen(false)}
+                propertyName={property?.title}
+            />
         </div>
     );
 }

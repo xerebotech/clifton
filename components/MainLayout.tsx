@@ -82,6 +82,8 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         );
     }, [pathname]);
 
+    const isPropertiesPage = pathname === '/properties';
+
     useEffect(() => {
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 50);
@@ -101,7 +103,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         <div className="min-h-screen bg-white">
             {/* Header */}
             <header
-                className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled || !isHomePage
+                className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled || (!isHomePage && !isPropertiesPage)
                     ? 'bg-white shadow-lg py-3'
                     : 'bg-transparent py-6'
                     }`}
@@ -109,7 +111,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                 <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
                     {/* Logo */}
                     <Link href={createPageUrl('Home')} className="flex items-center gap-3">
-                        <div className={`transition-all duration-500 ${isScrolled || !isHomePage ? '' : 'brightness-0 invert'}`}>
+                        <div className={`transition-all duration-500 ${isScrolled || (!isHomePage && !isPropertiesPage) ? '' : 'brightness-0 invert'}`}>
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img src="/logo.png" alt="Clifton Capital" className="h-24 w-auto object-contain" />
                         </div>
@@ -121,7 +123,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                             <div key={index} className="relative group">
                                 {('children' in item) ? (
                                     <div>
-                                        <button className={`flex items-center gap-1 text-base tracking-wider transition-colors duration-300 ${isScrolled || !isHomePage ? 'text-[#23312D] hover:text-[#AE9573]' : 'text-white hover:text-[#B4A68C]'
+                                        <button className={`flex items-center gap-1 text-base tracking-wider transition-colors duration-300 ${isScrolled || (!isHomePage && !isPropertiesPage) ? 'text-[#23312D] hover:text-[#AE9573]' : 'text-white hover:text-[#B4A68C]'
                                             }`}>
                                             {item.name}
                                             <ChevronDown className="w-4 h-4" />
@@ -143,7 +145,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                                 ) : (
                                     <Link
                                         href={'href' in item && item.href ? item.href : createPageUrl(item.page || 'Home')}
-                                        className={`text-base tracking-wider transition-colors duration-300 ${isScrolled || !isHomePage ? 'text-[#23312D] hover:text-[#AE9573]' : 'text-white hover:text-[#B4A68C]'
+                                        className={`text-base tracking-wider transition-colors duration-300 ${isScrolled || (!isHomePage && !isPropertiesPage) ? 'text-[#23312D] hover:text-[#AE9573]' : 'text-white hover:text-[#B4A68C]'
                                             } ${!('href' in item) && item.page && isCurrentPage(item.page) ? 'text-[#B4A68C]' : ''}`}
                                     >
                                         {item.name}
@@ -153,7 +155,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                         ))}
                         <Link
                             href={isLandingPage ? '#contact' : createPageUrl('Contact')}
-                            className={`px-6 py-3 text-sm tracking-widest uppercase transition-all duration-500 rounded-sm ${isScrolled || !isHomePage
+                            className={`px-6 py-3 text-sm tracking-widest uppercase transition-all duration-500 rounded-sm ${isScrolled || (!isHomePage && !isPropertiesPage)
                                 ? 'bg-[#00594F] text-white hover:bg-[#AE9573]'
                                 : 'bg-white/10 backdrop-blur-sm border border-white/30 text-white hover:bg-white hover:text-[#23312D]'
                                 }`}
@@ -165,7 +167,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                     {/* Mobile Menu Button */}
                     <button
                         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                        className={`lg:hidden p-2 transition-colors ${isScrolled || !isHomePage ? 'text-[#23312D]' : 'text-white'}`}
+                        className={`lg:hidden p-2 transition-colors ${isScrolled || (!isHomePage && !isPropertiesPage) ? 'text-[#23312D]' : 'text-white'}`}
                     >
                         {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                     </button>
@@ -224,7 +226,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
             </header>
 
             {/* Main Content */}
-            <main className={!isHomePage ? 'pt-24' : ''}>
+            <main className={!isHomePage && pathname !== '/properties' ? 'pt-24' : ''}>
                 {children}
             </main>
 
@@ -318,11 +320,17 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                 </div>
 
                 {/* Bottom Bar */}
-                <div>
-                    <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
-                        <p className="text-white/40 text-sm">
-                            © {new Date().getFullYear()} Clifton Capital Real Estate LLC. All rights reserved.
-                        </p>
+                <div className="border-t border-white/5">
+                    <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-8">
+                        <div className="flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
+                            <img src="/permit.png" alt="RERA Permit" className="h-16 w-16 object-contain bg-white p-1 rounded-sm" />
+                            <div>
+                                <p className="text-white/40 text-sm">
+                                    © {new Date().getFullYear()} Clifton Capital Real Estate LLC. All rights reserved.
+                                </p>
+                                <p className="text-white/20 text-[10px] mt-1 uppercase tracking-widest">RERA: 40255 | License: 1289051</p>
+                            </div>
+                        </div>
                         <div className="flex gap-6">
                             <Link href={createPageUrl('PrivacyPolicy')} className="text-white/40 text-sm hover:text-white/60 transition-colors">Privacy Policy</Link>
                             <Link href={createPageUrl('TermsOfService')} className="text-white/40 text-sm hover:text-white/60 transition-colors">Terms of Service</Link>

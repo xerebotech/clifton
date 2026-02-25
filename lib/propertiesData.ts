@@ -1,3 +1,16 @@
+export interface CommuteItem {
+    icon: string;
+    name: string;
+    dist: string;
+    time: string;
+}
+
+export interface AmenityItem {
+    icon: string;
+    name: string;
+    dist: string;
+}
+
 export interface Property {
     id: string;
     title: string;
@@ -11,6 +24,29 @@ export interface Property {
     amenities: string[];
     image: string;
     gallery: string[];
+    // Investment-specific fields (optional for backward compat)
+    developer?: string;
+    devProjects?: number;
+    devYears?: number;
+    devDelivered?: string;
+    devRating?: string;
+    status?: string;
+    handover?: string;
+    priceNumeric?: number;
+    annualRent?: number;
+    serviceCharges?: number;
+    appreciation?: number;
+    goldenVisa?: boolean;
+    unitsLeft?: number;
+    amenitiesText?: string;
+    commutes?: CommuteItem[];
+    nearbyAmenities?: AmenityItem[];
+    areaGrowth?: number[];
+    occupancy?: number;
+    popGrowth?: string;
+    avgDaysToRent?: number;
+    viewedToday?: number;
+    bookedThisWeek?: number;
 }
 
 export const properties: Property[] = [

@@ -9,6 +9,8 @@ import { fetchPropertiesFromSheet } from '@/lib/googleSheets';
 import { submitInquiry } from '@/lib/inquiryService';
 import { MapPin, Bed, Bath, Square, ArrowRight, X, User, Mail, Phone, Send, CheckCircle, Info, RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react';
 import PhoneInput from '../ui/PhoneInput';
+import PropertyPopup from '../properties/PropertyPopup';
+import { calcEMI, grossYield } from '../properties/utils';
 
 function PropertiesSectionContent() {
     const searchParams = useSearchParams();
@@ -70,41 +72,25 @@ function PropertiesSectionContent() {
     );
 
     const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [submitted, setSubmitted] = useState(false);
-    const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        message: "I'm interested in this property. Please provide more details."
-    });
+    const [currency, setCurrency] = useState('AED');
+    const [savedIds, setSavedIds] = useState<string[]>([]);
 
-    const handleInquiry = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsSubmitting(true);
-        try {
-            await submitInquiry({
-                ...formData,
-                projectOrService: `Property Inquiry: ${selectedProperty?.title || 'General'}`
-            });
-            setSubmitted(true);
-            setTimeout(() => {
-                setSelectedProperty(null);
-                setSubmitted(false);
-                setFormData({
-                    firstName: '',
-                    lastName: '',
-                    email: '',
-                    phone: '',
-                    message: "I'm interested in this property. Please provide more details."
-                });
-            }, 3000);
-        } catch (error) {
-            console.error("Inquiry failed:", error);
-        } finally {
-            setIsSubmitting(false);
-        }
+    const handleToggleSave = (id: string) => {
+        setSavedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
+    };
+
+    const handlePrev = () => {
+        if (!selectedProperty) return;
+        const idx = properties.findIndex(p => p.id === selectedProperty.id);
+        const prevIdx = (idx - 1 + properties.length) % properties.length;
+        setSelectedProperty(properties[prevIdx]);
+    };
+
+    const handleNext = () => {
+        if (!selectedProperty) return;
+        const idx = properties.findIndex(p => p.id === selectedProperty.id);
+        const nextIdx = (idx + 1) % properties.length;
+        setSelectedProperty(properties[nextIdx]);
     };
 
     return (
@@ -124,11 +110,13 @@ function PropertiesSectionContent() {
             totalFiltered={filteredProperties.length}
             selectedProperty={selectedProperty}
             setSelectedProperty={setSelectedProperty}
-            isSubmitting={isSubmitting}
-            submitted={submitted}
-            formData={formData}
-            setFormData={setFormData}
-            handleInquiry={handleInquiry}
+            currency={currency}
+            setCurrency={setCurrency}
+            handlePrev={handlePrev}
+            handleNext={handleNext}
+            savedIds={savedIds}
+            handleToggleSave={handleToggleSave}
+            allProperties={properties}
         />
     );
 }
@@ -153,7 +141,14 @@ function PropertiesSectionContentWrapper({
     submitted,
     formData,
     setFormData,
-    handleInquiry
+    handleInquiry,
+    currency,
+    setCurrency,
+    handlePrev,
+    handleNext,
+    savedIds,
+    handleToggleSave,
+    allProperties
 }: any) {
     return (
         <section id="properties" className="py-24 bg-white overflow-hidden">
@@ -167,13 +162,15 @@ function PropertiesSectionContentWrapper({
                             className="flex items-center gap-4 mb-4"
                         >
                             <span className="w-12 h-[1px] bg-[#AE9573]"></span>
-                            <span className="text-[#AE9573] text-sm tracking-[0.3em] font-bold uppercase">Featured Collection</span>
+                            <span className="text-[#AE9573] text-sm tracking-[0.3em] font-bold uppercase">Curated Portfolio</span>
                         </motion.div>
                         <h2 className="text-4xl md:text-5xl text-[#23312D] mb-6" style={{ fontFamily: 'var(--font-cinzel), serif' }}>
-                            Exclusive <span className="text-[#AE9573] italic">Properties</span>
+                            Investment
+                            <span className="text-[#AE9573] italic">Opportunities</span>
                         </h2>
                         <p className="text-[#5a5a5a] text-lg leading-relaxed max-w-xl">
-                            Discover luxury living in Dubai with our curated selection of properties. Filter by type and size to find your perfect home.
+                            Each property selected for yield, developer reputation, location growth, and Golden Visa eligibility. Compare side-by-side with real ROI data.
+
                         </p>
                     </div>
                 </div>
@@ -224,9 +221,24 @@ function PropertiesSectionContentWrapper({
                             className="grid md:grid-cols-2 lg:grid-cols-3 gap-10 min-h-[400px]"
                         >
                             {isLoading ? (
-                                <div className="col-span-full flex flex-col items-center justify-center py-20">
-                                    <RefreshCw className="w-10 h-10 text-[#AE9573] animate-spin mb-4" />
-                                    <p className="text-[#5a5a5a] tracking-widest uppercase text-sm">Loading Properties...</p>
+                                <div className="col-span-full flex flex-col items-center justify-center py-24">
+                                    <motion.div
+                                        animate={{
+                                            scale: [1, 1.05, 1],
+                                            opacity: [0.8, 1, 0.8]
+                                        }}
+                                        transition={{
+                                            duration: 2,
+                                            repeat: Infinity,
+                                            ease: "easeInOut"
+                                        }}
+                                        className="mb-8"
+                                    >
+                                        <img src="/logo.png" alt="Clifton Capital" className="h-24 w-auto object-contain brightness-0 grayscale" />
+                                    </motion.div>
+                                    <p className="text-[10px] font-bold text-[#AE9573] uppercase tracking-[0.3em] animate-pulse">
+                                        Curating your investment portfolio...
+                                    </p>
                                 </div>
                             ) : (
                                 paginatedProperties.length > 0 ? (
@@ -287,171 +299,23 @@ function PropertiesSectionContentWrapper({
                 </div>
             </div>
 
-            {/* Modal Overlay */}
-            <AnimatePresence>
-                {selectedProperty && (
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6">
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={() => setSelectedProperty(null)}
-                            className="absolute inset-0 bg-[#23312D]/90 backdrop-blur-sm"
-                        />
-
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            className="relative w-full max-w-5xl bg-white rounded-sm overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh]"
-                        >
-                            {/* Close Button */}
-                            <button
-                                onClick={() => setSelectedProperty(null)}
-                                className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/20 hover:bg-white text-white hover:text-[#23312D] backdrop-blur-md flex items-center justify-center transition-all duration-300"
-                            >
-                                <X className="w-5 h-5" />
-                            </button>
-
-                            {/* Property Info Side */}
-                            <div className="md:w-1/2 relative min-h-[300px] md:min-h-0">
-                                <img
-                                    src={selectedProperty.image}
-                                    alt={selectedProperty.title}
-                                    className="absolute inset-0 w-full h-full object-cover"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-[#23312D] via-transparent to-transparent" />
-
-                                <div className="absolute bottom-0 left-0 p-8 text-white w-full">
-                                    <div className="flex items-center gap-2 text-[#AE9573] text-xs tracking-widest uppercase mb-4">
-                                        <MapPin className="w-4 h-4" />
-                                        {selectedProperty.location}
-                                    </div>
-                                    <h3
-                                        className="text-3xl md:text-4xl mb-4"
-                                        style={{ fontFamily: 'var(--font-cinzel), serif' }}
-                                    >
-                                        {selectedProperty.title}
-                                    </h3>
-                                    <div className="text-2xl font-bold text-[#AE9573] mb-6">
-                                        {selectedProperty.price}
-                                    </div>
-
-                                    <div className="flex items-center gap-6 text-xs tracking-widest uppercase opacity-80">
-                                        <div className="flex items-center gap-2">
-                                            <Bed className="w-4 h-4" />
-                                            {selectedProperty.beds} Beds
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <Bath className="w-4 h-4" />
-                                            {selectedProperty.baths} Baths
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <Square className="w-4 h-4" />
-                                            {selectedProperty.area} Sq.Ft
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Inquiry Form Side */}
-                            <div className="md:w-1/2 p-8 md:p-12 overflow-y-auto bg-[#F9F8F6]">
-                                {submitted ? (
-                                    <div className="h-full flex flex-col items-center justify-center text-center space-y-6 py-12">
-                                        <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center">
-                                            <CheckCircle className="w-10 h-10 text-green-600" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <h4 className="text-2xl text-[#23312D]" style={{ fontFamily: 'var(--font-cinzel), serif' }}>Inquiry Received</h4>
-                                            <p className="text-[#5a5a5a]">Thank you for your interest. One of our luxury property consultants will contact you shortly.</p>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="space-y-8">
-                                        <div>
-                                            <h4 className="text-2xl text-[#23312D] mb-2" style={{ fontFamily: 'var(--font-cinzel), serif' }}>ENQUIRE NOW</h4>
-                                            <p className="text-[#5a5a5a] text-sm">Please fill out the form below and we&apos;ll get back to you with exclusive information about this property.</p>
-                                        </div>
-
-                                        <form id="property-modal-inquiry-form" onSubmit={handleInquiry} className="space-y-4">
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <div className="relative">
-                                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                                    <input
-                                                        required
-                                                        type="text"
-                                                        placeholder="First Name"
-                                                        value={formData.firstName}
-                                                        onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                                                        className="w-full h-14 pl-12 pr-4 bg-white border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none text-[#23312D] placeholder:text-[#23312D]/50 transition-all font-medium"
-                                                    />
-                                                </div>
-                                                <div className="relative">
-                                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                                    <input
-                                                        required
-                                                        type="text"
-                                                        placeholder="Last Name"
-                                                        value={formData.lastName}
-                                                        onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                                                        className="w-full h-14 pl-12 pr-4 bg-white border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none text-[#23312D] placeholder:text-[#23312D]/50 transition-all font-medium"
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="relative">
-                                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                                <input
-                                                    required
-                                                    type="email"
-                                                    placeholder="Email Address"
-                                                    value={formData.email}
-                                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                                    className="w-full h-14 pl-12 pr-4 bg-white border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none text-[#23312D] placeholder:text-[#23312D]/50 transition-all font-medium"
-                                                />
-                                            </div>
-                                            <PhoneInput
-                                                value={formData.phone}
-                                                onChange={(phone) => setFormData({ ...formData, phone })}
-                                                className="w-full h-14 bg-white border border-[#e8e6e3] focus-within:border-[#00594F] transition-all"
-                                            />
-                                            <textarea
-                                                rows={4}
-                                                placeholder="Message"
-                                                value={formData.message}
-                                                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                                                className="w-full p-4 bg-white border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none text-[#23312D] placeholder:text-[#23312D]/50 transition-all resize-none font-medium"
-                                            />
-
-                                            <button
-                                                type="submit"
-                                                disabled={isSubmitting}
-                                                className="w-full h-14 bg-[#00594F] hover:bg-[#004a3f] text-white rounded-none tracking-widest uppercase transition-all duration-500 flex items-center justify-center font-medium disabled:opacity-50"
-                                            >
-                                                {isSubmitting ? (
-                                                    <>
-                                                        <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                                                        Sending...
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        Send Inquiry <Send className="w-4 h-4 ml-2" />
-                                                    </>
-                                                )}
-                                            </button>
-
-                                            <p className="text-[10px] text-[#5a5a5a] text-center uppercase tracking-widest mt-4">
-                                                Your data is handled with the outmost confidentiality.
-                                            </p>
-                                        </form>
-
-                                    </div>
-                                )}
-                            </div>
-                        </motion.div>
-                    </div>
-                )}
-            </AnimatePresence>
-        </section>
+            {/* NEW MODULAR PROPERTY POPUP */}
+            {
+                selectedProperty && (
+                    <PropertyPopup
+                        p={selectedProperty}
+                        allProperties={allProperties}
+                        onClose={() => setSelectedProperty(null)}
+                        onPrev={handlePrev}
+                        onNext={handleNext}
+                        currency={currency}
+                        onCurrencyChange={setCurrency}
+                        savedIds={savedIds}
+                        onToggleSave={handleToggleSave}
+                    />
+                )
+            }
+        </section >
     );
 }
 
@@ -529,7 +393,14 @@ function PropertyCard({ property, index, onOpenModal }: { property: any, index: 
 }
 export default function PropertiesSection() {
     return (
-        <Suspense fallback={<div className="py-32 bg-[#F9F8F6] text-center">Loading Properties...</div>}>
+        <Suspense fallback={
+            <div className="py-32 bg-white flex flex-col items-center justify-center">
+                <div className="animate-pulse mb-8">
+                    <img src="/logo.png" alt="Clifton Capital" className="h-24 w-auto object-contain brightness-0 grayscale opacity-20" />
+                </div>
+                <p className="text-[10px] font-bold text-[#AE9573] uppercase tracking-[0.3em]">Initialising Portfolio...</p>
+            </div>
+        }>
             <PropertiesSectionContent />
         </Suspense>
     );

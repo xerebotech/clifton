@@ -112,9 +112,44 @@ function parseCSV(csvText: string): Property[] {
                     entry[header] = val ? val.split(';').map(s => convertGoogleDriveUrl(s.trim())) : [];
                 } else if (header === 'image') {
                     entry[header] = convertGoogleDriveUrl(val);
-                } else if (header === 'beds' || header === 'baths' || header === 'area') {
-                    // Remove non-numeric chars but keep decimal points
-                    entry[header] = Number(val.replace(/[^0-9.]/g, '')) || 0;
+                } else if (['beds', 'baths', 'area', 'devprojects', 'devyears', 'pricenumeric',
+                    'annualrent', 'servicecharges', 'appreciation', 'unitsleft',
+                    'occupancy', 'avgdaystorent', 'viewedtoday', 'bookedthisweek'].includes(header)) {
+                    entry[header === 'devprojects' ? 'devProjects' :
+                        header === 'devyears' ? 'devYears' :
+                            header === 'pricenumeric' ? 'priceNumeric' :
+                                header === 'annualrent' ? 'annualRent' :
+                                    header === 'servicecharges' ? 'serviceCharges' :
+                                        header === 'unitsleft' ? 'unitsLeft' :
+                                            header === 'avgdaystorent' ? 'avgDaysToRent' :
+                                                header === 'viewedtoday' ? 'viewedToday' :
+                                                    header === 'bookedthisweek' ? 'bookedThisWeek' :
+                                                        header] = Number(val.replace(/[^0-9.]/g, '')) || 0;
+                } else if (header === 'goldenvisa') {
+                    entry['goldenVisa'] = val.toLowerCase() === 'true' || val.toLowerCase() === 'yes' || val === '1';
+                } else if (header === 'areagrowth') {
+                    // Semicolon-separated numbers: "6.1;9.3;14.5;18.2;11.8"
+                    entry['areaGrowth'] = val ? val.split(';').map(s => parseFloat(s.trim()) || 0) : [];
+                } else if (header === 'commutes') {
+                    // Format: "icon|name|dist|time;icon|name|dist|time"
+                    entry[header] = val ? val.split(';').map(s => {
+                        const parts = s.trim().split('|');
+                        return { icon: parts[0] || '', name: parts[1] || '', dist: parts[2] || '', time: parts[3] || '' };
+                    }) : [];
+                } else if (header === 'nearbyamenities') {
+                    // Format: "icon|name|dist;icon|name|dist"
+                    entry['nearbyAmenities'] = val ? val.split(';').map(s => {
+                        const parts = s.trim().split('|');
+                        return { icon: parts[0] || '', name: parts[1] || '', dist: parts[2] || '' };
+                    }) : [];
+                } else if (header === 'amenitiestext') {
+                    entry['amenitiesText'] = val;
+                } else if (header === 'devdelivered') {
+                    entry['devDelivered'] = val;
+                } else if (header === 'devrating') {
+                    entry['devRating'] = val;
+                } else if (header === 'popgrowth') {
+                    entry['popGrowth'] = val;
                 } else {
                     entry[header] = val;
                 }

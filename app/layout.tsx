@@ -99,14 +99,16 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${cinzel.variable} antialiased overflow-x-hidden`}
       >
+        {/* Google Tag Manager (noscript) */}
         <noscript>
           <iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-WRC99LCR"
+            src="https://xe.cliftonuae.com/ns.html?id=GTM-WRC99LCR"
             height="0"
             width="0"
             style={{ display: "none", visibility: "hidden" }}
           />
         </noscript>
+        {/* End Google Tag Manager (noscript) */}
         <MainLayout>{children}</MainLayout>
         <CookieBanner />
       </body>

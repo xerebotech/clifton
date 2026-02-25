@@ -10,6 +10,12 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-cinzel: var(--font-cinzel), serif;
+
+  --color-navy: #23312D;
+  --color-copper: #AE9573;
+  --color-gold: #B4A68C;
+  --color-deep-teal: #00594F;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -43,6 +49,7 @@ body {
 .animate-scroll:hover {
   animation-play-state: paused;
 }
+
 /* Ripple Effect Animation */
 @keyframes ripple {
   to {
@@ -54,4 +61,17 @@ body {
 
 .animate-ripple {
   animation: ripple 0.6s ease-out;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }

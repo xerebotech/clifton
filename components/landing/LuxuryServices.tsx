@@ -8,28 +8,28 @@ import Link from 'next/link';
 const services = [
     {
         title: "Investment Advisory",
-        description: "Data-driven strategies for high-yield Dubai real estate assets.",
+        description: "Data-driven strategies for high-yield Dubai real estate. ROI calculators, yield analysis, and 5-year projections.",
         icon: TrendingUp,
         path: "#contact",
         color: "bg-[#23312D]"
     },
     {
-        title: "Premium Sales",
-        description: "Exclusive access to off-market penthouses and luxury villas.",
+        title: "Premium Off-Plan Sales",
+        description: "Exclusive access to curated off-plan villas and apartments. Emaar, Meraas, Ellington. Developer-direct pricing.",
         icon: Home,
         path: "#contact",
         color: "bg-[#AE9573]"
     },
     {
-        title: "Portfolio Management",
-        description: "Comprehensive management for maximize ROI and asset longevity.",
+        title: "Golden Visa Services",
+        description: "End-to-end UAE Golden Visa processing. 10-year residency for you and your family through property investment.",
         icon: Shield,
         path: "#contact",
         color: "bg-[#4D6969]"
     },
     {
-        title: "Concierge Services",
-        description: "Bespoke legal, financial, and lifestyle integration for owners.",
+        title: "Concierge & PRO",
+        description: "Post-purchase support: tenant finding, property management, DEWA setup, POA, and annual PRO services.",
         icon: Key,
         path: "#contact",
         color: "bg-[#23312D]"
@@ -53,7 +53,8 @@ export default function LuxuryServices() {
                     </div>
                     <div className="max-w-md">
                         <p className="text-gray-600 leading-relaxed text-lg">
-                            We provide a comprehensive ecosystem of real estate services, ensuring every transaction is handled with the highest level of professionalism and discretion.
+                            A comprehensive ecosystem of real estate services, ensuring every transaction is handled with the highest level of professionalism.
+
                         </p>
                     </div>
                 </div>
