@@ -59,6 +59,9 @@ export default function PropertyPopup({ p, allProperties, onClose, onPrev, onNex
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({ container: scrollContainerRef });
     const scrollIndicatorOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0]);
+    const headerHeight = useTransform(scrollYProgress, [0, 0.15], ['var(--header-height, 18rem)', '120px']);
+    const headerOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0.8]);
+    const elementsOpacity = useTransform(scrollYProgress, [0, 0.05], [1, 0]);
 
     const f = useCallback((n: number) => fmt(n, currency), [currency]);
     const cv = useMemo(() => calcValues(p, dp, rate, term, app, vac, calcMode), [p, dp, rate, term, app, vac, calcMode]);
@@ -94,28 +97,36 @@ export default function PropertyPopup({ p, allProperties, onClose, onPrev, onNex
 
     return (
         <div className="fixed inset-0 z-[1000] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-navy/80 backdrop-blur-md animate-in fade-in duration-300" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
-            <div className="relative w-full sm:max-w-xl md:max-w-2xl max-h-[98vh] sm:max-h-[92vh] bg-white sm:rounded-[32px] overflow-hidden flex flex-col shadow-[0_40px_100px_rgba(0,0,0,0.4)] animate-in slide-in-from-bottom-8 sm:zoom-in-95 duration-400">
+            <div
+                className="relative w-full sm:max-w-xl md:max-w-2xl max-h-[98vh] sm:max-h-[92vh] bg-white sm:rounded-[32px] overflow-hidden flex flex-col shadow-[0_40px_100px_rgba(0,0,0,0.4)] animate-in slide-in-from-bottom-8 sm:zoom-in-95 duration-400"
+                style={{
+                    ['--header-height' as any]: 'clamp(12rem, 40vh, 18rem)'
+                } as any}
+            >
 
                 {/* Gallery Header */}
-                <div className="relative h-56 sm:h-72 flex-shrink-0">
+                <motion.div
+                    style={{ height: headerHeight, opacity: headerOpacity }}
+                    className="relative flex-shrink-0 overflow-hidden"
+                >
                     <img src={mainImg} alt={p.title} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/20 to-transparent" />
 
                     {/* Top controls */}
                     <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
                         <div className="flex gap-2">
-                            <button onClick={onPrev} className="w-9 h-9 bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white text-white hover:text-navy rounded-xl flex items-center justify-center transition-all shadow-lg group">
+                            <button onClick={onPrev} className="w-8 h-8 sm:w-9 sm:h-9 bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white text-white hover:text-navy rounded-xl flex items-center justify-center transition-all shadow-lg group">
                                 <ChevronLeft className="w-5 h-5 group-hover:scale-110 transition-transform" />
                             </button>
-                            <button onClick={onNext} className="w-9 h-9 bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white text-white hover:text-navy rounded-xl flex items-center justify-center transition-all shadow-lg group">
+                            <button onClick={onNext} className="w-8 h-8 sm:w-9 sm:h-9 bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white text-white hover:text-navy rounded-xl flex items-center justify-center transition-all shadow-lg group">
                                 <ChevronRight className="w-5 h-5 group-hover:scale-110 transition-transform" />
                             </button>
                         </div>
                         <div className="flex gap-2">
-                            <button onClick={() => onToggleSave(p.id)} className={`w-9 h-9 backdrop-blur-xl border rounded-xl flex items-center justify-center transition-all shadow-lg ${isSaved ? 'bg-copper border-copper text-white' : 'bg-white/10 border-white/20 text-white hover:bg-white hover:text-navy'}`}>
+                            <button onClick={() => onToggleSave(p.id)} className={`w-8 h-8 sm:w-9 sm:h-9 backdrop-blur-xl border rounded-xl flex items-center justify-center transition-all shadow-lg ${isSaved ? 'bg-copper border-copper text-white' : 'bg-white/10 border-white/20 text-white hover:bg-white hover:text-navy'}`}>
                                 <Star className={`w-5 h-5 ${isSaved ? 'fill-current' : ''}`} />
                             </button>
-                            <button onClick={onClose} className="w-9 h-9 bg-white text-navy rounded-xl border-none font-bold flex items-center justify-center transition-all hover:bg-white/90 shadow-lg cursor-pointer">
+                            <button onClick={onClose} className="w-8 h-8 sm:w-9 sm:h-9 bg-white text-navy rounded-xl border-none font-bold flex items-center justify-center transition-all hover:bg-white/90 shadow-lg cursor-pointer">
                                 <X className="w-6 h-6" />
                             </button>
                         </div>
@@ -123,7 +134,10 @@ export default function PropertyPopup({ p, allProperties, onClose, onPrev, onNex
 
                     {/* Thumbnail strip */}
                     {imgs.length > 1 && (
-                        <div className="absolute bottom-5 left-5 flex gap-2">
+                        <motion.div
+                            style={{ opacity: elementsOpacity }}
+                            className="absolute bottom-5 left-5 flex gap-2"
+                        >
                             {imgs.map((img: string, i: number) => (
                                 <img
                                     key={i}
@@ -134,15 +148,18 @@ export default function PropertyPopup({ p, allProperties, onClose, onPrev, onNex
                                 />
                             )).slice(0, 4)}
                             {imgs.length > 4 && <div className="w-14 h-11 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white text-[10px] font-bold border border-white/30">+{imgs.length - 4}</div>}
-                        </div>
+                        </motion.div>
                     )}
 
                     {/* Badges */}
-                    <div className="absolute bottom-5 right-5 text-right flex flex-col items-end gap-1.5">
+                    <motion.div
+                        style={{ opacity: elementsOpacity }}
+                        className="absolute bottom-5 right-5 text-right flex flex-col items-end gap-1.5"
+                    >
                         {p.goldenVisa && <div className="text-[10px] bg-deep-teal text-white font-bold px-3 py-1.5 rounded-full uppercase tracking-widest shadow-lg border border-white/10">Golden Visa</div>}
                         {p.status && <div className="text-[10px] bg-copper text-white font-bold px-3 py-1.5 rounded-full uppercase tracking-widest shadow-lg border border-white/10">{p.status}</div>}
-                    </div>
-                </div>
+                    </motion.div>
+                </motion.div>
 
                 {/* Scrollable content container */}
                 <div className="flex-1 relative overflow-hidden flex flex-col">
@@ -163,8 +180,8 @@ export default function PropertyPopup({ p, allProperties, onClose, onPrev, onNex
                         {/* Property info */}
                         <div className="px-4 sm:px-6 pt-5 pb-4 border-b border-gray-100">
                             <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
-                                <div className="flex-1 min-w-0">
-                                    <h2 className="font-cinzel font-bold text-navy text-lg sm:text-xl leading-[1.15] mb-2">{p.title}</h2>
+                                <div className="flex-1 min-w-0 overflow-hidden">
+                                    <h2 className="font-cinzel font-bold text-navy text-lg sm:text-xl leading-[1.15] mb-2 break-words hyphens-auto">{p.title}</h2>
                                     <div className="text-xs font-bold text-copper tracking-[0.1em] uppercase mb-3 italic">{p.developer ? `${p.developer} · ` : ''}{p.location}</div>
                                     <div className="flex flex-wrap gap-x-3 gap-y-1.5 text-[10px] text-gray-400 font-bold uppercase tracking-widest">
                                         <span className="flex items-center gap-1.5">🛏 {p.beds === 0 ? 'Studio' : p.beds} Bed</span>

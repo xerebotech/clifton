@@ -61,7 +61,7 @@ export default function CostsTab({ calcValues, currency }: CostsTabProps) {
                     <div className="space-y-3.5">
                         {section.items.map((item, j) => (
                             <div key={j} className="flex justify-between gap-2 text-xs font-medium">
-                                <span className="text-gray-500 font-sans shrink-0 min-w-0 flex-[1_1_auto] pr-1 leading-tight">{item.l}</span>
+                                <span className="text-gray-500 font-sans shrink-0 min-w-0 flex-[1_1_auto] pr-1 leading-tight break-words">{item.l}</span>
                                 <span className={`font-sans shrink-0 text-right ${(item as { v: string; color?: string }).color || 'text-navy'}`}>
                                     {item.v}
                                 </span>
