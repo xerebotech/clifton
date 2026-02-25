@@ -330,7 +330,7 @@ function PropertyCard({ property, index, onOpenModal }: { property: any, index: 
             className="group cursor-pointer relative"
             onClick={onOpenModal}
         >
-            <div className="relative aspect-[4/5] overflow-hidden rounded-sm shadow-md mb-0">
+            <div className="relative aspect-[3/2] overflow-hidden rounded-sm shadow-md mb-0">
                 <img
                     src={property.image}
                     alt={property.title}

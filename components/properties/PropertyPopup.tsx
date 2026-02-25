@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useRef } from 'react';
+import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { fmt, calcEMI, grossYield, calcValues } from './utils';
 import { submitInquiry } from '@/lib/inquiryService';
 import PhoneInput from '../ui/PhoneInput';
@@ -33,12 +33,18 @@ interface PropertyPopupProps {
 
 export default function PropertyPopup({ p, allProperties, onClose, onPrev, onNext, currency, onCurrencyChange, savedIds, onToggleSave }: PropertyPopupProps) {
     const [activeTab, setActiveTab] = useState('roi');
+    const [currentImgIdx, setCurrentImgIdx] = useState(0);
     const [dp, setDp] = useState(20);
     const [rate, setRate] = useState(4.5);
     const [term, setTerm] = useState(25);
     const [app, setApp] = useState(p?.appreciation || 8);
     const [vac, setVac] = useState(5);
     const [calcMode, setCalcMode] = useState<'mortgage' | 'cash'>('mortgage');
+
+    // Reset image index when the property changes
+    useEffect(() => {
+        setCurrentImgIdx(0);
+    }, [p.id]);
     const [emailOpen, setEmailOpen] = useState(false);
     const [strategyOpen, setStrategyOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -83,7 +89,7 @@ export default function PropertyPopup({ p, allProperties, onClose, onPrev, onNex
     if (!p || !cv) return null;
 
     const imgs = (p.gallery && p.gallery.length > 0 ? p.gallery : [p.image]).filter(Boolean);
-    const mainImg = imgs[0] || 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1200&q=80';
+    const mainImg = imgs[currentImgIdx] || imgs[0] || 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1200&q=80';
     const isSaved = savedIds.includes(p.id);
 
     return (
@@ -118,9 +124,15 @@ export default function PropertyPopup({ p, allProperties, onClose, onPrev, onNex
                     {/* Thumbnail strip */}
                     {imgs.length > 1 && (
                         <div className="absolute bottom-5 left-5 flex gap-2">
-                            {imgs.slice(1, 4).map((img: string, i: number) => (
-                                <img key={i} src={img} alt={`Property view ${i + 1}`} className="w-14 h-11 object-cover rounded-xl border-2 border-white/30 shadow-2xl hover:scale-105 transition-transform cursor-pointer" />
-                            ))}
+                            {imgs.map((img: string, i: number) => (
+                                <img
+                                    key={i}
+                                    src={img}
+                                    alt={`Property view ${i + 1}`}
+                                    onClick={() => setCurrentImgIdx(i)}
+                                    className={`w-14 h-11 object-cover rounded-xl border-2 shadow-2xl hover:scale-105 transition-all cursor-pointer ${i === currentImgIdx ? 'border-copper scale-110 shadow-copper/20' : 'border-white/30 opacity-70 hover:opacity-100'}`}
+                                />
+                            )).slice(0, 4)}
                             {imgs.length > 4 && <div className="w-14 h-11 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white text-[10px] font-bold border border-white/30">+{imgs.length - 4}</div>}
                         </div>
                     )}
@@ -234,7 +246,7 @@ export default function PropertyPopup({ p, allProperties, onClose, onPrev, onNex
                                     <p className="text-[11px] text-gray-500 text-center mb-8 font-medium leading-relaxed">
                                         A detailed breakdown including ROI projections, cost analysis, and area intelligence for <strong>{p?.title.split('—')[0]}</strong>.
                                     </p>
-                                    <form onSubmit={handleAnalysisSubmit} className="space-y-4">
+                                    <form id="property-modal-inquiry-form" onSubmit={handleAnalysisSubmit} className="space-y-4">
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="space-y-1">
                                                 <label className="text-[9px] font-bold text-gray-400 uppercase tracking-widest ml-1">First Name</label>
