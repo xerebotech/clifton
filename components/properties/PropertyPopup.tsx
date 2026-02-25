@@ -161,10 +161,10 @@ export default function PropertyPopup({ p, allProperties, onClose, onPrev, onNex
                         className="flex-1 overflow-y-auto no-scrollbar scroll-smooth"
                     >
                         {/* Property info */}
-                        <div className="px-6 pt-6 pb-5 border-b border-gray-100">
-                            <div className="flex flex-col gap-4">
-                                <div className="flex-1">
-                                    <h2 className="font-cinzel font-bold text-navy text-lg sm:text-xl md:text-2xl leading-[1.15] mb-2">{p.title}</h2>
+                        <div className="px-4 sm:px-6 pt-5 pb-4 border-b border-gray-100">
+                            <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
+                                <div className="flex-1 min-w-0">
+                                    <h2 className="font-cinzel font-bold text-navy text-lg sm:text-xl leading-[1.15] mb-2">{p.title}</h2>
                                     <div className="text-xs font-bold text-copper tracking-[0.1em] uppercase mb-3 italic">{p.developer ? `${p.developer} · ` : ''}{p.location}</div>
                                     <div className="flex flex-wrap gap-x-3 gap-y-1.5 text-[10px] text-gray-400 font-bold uppercase tracking-widest">
                                         <span className="flex items-center gap-1.5">🛏 {p.beds === 0 ? 'Studio' : p.beds} Bed</span>
@@ -175,12 +175,10 @@ export default function PropertyPopup({ p, allProperties, onClose, onPrev, onNex
                                         {p.handover && <><span className="w-1 h-1 bg-gray-200 rounded-full my-auto" /><span>🗝 {p.handover}</span></>}
                                     </div>
                                 </div>
-                                <div className="flex items-center justify-between bg-gray-50 p-4 rounded-2xl border border-gray-100 shadow-sm">
-                                    <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Monthly From</div>
-                                    <div className="text-right">
-                                        <div className="text-xl sm:text-2xl font-bold font-cinzel text-navy leading-none mb-0.5">{f(Math.round(cv.baseEmi))}<span className="text-xs font-normal text-gray-400">/mo</span></div>
-                                        <div className="text-[11px] font-bold text-copper">{f(cv.price)} total</div>
-                                    </div>
+                                <div className="shrink-0 text-right bg-gray-50 p-3 sm:p-4 rounded-2xl border border-gray-100 w-full sm:w-auto shadow-sm">
+                                    <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Monthly From</div>
+                                    <div className="text-xl font-bold font-cinzel text-navy leading-none mb-0.5">{f(Math.round(cv.baseEmi))}<span className="text-xs font-normal text-gray-400">/mo</span></div>
+                                    <div className="text-[11px] font-bold text-copper">{f(cv.price)} total</div>
                                 </div>
                             </div>
                         </div>
@@ -197,7 +195,7 @@ export default function PropertyPopup({ p, allProperties, onClose, onPrev, onNex
                         </div>
 
                         {/* Tab content */}
-                        <div className="px-6 pt-6 pb-10">
+                        <div className="px-4 sm:px-6 pt-5 pb-10">
                             {activeTab === 'roi' && <ROITab calcValues={cv} currency={currency} onCurrencyChange={onCurrencyChange} calcMode={calcMode} setCalcMode={setCalcMode} dp={dp} setDp={setDp} rate={rate} setRate={setRate} term={term} setTerm={setTerm} app={app} setApp={setApp} vac={vac} setVac={setVac} />}
                             {activeTab === 'costs' && <CostsTab calcValues={cv} currency={currency} />}
                             {activeTab === 'location' && <LocationTab p={p} price={cv.price} currency={currency} />}
