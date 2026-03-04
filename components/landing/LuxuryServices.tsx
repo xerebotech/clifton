@@ -15,7 +15,7 @@ const services = [
     },
     {
         title: "Premium Off-Plan Sales",
-        description: "Exclusive access to curated off-plan villas and apartments. Emaar, Meraas, Ellington. Developer-direct pricing.",
+        description: "Exclusive access to curated off-plan Villas and apartments from major developers of dubai such as Emaar, meraas,ellington etc",
         icon: Home,
         path: "#contact",
         color: "bg-[#AE9573]"

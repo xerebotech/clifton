@@ -79,7 +79,7 @@ export default function LandingHero() {
                         transition={{ duration: 1, delay: 0.8 }}
                         className="text-white text-base md:text-xl max-w-2xl mx-auto mb-8 md:mb-10 font-light leading-relaxed drop-shadow-md"
                     >
-                        10 curated properties from Emaar, Meraas & Ellington. Yields up to 6.5%. Golden Visa eligible. We handle everything — purchase, visa, and beyond.
+                        10 curated properties by Emaar, Meraas & Ellington Yields above 6% + Golden Visa eligibility From purchase to residency—we handle it all.
                     </motion.p>
 
                     {/* Stats Grid */}
@@ -90,7 +90,7 @@ export default function LandingHero() {
                         className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-8 max-w-4xl mx-auto mb-10 md:mb-12"
                     >
                         {[
-                            { val: '6.5%', label: 'Yield Up To' },
+                            { val: '6%', label: 'Yield Above' },
                             { val: '0%', label: 'Income Tax' },
                             { val: '10yr', label: 'Golden Visa' },
                             { val: '20%', label: 'Down Payment' }

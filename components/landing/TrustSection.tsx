@@ -4,7 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 const developers = [
-    "EMAAR", "DAMAC", "SELECT GROUP", "SOBHA", "NAKHEEL", "MBI"
+    "EMAAR", "DAMAC", "SELECT GROUP", "SOBHA", "NAKHEEL", "MERAAS"
 ];
 
 export default function TrustSection() {
