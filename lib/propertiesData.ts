@@ -47,6 +47,7 @@ export interface Property {
     avgDaysToRent?: number;
     viewedToday?: number;
     bookedThisWeek?: number;
+    furnishing?: string;
 }
 
 export const properties: Property[] = [

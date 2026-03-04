@@ -18,7 +18,7 @@ export async function fetchPropertiesFromSheet(): Promise<Property[]> {
 
     try {
         const response = await fetch(GOOGLE_SHEET_CSV_URL, {
-            next: { revalidate: 3600 } // Revalidate every hour
+            cache: 'no-store' // Always fetch fresh data
         });
 
         if (!response.ok) throw new Error("Failed to fetch Google Sheet");

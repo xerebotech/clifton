@@ -18,6 +18,9 @@ function PropertiesSectionContent() {
     const [isLoading, setIsLoading] = useState(true);
     const [selectedType, setSelectedType] = useState('All');
     const [selectedBeds, setSelectedBeds] = useState('All');
+    const [selectedFurnishing, setSelectedFurnishing] = useState('All');
+
+    const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
 
     useEffect(() => {
         const loadProperties = async () => {
@@ -35,15 +38,27 @@ function PropertiesSectionContent() {
         loadProperties();
     }, []);
 
+    // When fresh sheet data loads, re-sync the open popup's property object
+    // so it picks up new fields like `furnishing` that weren't in the static data
+    useEffect(() => {
+        if (selectedProperty) {
+            const fresh = properties.find(p => p.id === selectedProperty.id);
+            if (fresh) setSelectedProperty(fresh);
+        }
+    }, [properties]);
+
     // Extract unique types and beds for filters
     const propertyTypes = ['All', ...Array.from(new Set(properties.map(p => p.type)))];
     const bedOptions = ['All', '1', '2', '3', '4', '5+'];
+    const furnishingOptions = ['All', 'Unfurnished', 'Fully Fitted', 'Fully Furnished'];
 
     const filteredProperties = properties.filter(property => {
         const typeMatch = selectedType === 'All' || property.type === selectedType;
         const bedsMatch = selectedBeds === 'All' ||
             (selectedBeds === '5+' ? (property.beds || 0) >= 5 : (property.beds || 0).toString() === selectedBeds);
-        return typeMatch && bedsMatch;
+        const furnishingMatch = selectedFurnishing === 'All' ||
+            property.furnishing === selectedFurnishing;
+        return typeMatch && bedsMatch && furnishingMatch;
     });
 
     const [currentPage, setCurrentPage] = useState(0);
@@ -63,7 +78,7 @@ function PropertiesSectionContent() {
     // Reset page when filters change
     useEffect(() => {
         setCurrentPage(0);
-    }, [selectedType, selectedBeds]);
+    }, [selectedType, selectedBeds, selectedFurnishing]);
 
     const totalPages = Math.ceil(filteredProperties.length / itemsPerPage);
     const paginatedProperties = filteredProperties.slice(
@@ -71,7 +86,6 @@ function PropertiesSectionContent() {
         (currentPage + 1) * itemsPerPage
     );
 
-    const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
     const [currency, setCurrency] = useState('AED');
     const [savedIds, setSavedIds] = useState<string[]>([]);
 
@@ -97,10 +111,13 @@ function PropertiesSectionContent() {
         <PropertiesSectionContentWrapper
             propertyTypes={propertyTypes}
             bedOptions={bedOptions}
+            furnishingOptions={furnishingOptions}
             selectedType={selectedType}
             setSelectedType={setSelectedType}
             selectedBeds={selectedBeds}
             setSelectedBeds={setSelectedBeds}
+            selectedFurnishing={selectedFurnishing}
+            setSelectedFurnishing={setSelectedFurnishing}
             isLoading={isLoading}
             paginatedProperties={paginatedProperties}
             currentPage={currentPage}
@@ -124,10 +141,13 @@ function PropertiesSectionContent() {
 function PropertiesSectionContentWrapper({
     propertyTypes,
     bedOptions,
+    furnishingOptions,
     selectedType,
     setSelectedType,
     selectedBeds,
     setSelectedBeds,
+    selectedFurnishing,
+    setSelectedFurnishing,
     isLoading,
     paginatedProperties,
     currentPage,
@@ -208,6 +228,32 @@ function PropertiesSectionContentWrapper({
                             ))}
                         </div>
                     </div>
+
+                    <div className="flex items-center gap-4">
+                        <span className="text-[10px] tracking-[0.2em] font-bold text-[#AE9573] uppercase">Furnishing:</span>
+                        <div className="flex gap-4">
+                            {furnishingOptions.map((option: string) => (
+                                <button
+                                    key={option}
+                                    onClick={() => setSelectedFurnishing(option)}
+                                    className={`text-xs tracking-widest uppercase transition-all duration-300 pb-1 border-b ${selectedFurnishing === option ? 'text-[#23312D] border-[#AE9573] font-bold' : 'text-[#5a5a5a] border-transparent hover:text-[#23312D]'
+                                        }`}
+                                >
+                                    {option}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Clear Filters */}
+                    {(selectedType !== 'All' || selectedBeds !== 'All' || selectedFurnishing !== 'All') && (
+                        <button
+                            onClick={() => { setSelectedType('All'); setSelectedBeds('All'); setSelectedFurnishing('All'); }}
+                            className="flex items-center gap-1.5 text-[10px] tracking-[0.2em] font-bold uppercase text-[#5a5a5a] hover:text-red-400 transition-colors duration-300 ml-auto"
+                        >
+                            <X className="w-3 h-3" /> Clear Filters
+                        </button>
+                    )}
                 </div>
 
                 <div className="relative">

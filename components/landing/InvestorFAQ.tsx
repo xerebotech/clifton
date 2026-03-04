@@ -22,7 +22,7 @@ const faqs = [
     },
     {
         question: "What payment plans are available?",
-        answer: "Emaar 80/20, Meraas 60/40, Ellington 70/30, Rove 50/50. Down payments from 20% (AED 440K). No mortgage needed during construction. Developer-direct pricing."
+        answer: "Payment plans from the major developers of dubai ranges between 50/50 to 80/20 and it could vary on project to project basis also. Offplan financing can be obtained for approved projects from government developers at easy interest rates as well. Refer to the property   listings or contact our team for more specific information."
     },
     {
         question: "What does Clifton Capital handle after purchase?",
