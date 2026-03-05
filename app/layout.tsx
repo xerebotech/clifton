@@ -80,6 +80,7 @@ const jsonLd = {
 
 import MainLayout from "@/components/MainLayout";
 import GoogleTagManager from "@/components/GoogleTagManager";
+import GTMPageTracker from "@/components/GTMPageTracker";
 import CookieBanner from "@/components/ui/CookieBanner";
 
 export default function RootLayout({
@@ -102,13 +103,14 @@ export default function RootLayout({
         {/* Google Tag Manager (noscript) */}
         <noscript>
           <iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-WRC99LCR"
+            src="https://xe.cliftonuae.com/ns.html?id=GTM-WRC99LCR"
             height="0"
             width="0"
             style={{ display: "none", visibility: "hidden" }}
           />
         </noscript>
         {/* End Google Tag Manager (noscript) */}
+        <GTMPageTracker />
         <MainLayout>{children}</MainLayout>
         <CookieBanner />
       </body>

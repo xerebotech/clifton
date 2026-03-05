@@ -150,6 +150,8 @@ function parseCSV(csvText: string): Property[] {
                     entry['devRating'] = val;
                 } else if (header === 'popgrowth') {
                     entry['popGrowth'] = val;
+                } else if (header === 'furnishing') {
+                    entry['furnishing'] = val;
                 } else {
                     entry[header] = val;
                 }
