@@ -22,7 +22,7 @@ function ExclusiveOfferContent() {
     const trackClick = (type: string, value: string) => {
         if (typeof window !== 'undefined' && (window as any).dataLayer) {
             (window as any).dataLayer.push({
-                event: 'contact_link_click',
+                event: type === 'phone' ? 'phone_click' : 'contact_link_click',
                 link_type: type,
                 link_value: value
             });

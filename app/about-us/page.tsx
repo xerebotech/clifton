@@ -34,6 +34,17 @@ function AnimatedCounter({ end, duration = 2, suffix = "" }: { end: number; dura
 }
 
 export default function AboutUs() {
+    // GTM tracking function
+    const trackClick = (type: string, value: string) => {
+        if (typeof window !== 'undefined' && (window as any).dataLayer) {
+            (window as any).dataLayer.push({
+                event: type === 'phone' ? 'phone_click' : 'contact_link_click',
+                link_type: type,
+                link_value: value
+            });
+        }
+    };
+
     const teamSchema = {
         "@context": "https://schema.org",
         "@graph": [
@@ -651,12 +662,14 @@ export default function AboutUs() {
                                             <a
                                                 href="tel:+971559304697"
                                                 className="w-11 h-11 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-[#AE9573] hover:scale-110 transition-all duration-300 shadow-lg"
+                                                onClick={() => trackClick('phone', '+971 55 930 4697')}
                                             >
                                                 <Phone className="w-5 h-5" />
                                             </a>
                                             <a
                                                 href="mailto:realestate@cliftonuae.com"
                                                 className="w-11 h-11 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-[#AE9573] hover:scale-110 transition-all duration-300 shadow-lg"
+                                                onClick={() => trackClick('email', 'realestate@cliftonuae.com')}
                                             >
                                                 <Mail className="w-5 h-5" />
                                             </a>
@@ -849,6 +862,7 @@ export default function AboutUs() {
                             <a
                                 href="tel:+971559304697"
                                 className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-lg font-semibold flex items-center gap-2 hover:bg-white hover:text-[#00594F] transition-all duration-300"
+                                onClick={() => trackClick('phone', '+971 55 930 4697')}
                             >
                                 <Phone className="w-5 h-5" />
                                 Call Us Now
@@ -857,6 +871,7 @@ export default function AboutUs() {
                             <a
                                 href="mailto:realestate@cliftonuae.com"
                                 className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-lg font-semibold flex items-center gap-2 hover:bg-white hover:text-[#00594F] transition-all duration-300"
+                                onClick={() => trackClick('email', 'realestate@cliftonuae.com')}
                             >
                                 <Mail className="w-5 h-5" />
                                 Email Us
