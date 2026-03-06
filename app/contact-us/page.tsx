@@ -48,7 +48,16 @@ function ContactContent() {
     const searchParams = useSearchParams();
     const serviceParam = searchParams.get('service');
 
-
+    // GTM tracking function
+    const trackClick = (type: string, value: string) => {
+        if (typeof window !== 'undefined' && (window as any).dataLayer) {
+            (window as any).dataLayer.push({
+                event: 'contact_link_click',
+                link_type: type,
+                link_value: value
+            });
+        }
+    };
 
     const [formData, setFormData] = useState({
         firstName: '',
@@ -153,6 +162,7 @@ function ContactContent() {
                                             target={info.type === 'address' ? "_blank" : undefined}
                                             rel={info.type === 'address' ? "noopener noreferrer" : undefined}
                                             className="text-[#3B5B5D] font-medium hover:text-[#AE9573] transition-colors duration-300 truncate block w-full"
+                                            onClick={() => trackClick(info.type || 'link', info.content)}
                                         >
                                             {info.content}
                                         </a>

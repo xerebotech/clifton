@@ -34,8 +34,6 @@ function AnimatedCounter({ end, duration = 2, suffix = "" }: { end: number; dura
 }
 
 export default function AboutUs() {
-
-
     const teamSchema = {
         "@context": "https://schema.org",
         "@graph": [
