@@ -88,16 +88,7 @@ function PropertyDetailPageContent() {
         phone: ""
     });
 
-    // GTM tracking function
-    const trackClick = (type: string, value: string) => {
-        if (typeof window !== 'undefined' && (window as any).dataLayer) {
-            (window as any).dataLayer.push({
-                event: type === 'phone' ? 'phone_click' : 'contact_link_click',
-                link_type: type,
-                link_value: value
-            });
-        }
-    };
+
 
     useEffect(() => {
         const loadProperty = async () => {
@@ -487,7 +478,6 @@ function PropertyDetailPageContent() {
                                 <div className="mt-6 space-y-3">
                                     <a
                                         href="tel:+971559304697"
-                                        onClick={() => trackClick('phone', '+971 55 930 4697')}
                                         className="flex items-center justify-center gap-3 w-full py-4 border-2 border-[#00594F] text-[#00594F] font-semibold rounded-xl hover:bg-[#00594F] hover:text-white transition-colors"
                                     >
                                         <Phone className="w-5 h-5" />
@@ -495,7 +485,6 @@ function PropertyDetailPageContent() {
                                     </a>
                                     <a
                                         href="mailto:realestate@cliftonuae.com"
-                                        onClick={() => trackClick('email', 'realestate@cliftonuae.com')}
                                         className="flex items-center justify-center gap-3 w-full py-4 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:border-[#3B5B5D] hover:text-[#3B5B5D] transition-colors"
                                     >
                                         <Mail className="w-5 h-5" />

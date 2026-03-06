@@ -18,16 +18,7 @@ function ExclusiveOfferContent() {
     const [isSubmitting, setIsSubmitting] = React.useState(false);
     const [submitted, setSubmitted] = React.useState(false);
 
-    // GTM tracking function
-    const trackClick = (type: string, value: string) => {
-        if (typeof window !== 'undefined' && (window as any).dataLayer) {
-            (window as any).dataLayer.push({
-                event: type === 'phone' ? 'phone_click' : 'contact_link_click',
-                link_type: type,
-                link_value: value
-            });
-        }
-    };
+
 
     const handleNextStep = (e: React.FormEvent) => {
         e.preventDefault();
@@ -181,7 +172,6 @@ function ExclusiveOfferContent() {
                                 Or contact our private office directly at <a
                                     href="tel:+971559304697"
                                     className="text-white/60 underline hover:text-[#AE9573] transition-colors"
-                                    onClick={() => trackClick('phone', '+971 55 930 4697')}
                                 >
                                     +971 55 930 4697
                                 </a>

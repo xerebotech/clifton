@@ -15,15 +15,7 @@ function ContactSectionContent() {
     const [submitted, setSubmitted] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const trackClick = (type: string, value: string) => {
-        if (typeof window !== 'undefined' && (window as any).dataLayer) {
-            (window as any).dataLayer.push({
-                event: type === 'phone' ? 'phone_click' : 'contact_link_click',
-                link_type: type,
-                link_value: value
-            });
-        }
-    };
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -126,7 +118,6 @@ function ContactSectionContent() {
                                                     target={info.type === 'address' ? "_blank" : undefined}
                                                     rel={info.type === 'address' ? "noopener noreferrer" : undefined}
                                                     className="text-[#5a5a5a] hover:text-[#AE9573] transition-colors duration-300"
-                                                    onClick={() => trackClick(info.type || 'link', info.content)}
                                                 >
                                                     {info.content}
                                                 </a>
