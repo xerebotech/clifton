@@ -171,10 +171,10 @@ function PropertiesSectionContentWrapper({
     allProperties
 }: any) {
     return (
-        <section id="properties" className="py-24 bg-white overflow-hidden">
-            <div className="container mx-auto px-4 md:px-6">
-                <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-16">
-                    <div className="max-w-2xl">
+        <section id="properties" className="py-12 md:py-24 bg-white overflow-hidden">
+            <div className="container mx-auto px-4 md:px-8">
+                <div className="flex flex-col md:flex-row justify-between items-end gap-4 mb-8 md:mb-16">
+                    <div className="w-full max-w-2xl">
                         <motion.div
                             initial={{ opacity: 0, x: -20 }}
                             whileInView={{ opacity: 1, x: 0 }}
@@ -184,11 +184,11 @@ function PropertiesSectionContentWrapper({
                             <span className="w-12 h-[1px] bg-[#AE9573]"></span>
                             <span className="text-[#AE9573] text-sm tracking-[0.3em] font-bold uppercase">Curated Portfolio</span>
                         </motion.div>
-                        <h2 className="text-4xl md:text-5xl text-[#23312D] mb-6" style={{ fontFamily: 'var(--font-cinzel), serif' }}>
-                            Investment
+                        <h2 className="text-2xl md:text-5xl text-[#23312D] mb-4 md:mb-6" style={{ fontFamily: 'var(--font-cinzel), serif' }}>
+                            Investment{' '}
                             <span className="text-[#AE9573] italic">Opportunities</span>
                         </h2>
-                        <p className="text-[#5a5a5a] text-lg leading-relaxed max-w-xl">
+                        <p className="text-[#5a5a5a] text-base md:text-lg leading-relaxed max-w-xl">
                             Each property selected for yield, developer reputation, location growth, and Golden Visa eligibility. Compare side-by-side with real ROI data.
 
                         </p>
@@ -196,10 +196,11 @@ function PropertiesSectionContentWrapper({
                 </div>
 
                 {/* Filter Bar */}
-                <div className="flex flex-wrap items-center gap-8 mb-16 pb-8 border-b border-[#23312D]/10">
-                    <div className="flex items-center gap-4">
-                        <span className="text-[10px] tracking-[0.2em] font-bold text-[#AE9573] uppercase">Type:</span>
-                        <div className="flex gap-4">
+                <div className="flex flex-col gap-4 mb-10 md:mb-16 pb-6 md:pb-8 border-b border-[#23312D]/10">
+                    {/* Type Filter */}
+                    <div className="flex items-center gap-3">
+                        <span className="text-[10px] tracking-[0.2em] font-bold text-[#AE9573] uppercase shrink-0 w-20">Type:</span>
+                        <div className="flex gap-3 flex-wrap">
                             {propertyTypes.map((type: string) => (
                                 <button
                                     key={type}
@@ -213,9 +214,10 @@ function PropertiesSectionContentWrapper({
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-4">
-                        <span className="text-[10px] tracking-[0.2em] font-bold text-[#AE9573] uppercase">Beds:</span>
-                        <div className="flex gap-4">
+                    {/* Beds Filter */}
+                    <div className="flex items-center gap-3">
+                        <span className="text-[10px] tracking-[0.2em] font-bold text-[#AE9573] uppercase shrink-0 w-20">Beds:</span>
+                        <div className="flex gap-3 flex-wrap">
                             {bedOptions.map((beds: string) => (
                                 <button
                                     key={beds}
@@ -229,9 +231,10 @@ function PropertiesSectionContentWrapper({
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-4">
-                        <span className="text-[10px] tracking-[0.2em] font-bold text-[#AE9573] uppercase">Furnishing:</span>
-                        <div className="flex gap-4">
+                    {/* Furnishing Filter */}
+                    <div className="flex items-center gap-3">
+                        <span className="text-[10px] tracking-[0.2em] font-bold text-[#AE9573] uppercase shrink-0 w-20">Finish:</span>
+                        <div className="flex gap-3 flex-wrap">
                             {furnishingOptions.map((option: string) => (
                                 <button
                                     key={option}
@@ -249,7 +252,7 @@ function PropertiesSectionContentWrapper({
                     {(selectedType !== 'All' || selectedBeds !== 'All' || selectedFurnishing !== 'All') && (
                         <button
                             onClick={() => { setSelectedType('All'); setSelectedBeds('All'); setSelectedFurnishing('All'); }}
-                            className="flex items-center gap-1.5 text-[10px] tracking-[0.2em] font-bold uppercase text-[#5a5a5a] hover:text-red-400 transition-colors duration-300 ml-auto"
+                            className="flex items-center gap-1.5 text-[10px] tracking-[0.2em] font-bold uppercase text-[#5a5a5a] hover:text-red-400 transition-colors duration-300 self-start"
                         >
                             <X className="w-3 h-3" /> Clear Filters
                         </button>
@@ -264,7 +267,7 @@ function PropertiesSectionContentWrapper({
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: -20 }}
                             transition={{ duration: 0.5 }}
-                            className="grid md:grid-cols-2 lg:grid-cols-3 gap-10 min-h-[400px]"
+                            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10 min-h-[400px]"
                         >
                             {isLoading ? (
                                 <div className="col-span-full flex flex-col items-center justify-center py-24">
@@ -384,14 +387,14 @@ function PropertyCard({ property, index, onOpenModal }: { property: any, index: 
                 />
 
                 {/* Default Status Tag */}
-                <div className="absolute top-6 left-6 z-10 transition-opacity duration-300 group-hover:opacity-0">
-                    <span className="bg-white/90 backdrop-blur-md text-[#23312D] text-[10px] tracking-[0.2em] font-bold px-4 py-2 uppercase">
+                <div className="absolute top-4 left-4 md:top-6 md:left-6 z-10 transition-opacity duration-300 group-hover:opacity-0">
+                    <span className="bg-white/90 backdrop-blur-md text-[#23312D] text-[10px] tracking-[0.2em] font-bold px-3 py-1.5 md:px-4 md:py-2 uppercase">
                         {property.type}
                     </span>
                 </div>
 
-                {/* Default Bottom info overlay (fades out on hover) */}
-                <div className="absolute inset-x-0 bottom-0 p-8 pt-24 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity duration-300 group-hover:opacity-0">
+                {/* Default Bottom info overlay (fades out on hover) — hidden on mobile */}
+                <div className="hidden md:block absolute inset-x-0 bottom-0 p-8 pt-24 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity duration-300 group-hover:opacity-0">
                     <div className="text-[#AE9573] text-sm tracking-widest uppercase mb-1 font-bold">
                         {property.price}
                     </div>
@@ -400,8 +403,8 @@ function PropertyCard({ property, index, onOpenModal }: { property: any, index: 
                     </div>
                 </div>
 
-                {/* Hover Overlay */}
-                <div className="absolute inset-0 bg-[#23312D]/90 opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col items-center justify-center p-8 text-center">
+                {/* Hover Overlay — desktop only */}
+                <div className="hidden md:flex absolute inset-0 bg-[#23312D]/90 opacity-0 group-hover:opacity-100 transition-all duration-500 flex-col items-center justify-center p-8 text-center">
                     <motion.div
                         className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 flex flex-col items-center gap-6"
                     >
@@ -432,6 +435,20 @@ function PropertyCard({ property, index, onOpenModal }: { property: any, index: 
                             </div>
                         </div>
                     </motion.div>
+                </div>
+            </div>
+
+            {/* Mobile-only info card below image */}
+            <div className="md:hidden bg-white border border-[#23312D]/8 rounded-sm px-4 py-3 flex items-center justify-between">
+                <div className="min-w-0">
+                    <div className="text-[#AE9573] text-[10px] tracking-widest uppercase font-bold truncate">{property.price}</div>
+                    <div className="text-[#23312D] text-sm font-semibold leading-tight truncate" style={{ fontFamily: 'var(--font-cinzel), serif' }}>{property.title}</div>
+                    <div className="flex items-center gap-1 text-[#5a5a5a] text-[10px] mt-0.5">
+                        <MapPin className="w-2.5 h-2.5 shrink-0" /><span className="truncate">{property.location}</span>
+                    </div>
+                </div>
+                <div className="shrink-0 ml-3 bg-[#AE9573] text-white text-[10px] tracking-widest uppercase font-bold px-4 py-2 flex items-center gap-1.5 rounded-sm">
+                    View <ArrowRight className="w-3 h-3" />
                 </div>
             </div>
         </motion.div>

@@ -1,15 +1,14 @@
 "use client";
 
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { MousePointer2, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 export default function LandingHero() {
     const containerRef = useRef(null);
     const { scrollY } = useScroll();
     const y1 = useTransform(scrollY, [0, 500], [0, 200]);
-    const opacity = useTransform(scrollY, [0, 300], [1, 0]);
     const scale = useTransform(scrollY, [0, 500], [1, 1.1]);
 
     return (
@@ -32,7 +31,7 @@ export default function LandingHero() {
             </motion.div>
 
             {/* Content */}
-            <div className="relative z-10 h-full flex flex-col items-center justify-center px-6 text-center pt-20 lg:pt-0">
+            <div className="relative z-30 h-full flex flex-col items-center justify-center px-6 text-center pt-20 lg:pt-0">
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -126,14 +125,7 @@ export default function LandingHero() {
                 </motion.div>
             </div>
 
-            {/* Floating Elements / Decorative */}
-            <motion.div
-                style={{ opacity }}
-                className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-4"
-            >
-                <div className="w-[1px] h-24 bg-gradient-to-b from-white to-transparent pointer-events-none" />
-                <span className="text-white/40 text-[10px] tracking-[0.5em] uppercase vertical-text pointer-events-none">Scroll To Discover</span>
-            </motion.div>
+
 
             {/* Side Accents */}
             <div className="absolute left-10 top-1/2 -translate-y-1/2 hidden xl:flex flex-col gap-8 opacity-20 pointer-events-none">
