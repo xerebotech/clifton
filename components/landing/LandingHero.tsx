@@ -113,7 +113,7 @@ export default function LandingHero() {
                             <span className="relative z-10 flex items-center justify-center gap-2 tracking-widest uppercase text-xs md:text-sm font-bold">
                                 Explore Collection <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                             </span>
-                            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+                            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 pointer-events-none" />
                         </Link>
 
                         <Link
@@ -131,15 +131,15 @@ export default function LandingHero() {
                 style={{ opacity }}
                 className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-4"
             >
-                <div className="w-[1px] h-24 bg-gradient-to-b from-white to-transparent" />
-                <span className="text-white/40 text-[10px] tracking-[0.5em] uppercase vertical-text">Scroll To Discover</span>
+                <div className="w-[1px] h-24 bg-gradient-to-b from-white to-transparent pointer-events-none" />
+                <span className="text-white/40 text-[10px] tracking-[0.5em] uppercase vertical-text pointer-events-none">Scroll To Discover</span>
             </motion.div>
 
             {/* Side Accents */}
-            <div className="absolute left-10 top-1/2 -translate-y-1/2 hidden xl:flex flex-col gap-8 opacity-20">
-                <div className="w-[2px] h-4 bg-white" />
-                <div className="w-[2px] h-4 bg-white" />
-                <div className="w-[2px] h-4 bg-white" />
+            <div className="absolute left-10 top-1/2 -translate-y-1/2 hidden xl:flex flex-col gap-8 opacity-20 pointer-events-none">
+                <div className="w-[2px] h-4 bg-white pointer-events-none" />
+                <div className="w-[2px] h-4 bg-white pointer-events-none" />
+                <div className="w-[2px] h-4 bg-white pointer-events-none" />
             </div>
         </section>
     );
