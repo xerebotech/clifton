@@ -1,19 +1,16 @@
 "use client";
 
 import React, { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { properties as staticProperties, Property } from '@/lib/propertiesData';
 import { fetchPropertiesFromSheet } from '@/lib/googleSheets';
-import { submitInquiry } from '@/lib/inquiryService';
 import { MapPin, Bed, Bath, Square, ArrowRight, X, User, Mail, Phone, Send, CheckCircle, Info, RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react';
-import PhoneInput from '../ui/PhoneInput';
 import PropertyPopup from '../properties/PropertyPopup';
 import { calcEMI, grossYield } from '../properties/utils';
+import { trackViewItemList, trackSelectItem, trackViewItem, trackAddToWishlist, toAnalyticsItem } from '@/lib/gtm';
 
 function PropertiesSectionContent() {
-    const searchParams = useSearchParams();
     const [properties, setProperties] = useState<Property[]>(staticProperties);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedType, setSelectedType] = useState('All');
@@ -28,6 +25,7 @@ function PropertiesSectionContent() {
             try {
                 const data = await fetchPropertiesFromSheet();
                 setProperties(data);
+                trackViewItemList('Landing Featured Properties', data.slice(0, 20).map(toAnalyticsItem));
             } catch (error) {
                 console.error("Failed to load dynamic properties:", error);
                 setProperties(staticProperties);
@@ -90,8 +88,21 @@ function PropertiesSectionContent() {
     const [savedIds, setSavedIds] = useState<string[]>([]);
 
     const handleToggleSave = (id: string) => {
-        setSavedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
+        setSavedIds(prev => {
+            const isAdding = !prev.includes(id);
+            if (isAdding) {
+                const prop = properties.find(p => p.id === id);
+                if (prop) trackAddToWishlist(toAnalyticsItem(prop), currency);
+            }
+            return isAdding ? [...prev, id] : prev.filter(i => i !== id);
+        });
     };
+
+    // Fire view_item whenever a property popup is shown (including prev/next navigation)
+    useEffect(() => {
+        if (selectedProperty) trackViewItem(toAnalyticsItem(selectedProperty), currency);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedProperty?.id]);
 
     const handlePrev = () => {
         if (!selectedProperty) return;
@@ -123,7 +134,7 @@ function PropertiesSectionContent() {
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
             totalPages={totalPages}
-            onOpenModal={(property: Property) => setSelectedProperty(property)}
+            onOpenModal={(property: Property) => { trackSelectItem('Landing Featured Properties', toAnalyticsItem(property)); setSelectedProperty(property); }}
             totalFiltered={filteredProperties.length}
             selectedProperty={selectedProperty}
             setSelectedProperty={setSelectedProperty}

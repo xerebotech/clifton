@@ -3,6 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { MessageCircle } from 'lucide-react';
+import { trackWhatsappClick } from '@/lib/gtm';
 
 export default function WhatsAppCTA() {
     const phoneNumber = "+971559304697"; // As seen in ContactSection
@@ -26,6 +27,7 @@ export default function WhatsAppCTA() {
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackWhatsappClick('floating_button')}
                 className="group relative flex items-center justify-center"
             >
                 {/* Ping Animation */}

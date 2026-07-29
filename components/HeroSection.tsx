@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
+import { trackCtaClick } from '@/lib/gtm';
 
 const slides = [
     {
@@ -73,6 +74,7 @@ export default function HeroSection() {
                         </p>
                         <Link
                             href="/contact-us"
+                            onClick={() => trackCtaClick('Contact Us', 'hero', '/contact-us')}
                             className="inline-block bg-[#AE9573] border-2 border-[#AE9573] text-[#23312D] hover:bg-transparent hover:text-white px-10 py-4 text-sm font-black tracking-[0.2em] uppercase transition-all duration-500 rounded-sm shadow-[0_10px_30px_rgba(0,0,0,0.3)]"
                         >
                             Contact Us

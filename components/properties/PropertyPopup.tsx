@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { fmt, calcEMI, grossYield, calcValues } from './utils';
-import { submitInquiry } from '@/lib/inquiryService';
+import { submitInquiry, isValidPhone, SUBMIT_ERROR_MESSAGE, PHONE_ERROR_MESSAGE } from '@/lib/inquiryService';
+import { useFormStart, trackFormError, trackCtaClick } from '@/lib/gtm';
 import PhoneInput from '../ui/PhoneInput';
 import ROITab from './ROITab';
 import CostsTab from './CostsTab';
@@ -48,6 +49,8 @@ export default function PropertyPopup({ p, allProperties, onClose, onPrev, onNex
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [analysisForm, setAnalysisForm] = useState({ firstName: '', lastName: '', email: '', phone: '' });
+    const [analysisError, setAnalysisError] = useState('');
+    const onAnalysisFormStart = useFormStart('property-modal-analysis-form');
 
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({ container: scrollContainerRef });
@@ -61,6 +64,13 @@ export default function PropertyPopup({ p, allProperties, onClose, onPrev, onNex
 
     const handleAnalysisSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!isValidPhone(analysisForm.phone)) {
+            setAnalysisError(PHONE_ERROR_MESSAGE);
+            trackFormError('property-modal-analysis-form', 'invalid_phone');
+            return;
+        }
+        setAnalysisError('');
         setIsSubmitting(true);
         const success = await submitInquiry({
             firstName: analysisForm.firstName,
@@ -69,11 +79,13 @@ export default function PropertyPopup({ p, allProperties, onClose, onPrev, onNex
             phone: analysisForm.phone,
             message: `Send Full Investment Analysis (PDF) for ${p.title}`,
             projectOrService: "Investment Analysis Request"
-        });
+        }, { formId: 'property-modal-analysis-form', propertyName: p?.title, buttonName: 'Send My Report' });
         setIsSubmitting(false);
         if (success) {
             setSubmitted(true);
             setTimeout(() => { onClose(); }, 3000);
+        } else {
+            setAnalysisError(SUBMIT_ERROR_MESSAGE);
         }
     };
 
@@ -274,7 +286,7 @@ export default function PropertyPopup({ p, allProperties, onClose, onPrev, onNex
                                     exit={{ opacity: 0, y: -8 }}
                                     transition={{ duration: 0.18 }}
                                 >
-                                    {activeTab === 'roi' && <ROITab calcValues={cv} currency={currency} onCurrencyChange={onCurrencyChange} calcMode={calcMode} setCalcMode={setCalcMode} dp={dp} setDp={setDp} rate={rate} setRate={setRate} term={term} setTerm={setTerm} app={app} setApp={setApp} vac={vac} setVac={setVac} />}
+                                    {activeTab === 'roi' && <ROITab calcValues={cv} currency={currency} onCurrencyChange={onCurrencyChange} calcMode={calcMode} setCalcMode={setCalcMode} dp={dp} setDp={setDp} rate={rate} setRate={setRate} term={term} setTerm={setTerm} app={app} setApp={setApp} vac={vac} setVac={setVac} propertyName={p?.title} />}
                                     {activeTab === 'costs' && <CostsTab calcValues={cv} currency={currency} />}
                                     {activeTab === 'location' && <LocationTab p={p} price={cv.price} currency={currency} />}
                                     {activeTab === 'compare' && <CompareTab currentProp={p} allProperties={allProperties} currency={currency} />}
@@ -288,7 +300,7 @@ export default function PropertyPopup({ p, allProperties, onClose, onPrev, onNex
                     <div className="sticky bottom-0 bg-[#f7f5f2] border-t border-[#23312D]/8 px-5 sm:px-7 py-4 sm:py-5 z-30 shadow-[0_-24px_48px_rgba(11,22,34,0.07)]">
                         {/* Primary CTA */}
                         <button
-                            onClick={() => setStrategyOpen(true)}
+                            onClick={() => { trackCtaClick('Book Free Strategy Session', 'property_popup_footer'); setStrategyOpen(true); }}
                             className="w-full flex items-center justify-between gap-3 bg-[#23312D] hover:bg-[#23312D] text-white font-bold py-4 px-6 rounded-2xl transition-all text-xs uppercase tracking-[0.14em] shadow-xl shadow-[#23312D]/20 active:scale-[0.98] group mb-3"
                         >
                             <div className="flex items-center gap-3">
@@ -302,7 +314,7 @@ export default function PropertyPopup({ p, allProperties, onClose, onPrev, onNex
 
                         {/* Secondary CTA */}
                         <button
-                            onClick={() => setEmailOpen(true)}
+                            onClick={() => { trackCtaClick('Send Full Investment Analysis (PDF)', 'property_popup_footer'); setEmailOpen(true); }}
                             className="w-full flex items-center justify-center gap-2 text-[10px] font-bold text-[#23312D]/50 uppercase tracking-[0.18em] hover:text-[#AE9573] transition-all group py-1"
                         >
                             <Mail className="w-3.5 h-3.5" />
@@ -362,7 +374,7 @@ export default function PropertyPopup({ p, allProperties, onClose, onPrev, onNex
                                             ROI projections, cost breakdown & area intelligence for{' '}
                                             <strong className="text-[#23312D]">{p?.title.split('—')[0]}</strong>.
                                         </p>
-                                        <form id="property-modal-inquiry-form" onSubmit={handleAnalysisSubmit} className="space-y-3.5">
+                                        <form id="property-modal-inquiry-form" onSubmit={handleAnalysisSubmit} onFocusCapture={onAnalysisFormStart} className="space-y-3.5">
                                             <div className="grid grid-cols-2 gap-3">
                                                 {[
                                                     { label: 'First Name', key: 'firstName', placeholder: 'John' },
@@ -392,6 +404,9 @@ export default function PropertyPopup({ p, allProperties, onClose, onPrev, onNex
                                                 <PhoneInput value={analysisForm.phone} onChange={val => setAnalysisForm({ ...analysisForm, phone: val })}
                                                     className="w-full h-11 bg-gray-50 border border-gray-100 rounded-xl focus-within:border-[#AE9573] transition-colors text-xs" />
                                             </div>
+                                            {analysisError && (
+                                                <p className="text-red-600 text-xs text-center" role="alert">{analysisError}</p>
+                                            )}
                                             <button disabled={isSubmitting} type="submit"
                                                 className="w-full bg-[#23312D] hover:bg-[#23312D] text-white font-bold py-4 rounded-xl text-xs uppercase tracking-[0.18em] transition-all shadow-lg shadow-[#23312D]/15 mt-1 flex items-center justify-center gap-3">
                                                 {isSubmitting

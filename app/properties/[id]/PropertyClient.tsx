@@ -4,8 +4,9 @@ import React, { useState, useEffect, Suspense, useMemo, useCallback } from 'reac
 import { motion } from 'framer-motion';
 import { Property } from '@/lib/propertiesData';
 import { fetchPropertiesFromSheet } from '@/lib/googleSheets';
-import { submitInquiry } from '@/lib/inquiryService';
-import { useParams, useSearchParams } from 'next/navigation';
+import { submitInquiry, isValidPhone, SUBMIT_ERROR_MESSAGE, PHONE_ERROR_MESSAGE } from '@/lib/inquiryService';
+import { useFormStart, trackFormError, trackCtaClick, trackViewItem, toAnalyticsItem } from '@/lib/gtm';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import {
     MapPin,
@@ -49,8 +50,9 @@ const TABS = [
 
 function PropertyDetailPageContent() {
     const params = useParams();
-    const searchParams = useSearchParams();
     const id = params?.id as string;
+    const onInquiryFormStart = useFormStart('property-detail-inquiry-form');
+    const onAnalysisFormStart = useFormStart('property-analysis-form');
     const [property, setProperty] = useState<Property | null>(null);
     const [loading, setLoading] = useState(true);
     const [allProperties, setAllProperties] = useState<Property[]>([]);
@@ -65,6 +67,7 @@ function PropertyDetailPageContent() {
     });
     const [submitted, setSubmitted] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState('');
 
     // Financial calculations state
     const [activeTab, setActiveTab] = useState('roi');
@@ -81,6 +84,7 @@ function PropertyDetailPageContent() {
     const [strategyOpen, setStrategyOpen] = useState(false);
     const [analysisSubmitted, setAnalysisSubmitted] = useState(false);
     const [analysisIsSubmitting, setAnalysisIsSubmitting] = useState(false);
+    const [analysisError, setAnalysisError] = useState('');
     const [analysisForm, setAnalysisForm] = useState({
         firstName: "",
         lastName: "",
@@ -109,6 +113,7 @@ function PropertyDetailPageContent() {
                 setProperty(found);
                 setCurrentImageIndex(0);
                 if (found.appreciation) setApp(found.appreciation);
+                trackViewItem(toAnalyticsItem(found));
             }
             setLoading(false);
         };
@@ -119,15 +124,14 @@ function PropertyDetailPageContent() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsSubmitting(true);
 
-        const utmParams = {
-            utm_source: searchParams.get('utm_source') || '',
-            utm_medium: searchParams.get('utm_medium') || '',
-            utm_campaign: searchParams.get('utm_campaign') || '',
-            utm_term: searchParams.get('utm_term') || '',
-            utm_content: searchParams.get('utm_content') || '',
-        };
+        if (!isValidPhone(formData.phone)) {
+            setError(PHONE_ERROR_MESSAGE);
+            trackFormError('property-detail-inquiry-form', 'invalid_phone');
+            return;
+        }
+        setError('');
+        setIsSubmitting(true);
 
         const success = await submitInquiry({
             firstName: formData.firstName,
@@ -136,8 +140,7 @@ function PropertyDetailPageContent() {
             phone: formData.phone,
             message: formData.message,
             projectOrService: `Property Enquiry: ${property?.title || id}`,
-            ...utmParams
-        });
+        }, { formId: 'property-detail-inquiry-form', propertyName: property?.title, buttonName: 'Send Inquiry' });
 
         setIsSubmitting(false);
         if (success) {
@@ -150,11 +153,20 @@ function PropertyDetailPageContent() {
                 phone: "",
                 message: "I'm interested in this property. Please contact me with more details."
             });
+        } else {
+            setError(SUBMIT_ERROR_MESSAGE);
         }
     };
 
     const handleAnalysisSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!isValidPhone(analysisForm.phone)) {
+            setAnalysisError(PHONE_ERROR_MESSAGE);
+            trackFormError('property-analysis-form', 'invalid_phone');
+            return;
+        }
+        setAnalysisError('');
         setAnalysisIsSubmitting(true);
 
         const success = await submitInquiry({
@@ -164,7 +176,7 @@ function PropertyDetailPageContent() {
             phone: analysisForm.phone,
             message: `Send Full Investment Analysis (PDF) for ${property?.title}`,
             projectOrService: "Investment Analysis Request"
-        });
+        }, { formId: 'property-analysis-form', propertyName: property?.title, buttonName: 'Send My Report' });
 
         setAnalysisIsSubmitting(false);
         if (success) {
@@ -173,6 +185,8 @@ function PropertyDetailPageContent() {
                 setEmailOpen(false);
                 setAnalysisSubmitted(false);
             }, 3000);
+        } else {
+            setAnalysisError(SUBMIT_ERROR_MESSAGE);
         }
     };
 
@@ -343,7 +357,7 @@ function PropertyDetailPageContent() {
                                 <div className="p-8">
                                     {cv && (
                                         <>
-                                            {activeTab === 'roi' && <ROITab calcValues={cv} currency={currency} onCurrencyChange={setCurrency} calcMode={calcMode} setCalcMode={setCalcMode} dp={dp} setDp={setDp} rate={rate} setRate={setRate} term={term} setTerm={setTerm} app={app} setApp={setApp} vac={vac} setVac={setVac} />}
+                                            {activeTab === 'roi' && <ROITab calcValues={cv} currency={currency} onCurrencyChange={setCurrency} calcMode={calcMode} setCalcMode={setCalcMode} dp={dp} setDp={setDp} rate={rate} setRate={setRate} term={term} setTerm={setTerm} app={app} setApp={setApp} vac={vac} setVac={setVac} propertyName={property?.title} />}
                                             {activeTab === 'costs' && <CostsTab calcValues={cv} currency={currency} />}
                                             {activeTab === 'location' && <LocationTab p={property} price={cv.price} currency={currency} />}
                                             {activeTab === 'compare' && <CompareTab currentProp={property} allProperties={allProperties} currency={currency} />}
@@ -402,7 +416,7 @@ function PropertyDetailPageContent() {
                                             <h3 className="text-2xl text-[#23312D] mb-8" style={{ fontFamily: 'var(--font-cinzel), serif' }}>
                                                 Enquire About This Property
                                             </h3>
-                                            <form id="property-detail-inquiry-form" onSubmit={handleSubmit} className="space-y-6">
+                                            <form id="property-detail-inquiry-form" onSubmit={handleSubmit} onFocusCapture={onInquiryFormStart} className="space-y-6">
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <div className="relative">
                                                         <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -451,6 +465,9 @@ function PropertyDetailPageContent() {
                                                     rows={4}
                                                     className="w-full p-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white resize-none text-[#23312D] placeholder:text-[#23312D]/50 min-h-[120px]"
                                                 />
+                                                {error && (
+                                                    <p className="text-red-600 text-sm text-center" role="alert">{error}</p>
+                                                )}
                                                 <button
                                                     type="submit"
                                                     disabled={isSubmitting}
@@ -475,10 +492,10 @@ function PropertyDetailPageContent() {
 
                                 {/* Action Sidebar integration */}
                                 <div className="mt-8 space-y-4 pt-8 border-t border-[#e8e6e3]">
-                                    <button onClick={() => setStrategyOpen(true)} className="w-full flex items-center justify-center gap-3 bg-[#1a2622] hover:bg-[#00594F] text-white font-bold py-5 rounded-none transition-all text-xs uppercase tracking-widest shadow-lg active:scale-[0.98]">
+                                    <button onClick={() => { trackCtaClick('Book Strategy Session', 'property_detail_sidebar'); setStrategyOpen(true); }} className="w-full flex items-center justify-center gap-3 bg-[#1a2622] hover:bg-[#00594F] text-white font-bold py-5 rounded-none transition-all text-xs uppercase tracking-widest shadow-lg active:scale-[0.98]">
                                         <Calendar className="w-4 h-4" /> Book Strategy Session
                                     </button>
-                                    <button onClick={() => setEmailOpen(true)} className="w-full text-[10px] font-bold text-[#AE9573] uppercase tracking-widest hover:text-[#00594F] transition-all flex items-center justify-center gap-2 group py-2">
+                                    <button onClick={() => { trackCtaClick('Send Full Investment Analysis (PDF)', 'property_detail_sidebar'); setEmailOpen(true); }} className="w-full text-[10px] font-bold text-[#AE9573] uppercase tracking-widest hover:text-[#00594F] transition-all flex items-center justify-center gap-2 group py-2">
                                         <Mail className="w-3.5 h-3.5" /> Send Full Investment Analysis (PDF) <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                                     </button>
                                 </div>
@@ -537,7 +554,7 @@ function PropertyDetailPageContent() {
                                 <p className="text-[11px] text-gray-500 text-center mb-8 font-medium leading-relaxed">
                                     A detailed breakdown including ROI projections, cost analysis, and area intelligence for <strong>{property?.title}</strong>.
                                 </p>
-                                <form onSubmit={handleAnalysisSubmit} className="space-y-4">
+                                <form id="property-analysis-form" onSubmit={handleAnalysisSubmit} onFocusCapture={onAnalysisFormStart} className="space-y-4">
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-1">
                                             <label className="text-[9px] font-bold text-gray-400 uppercase tracking-widest ml-1">First Name</label>
@@ -556,6 +573,9 @@ function PropertyDetailPageContent() {
                                         <label className="text-[9px] font-bold text-gray-400 uppercase tracking-widest ml-1">Phone Number</label>
                                         <PhoneInput value={analysisForm.phone} onChange={val => setAnalysisForm({ ...analysisForm, phone: val })} className="w-full h-11 bg-gray-50 border border-gray-100 rounded-none focus-within:border-[#AE9573] transition-colors text-xs" />
                                     </div>
+                                    {analysisError && (
+                                        <p className="text-red-600 text-sm text-center" role="alert">{analysisError}</p>
+                                    )}
                                     <button disabled={analysisIsSubmitting} type="submit" className="w-full bg-[#1a2622] hover:bg-black text-white font-bold py-4 rounded-none text-xs uppercase tracking-[0.2em] transition-all shadow-xl mt-2 flex items-center justify-center gap-3">
                                         {analysisIsSubmitting ? <><RefreshCw className="w-4 h-4 animate-spin" /> Sending...</> : 'Send My Report'}
                                     </button>

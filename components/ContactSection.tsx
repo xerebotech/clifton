@@ -2,18 +2,19 @@
 
 import React, { useState, useRef, Suspense } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
-import { useSearchParams } from 'next/navigation';
-import { submitInquiry } from '@/lib/inquiryService';
+import { submitInquiry, isValidPhone, SUBMIT_ERROR_MESSAGE, PHONE_ERROR_MESSAGE } from '@/lib/inquiryService';
+import { useFormStart, trackFormError } from '@/lib/gtm';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle, RefreshCw } from 'lucide-react';
 import PhoneInput from './ui/PhoneInput';
 
 function ContactSectionContent() {
-    const searchParams = useSearchParams();
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true, margin: "-100px" });
+    const onFormStart = useFormStart('home-contact-form');
     const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', phone: '', service: '', message: '' });
     const [submitted, setSubmitted] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState('');
 
     // GTM tracking function
     const trackClick = (type: string, value: string) => {
@@ -28,15 +29,14 @@ function ContactSectionContent() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsSubmitting(true);
 
-        const utmParams = {
-            utm_source: searchParams.get('utm_source') || '',
-            utm_medium: searchParams.get('utm_medium') || '',
-            utm_campaign: searchParams.get('utm_campaign') || '',
-            utm_term: searchParams.get('utm_term') || '',
-            utm_content: searchParams.get('utm_content') || '',
-        };
+        if (!isValidPhone(formData.phone)) {
+            setError(PHONE_ERROR_MESSAGE);
+            trackFormError('home-contact-form', 'invalid_phone');
+            return;
+        }
+        setError('');
+        setIsSubmitting(true);
 
         const success = await submitInquiry({
             firstName: formData.firstName,
@@ -45,14 +45,15 @@ function ContactSectionContent() {
             phone: formData.phone,
             message: formData.message,
             projectOrService: formData.service || "General Inquiry",
-            ...utmParams
-        });
+        }, { formId: 'home-contact-form', buttonName: 'Send Message' });
 
         setIsSubmitting(false);
         if (success) {
             setSubmitted(true);
             setTimeout(() => setSubmitted(false), 3000);
             setFormData({ firstName: '', lastName: '', email: '', phone: '', service: '', message: '' });
+        } else {
+            setError(SUBMIT_ERROR_MESSAGE);
         }
     };
 
@@ -173,6 +174,7 @@ function ContactSectionContent() {
                                         id="home-contact-form"
                                         key="form"
                                         onSubmit={handleSubmit}
+                                        onFocusCapture={onFormStart}
                                         className="space-y-6"
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
@@ -241,6 +243,9 @@ function ContactSectionContent() {
                                             required
                                             className="w-full min-h-[150px] p-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-transparent resize-none text-[#23312D] placeholder:text-[#23312D]/50"
                                         />
+                                        {error && (
+                                            <p className="text-red-600 text-sm text-center" role="alert">{error}</p>
+                                        )}
                                         <button
                                             type="submit"
                                             disabled={isSubmitting}
