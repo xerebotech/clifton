@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Cookie, X, ShieldCheck } from "lucide-react";
+import { trackConsent } from "@/lib/gtm";
 
 export default function CookieBanner() {
     const [isVisible, setIsVisible] = useState(false);
@@ -86,6 +87,13 @@ export default function CookieBanner() {
         }
 
         localStorage.setItem("clifton-cookie-consent", JSON.stringify(consentData));
+
+        trackConsent(
+            type,
+            consentData.analytics_storage === "granted",
+            consentData.ad_storage === "granted",
+        );
+
         setIsVisible(false);
         setShowSettings(false);
     };

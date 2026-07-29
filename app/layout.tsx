@@ -81,6 +81,8 @@ const jsonLd = {
 import MainLayout from "@/components/MainLayout";
 import GoogleTagManager from "@/components/GoogleTagManager";
 import GTMPageTracker from "@/components/GTMPageTracker";
+import AttributionCapture from "@/components/AttributionCapture";
+import EngagementTracker from "@/components/EngagementTracker";
 import CookieBanner from "@/components/ui/CookieBanner";
 
 export default function RootLayout({
@@ -89,7 +91,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <GoogleTagManager />
         <script
@@ -111,6 +113,8 @@ export default function RootLayout({
         </noscript>
         {/* End Google Tag Manager (noscript) */}
         <GTMPageTracker />
+        <AttributionCapture />
+        <EngagementTracker />
         <MainLayout>{children}</MainLayout>
         <CookieBanner />
       </body>

@@ -1,4 +1,6 @@
+import { useRef } from 'react';
 import { fmt, currenciesMap, CalcValues } from './utils';
+import { trackRoiCalculatorUse } from '@/lib/gtm';
 import { Building2, Banknote } from 'lucide-react';
 
 interface ROITabProps {
@@ -17,13 +19,21 @@ interface ROITabProps {
     setApp: (v: number) => void;
     vac: number;
     setVac: (v: number) => void;
+    propertyName?: string;
 }
 
 export default function ROITab({
     calcValues, currency, onCurrencyChange, calcMode, setCalcMode,
-    dp, setDp, rate, setRate, term, setTerm, app, setApp, vac, setVac
+    dp, setDp, rate, setRate, term, setTerm, app, setApp, vac, setVac, propertyName
 }: ROITabProps) {
     const f = (n: number) => fmt(n, currency);
+
+    // Debounce slider tracking so dragging fires one event, not dozens.
+    const roiTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const fireRoi = (field: string, value: number | string) => {
+        if (roiTimer.current) clearTimeout(roiTimer.current);
+        roiTimer.current = setTimeout(() => trackRoiCalculatorUse(field, value, propertyName), 600);
+    };
 
     return (
         <div className="space-y-8">
@@ -31,13 +41,13 @@ export default function ROITab({
             <div className="flex gap-2 p-1 bg-gray-100 rounded-xl w-fit">
                 <button
                     className={`flex items-center gap-2 px-6 py-2 rounded-lg text-xs font-bold transition-all ${calcMode === 'mortgage' ? 'bg-white shadow-sm text-navy' : 'text-gray-400 hover:text-navy'}`}
-                    onClick={() => setCalcMode('mortgage')}
+                    onClick={() => { setCalcMode('mortgage'); fireRoi('mode', 'mortgage'); }}
                 >
                     <Building2 className="w-3.5 h-3.5" /> Mortgage
                 </button>
                 <button
                     className={`flex items-center gap-2 px-6 py-2 rounded-lg text-xs font-bold transition-all ${calcMode === 'cash' ? 'bg-white shadow-sm text-navy' : 'text-gray-400 hover:text-navy'}`}
-                    onClick={() => setCalcMode('cash')}
+                    onClick={() => { setCalcMode('cash'); fireRoi('mode', 'cash'); }}
                 >
                     <Banknote className="w-3.5 h-3.5" /> Cash
                 </button>
@@ -49,7 +59,7 @@ export default function ROITab({
                     <button
                         key={c}
                         className={`px-4 py-1.5 rounded-lg border text-[11px] font-bold transition-all ${c === currency ? 'bg-navy border-navy text-white shadow-md' : 'bg-white border-gray-200 text-gray-500 hover:border-copper'}`}
-                        onClick={() => onCurrencyChange(c)}
+                        onClick={() => { onCurrencyChange(c); fireRoi('currency', c); }}
                     >
                         {c}
                     </button>
@@ -72,7 +82,7 @@ export default function ROITab({
                             </div>
                             <input
                                 type="range" min={s.min} max={s.max} step={s.step} value={s.val}
-                                onChange={e => s.setter(parseFloat(e.target.value))}
+                                onChange={e => { const v = parseFloat(e.target.value); s.setter(v); fireRoi(s.label, v); }}
                                 className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-copper"
                             />
                         </div>
@@ -91,7 +101,7 @@ export default function ROITab({
                             </div>
                             <input
                                 type="range" min={s.min} max={s.max} step={s.step} value={s.val}
-                                onChange={e => s.setter(parseFloat(e.target.value))}
+                                onChange={e => { const v = parseFloat(e.target.value); s.setter(v); fireRoi(s.label, v); }}
                                 className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-copper"
                             />
                         </div>

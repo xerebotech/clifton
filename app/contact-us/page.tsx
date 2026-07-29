@@ -5,7 +5,8 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle, RefreshCw } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
-import { submitInquiry } from '@/lib/inquiryService';
+import { submitInquiry, isValidPhone, SUBMIT_ERROR_MESSAGE, PHONE_ERROR_MESSAGE } from '@/lib/inquiryService';
+import { useFormStart, trackFormError } from '@/lib/gtm';
 import PhoneInput from '../../components/ui/PhoneInput';
 
 const contactInfo = [
@@ -47,6 +48,7 @@ export default function Contact() {
 function ContactContent() {
     const searchParams = useSearchParams();
     const serviceParam = searchParams.get('service');
+    const onFormStart = useFormStart('contact-page-form');
 
     // GTM tracking function
     const trackClick = (type: string, value: string) => {
@@ -76,18 +78,18 @@ function ContactContent() {
 
     const [submitted, setSubmitted] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState('');
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsSubmitting(true);
 
-        const utmParams = {
-            utm_source: searchParams.get('utm_source') || '',
-            utm_medium: searchParams.get('utm_medium') || '',
-            utm_campaign: searchParams.get('utm_campaign') || '',
-            utm_term: searchParams.get('utm_term') || '',
-            utm_content: searchParams.get('utm_content') || '',
-        };
+        if (!isValidPhone(formData.phone)) {
+            setError(PHONE_ERROR_MESSAGE);
+            trackFormError('contact-page-form', 'invalid_phone');
+            return;
+        }
+        setError('');
+        setIsSubmitting(true);
 
         const success = await submitInquiry({
             firstName: formData.firstName,
@@ -96,14 +98,15 @@ function ContactContent() {
             phone: formData.phone,
             message: formData.message,
             projectOrService: formData.service || "General Inquiry (Contact Page)",
-            ...utmParams
-        });
+        }, { formId: 'contact-page-form', buttonName: 'Send Message' });
 
         setIsSubmitting(false);
         if (success) {
             setSubmitted(true);
             setTimeout(() => setSubmitted(false), 3000);
             setFormData({ firstName: '', lastName: '', email: '', phone: '', service: '', message: '' });
+        } else {
+            setError(SUBMIT_ERROR_MESSAGE);
         }
     };
 
@@ -207,7 +210,7 @@ function ContactContent() {
                                     <p className="text-[#A5A19D] mt-2">We&apos;ll get back to you shortly.</p>
                                 </motion.div>
                             ) : (
-                                <form id="contact-page-form" onSubmit={handleSubmit} className="bg-white p-10 shadow-lg space-y-6">
+                                <form id="contact-page-form" onSubmit={handleSubmit} onFocusCapture={onFormStart} className="bg-white p-10 shadow-lg space-y-6">
                                     <div className="grid md:grid-cols-2 gap-6">
                                         <div>
                                             <label className="text-sm text-[#23312D] mb-2 block font-medium">First Name *</label>
@@ -247,7 +250,7 @@ function ContactContent() {
                                             />
                                         </div>
                                         <div>
-                                            <label className="text-sm text-[#23312D] mb-2 block font-medium">Phone Number</label>
+                                            <label className="text-sm text-[#23312D] mb-2 block font-medium">Phone Number *</label>
                                             <PhoneInput
                                                 value={formData.phone}
                                                 onChange={(phone) => setFormData({ ...formData, phone })}
@@ -281,6 +284,9 @@ function ContactContent() {
                                             className="w-full min-h-[150px] p-4 border border-[#e8e6e3] focus:border-[#00594F] focus:outline-none rounded-none bg-white resize-none text-[#23312D] placeholder:text-[#23312D]/50"
                                         />
                                     </div>
+                                    {error && (
+                                        <p className="text-red-600 text-sm text-center" role="alert">{error}</p>
+                                    )}
                                     <button
                                         type="submit"
                                         disabled={isSubmitting}

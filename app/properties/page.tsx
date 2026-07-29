@@ -4,6 +4,7 @@ import { Property } from '@/lib/propertiesData';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fmt, calcEMI, grossYield } from '@/components/properties/utils';
+import { trackViewItemList, trackSelectItem, toAnalyticsItem } from '@/lib/gtm';
 import { Landmark, Gem, ShieldCheck, Plane, LayoutGrid, Star, TrendingUp, Wallet, ChevronRight } from 'lucide-react';
 
 const filterTypes = ['All', 'Apartment', 'Villa', 'Penthouse', 'Off-Plan'];
@@ -24,7 +25,9 @@ export default function InvestmentPropertiesPage() {
                 const all = await fetchPropertiesFromSheet();
                 // Filter to only investment properties (those with priceNumeric set)
                 const inv = all.filter(p => p.priceNumeric && p.priceNumeric > 0);
-                setProperties(inv.length > 0 ? inv : all);
+                const shown = inv.length > 0 ? inv : all;
+                setProperties(shown);
+                trackViewItemList('Investment Properties', shown.slice(0, 20).map(toAnalyticsItem));
             } catch {
                 const { properties: fallback } = await import('@/lib/propertiesData');
                 setProperties(fallback);
@@ -154,7 +157,7 @@ export default function InvestmentPropertiesPage() {
                             const imgs = p.gallery && p.gallery.length > 0 ? p.gallery : [p.image];
 
                             return (
-                                <Link href={`/properties/${p.id}`} key={p.id}>
+                                <Link href={`/properties/${p.id}`} key={p.id} onClick={() => trackSelectItem('Investment Properties', toAnalyticsItem(p))}>
                                     <motion.div
                                         layout
                                         initial={{ opacity: 0, scale: 0.9 }}

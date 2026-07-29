@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, Send, CheckCircle, RefreshCw, ArrowRight } from 'lucide-react';
-import { submitInquiry } from '@/lib/inquiryService';
+import { submitInquiry, isValidPhone, SUBMIT_ERROR_MESSAGE, PHONE_ERROR_MESSAGE } from '@/lib/inquiryService';
+import { useFormStart, trackFormError } from '@/lib/gtm';
 import PhoneInput from '../ui/PhoneInput';
 
 interface StrategySessionModalProps {
@@ -22,9 +23,18 @@ export default function StrategySessionModal({ isOpen, onClose, propertyName }: 
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
+    const [error, setError] = useState('');
+    const onFormStart = useFormStart('strategy-session-form');
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!isValidPhone(formData.phone)) {
+            setError(PHONE_ERROR_MESSAGE);
+            trackFormError('strategy-session-form', 'invalid_phone');
+            return;
+        }
+        setError('');
         setIsSubmitting(true);
 
         const success = await submitInquiry({
@@ -34,11 +44,13 @@ export default function StrategySessionModal({ isOpen, onClose, propertyName }: 
             phone: formData.phone,
             message: formData.message,
             projectOrService: "Strategy Session"
-        });
+        }, { formId: 'strategy-session-form', propertyName, buttonName: 'Book Strategy Session' });
 
         setIsSubmitting(false);
         if (success) {
             setSubmitted(true);
+        } else {
+            setError(SUBMIT_ERROR_MESSAGE);
         }
     };
 
@@ -95,7 +107,7 @@ export default function StrategySessionModal({ isOpen, onClose, propertyName }: 
                                     <p className="text-xs text-gray-400 font-medium tracking-wide uppercase">Private Investment Consultation</p>
                                 </div>
 
-                                <form onSubmit={handleSubmit} className="space-y-4">
+                                <form id="strategy-session-form" onSubmit={handleSubmit} onFocusCapture={onFormStart} className="space-y-4">
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-1.5">
                                             <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">First Name</label>
@@ -142,6 +154,9 @@ export default function StrategySessionModal({ isOpen, onClose, propertyName }: 
                                         />
                                     </div>
 
+                                    {error && (
+                                        <p className="text-red-600 text-sm text-center" role="alert">{error}</p>
+                                    )}
                                     <button
                                         type="submit"
                                         disabled={isSubmitting}

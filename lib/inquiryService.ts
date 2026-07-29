@@ -1,8 +1,12 @@
 /**
- * Service to handle inquiry submissions to Google Sheets
+ * Service to submit inquiries. The lead is created in Frappe CRM via the
+ * server-side /api/lead proxy (which holds the Frappe credentials); attribution
+ * (UTMs, ad click-ids) is attached here from the first-party cookie, and the
+ * GA4 `generate_lead` event fires on success.
  */
 
-const INQUIRY_SCRIPT_URL = process.env.NEXT_PUBLIC_INQUIRY_SCRIPT_URL || "";
+import { trackLead, trackFormError } from './gtm';
+import { getAttribution } from './attribution';
 
 export interface InquiryData {
     firstName: string;
@@ -11,27 +15,32 @@ export interface InquiryData {
     phone: string;
     projectOrService: string;
     message: string;
-    utm_source?: string;
-    utm_medium?: string;
-    utm_campaign?: string;
-    utm_term?: string;
-    utm_content?: string;
 }
 
-export async function submitInquiry(data: InquiryData): Promise<boolean> {
+/** Shared error copy shown when a submission fails. */
+export const SUBMIT_ERROR_MESSAGE =
+    "Something went wrong. Please try again or call us at +971 55 930 4697.";
+export const PHONE_ERROR_MESSAGE = "Please enter a valid phone number.";
 
-    if (!INQUIRY_SCRIPT_URL) {
-        console.error("CRITICAL: Inquiry script URL is missing! Check your environment variables.");
-        return false;
-    }
+/** A usable phone needs at least 8 digits (the CRM requires mobile_no). */
+export function isValidPhone(phone: string): boolean {
+    return (phone || '').replace(/\D/g, '').length >= 8;
+}
 
+export interface InquiryTracking {
+    /** Stable form identifier for the generate_lead event, e.g. 'home-contact-form' */
+    formId: string;
+    /** Property title when the lead is tied to a listing */
+    propertyName?: string;
+    /** Label of the CTA the visitor used, e.g. 'Book Strategy Session' */
+    buttonName?: string;
+}
+
+export async function submitInquiry(data: InquiryData, tracking?: InquiryTracking): Promise<boolean> {
     try {
-        const response = await fetch(INQUIRY_SCRIPT_URL, {
+        const res = await fetch('/api/lead', {
             method: 'POST',
-            mode: 'no-cors',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 firstName: data.firstName,
                 lastName: data.lastName,
@@ -39,18 +48,41 @@ export async function submitInquiry(data: InquiryData): Promise<boolean> {
                 phone: data.phone,
                 projectOrService: data.projectOrService,
                 message: data.message,
-                utm_source: data.utm_source || "",
-                utm_medium: data.utm_medium || "",
-                utm_campaign: data.utm_campaign || "",
-                utm_term: data.utm_term || "",
-                utm_content: data.utm_content || "",
-                timestamp: new Date().toISOString()
-            })
+                propertyName: tracking?.propertyName || '',
+                formId: tracking?.formId || '',
+                buttonName: tracking?.buttonName || '',
+                pagePath: typeof window !== 'undefined' ? window.location.pathname : '',
+                attribution: getAttribution(),
+            }),
         });
+
+        if (!res.ok) {
+            console.error('Lead submission failed:', res.status);
+            if (tracking?.formId) trackFormError(tracking.formId, 'submit_failed');
+            return false;
+        }
+
+        // Marketing attribution/reporting is handled via GTM/GA4 — fire the
+        // conversion event centrally so no individual form can forget it.
+        if (tracking?.formId) {
+            trackLead({
+                formId: tracking.formId,
+                leadType: data.projectOrService,
+                propertyName: tracking.propertyName,
+                // For Enhanced Conversions / CAPI only — route to Ads/Meta tags, never GA4.
+                userData: {
+                    email: data.email,
+                    phone: data.phone,
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                },
+            });
+        }
 
         return true;
     } catch (error) {
-        console.error("Error submitting inquiry:", error);
+        console.error('Error submitting inquiry:', error);
+        if (tracking?.formId) trackFormError(tracking.formId, 'submit_failed');
         return false;
     }
 }

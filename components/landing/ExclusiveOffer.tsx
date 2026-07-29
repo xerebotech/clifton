@@ -3,13 +3,13 @@
 import React, { Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Mail } from 'lucide-react';
-import { useSearchParams } from 'next/navigation';
-import { submitInquiry } from '@/lib/inquiryService';
+import { submitInquiry, isValidPhone, SUBMIT_ERROR_MESSAGE, PHONE_ERROR_MESSAGE } from '@/lib/inquiryService';
+import { useFormStart, trackFormError, trackFormStep } from '@/lib/gtm';
 import Link from 'next/link';
 import PhoneInput from '../ui/PhoneInput';
 
 function ExclusiveOfferContent() {
-    const searchParams = useSearchParams();
+    const onFormStart = useFormStart('exclusive-offer-form');
     const [step, setStep] = React.useState(1);
     const [email, setEmail] = React.useState('');
     const [firstName, setFirstName] = React.useState('');
@@ -17,6 +17,7 @@ function ExclusiveOfferContent() {
     const [phone, setPhone] = React.useState('');
     const [isSubmitting, setIsSubmitting] = React.useState(false);
     const [submitted, setSubmitted] = React.useState(false);
+    const [error, setError] = React.useState('');
 
     // GTM tracking function
     const trackClick = (type: string, value: string) => {
@@ -31,20 +32,22 @@ function ExclusiveOfferContent() {
 
     const handleNextStep = (e: React.FormEvent) => {
         e.preventDefault();
-        if (email) setStep(2);
+        if (email) {
+            setStep(2);
+            trackFormStep('exclusive-offer-form', 2);
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsSubmitting(true);
 
-        const utmParams = {
-            utm_source: searchParams.get('utm_source') || '',
-            utm_medium: searchParams.get('utm_medium') || '',
-            utm_campaign: searchParams.get('utm_campaign') || '',
-            utm_term: searchParams.get('utm_term') || '',
-            utm_content: searchParams.get('utm_content') || '',
-        };
+        if (!isValidPhone(phone)) {
+            setError(PHONE_ERROR_MESSAGE);
+            trackFormError('exclusive-offer-form', 'invalid_phone');
+            return;
+        }
+        setError('');
+        setIsSubmitting(true);
 
         const success = await submitInquiry({
             firstName,
@@ -53,12 +56,13 @@ function ExclusiveOfferContent() {
             phone,
             message: "Exclusive Offer Access Request",
             projectOrService: "Exclusive Offer",
-            ...utmParams
-        });
+        }, { formId: 'exclusive-offer-form', buttonName: 'Request Access' });
 
         setIsSubmitting(false);
         if (success) {
             setSubmitted(true);
+        } else {
+            setError(SUBMIT_ERROR_MESSAGE);
         }
     };
 
@@ -103,7 +107,7 @@ function ExclusiveOfferContent() {
                                 </motion.div>
                             ) : (
                                 <div className="w-full max-w-xl">
-                                    <form id="exclusive-offer-form" onSubmit={step === 1 ? handleNextStep : handleSubmit} className="flex flex-col gap-6">
+                                    <form id="exclusive-offer-form" onSubmit={step === 1 ? handleNextStep : handleSubmit} onFocusCapture={onFormStart} className="flex flex-col gap-6">
                                         <div className="relative overflow-hidden">
                                             <AnimatePresence mode="wait">
                                                 {step === 1 ? (
@@ -173,6 +177,9 @@ function ExclusiveOfferContent() {
                                                 )}
                                             </AnimatePresence>
                                         </div>
+                                        {error && (
+                                            <p className="text-red-300 text-sm text-center" role="alert">{error}</p>
+                                        )}
                                     </form>
                                 </div>
                             )}
