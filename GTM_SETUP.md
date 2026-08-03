@@ -128,8 +128,8 @@ user_data: {
 - Gate the Google Ads / Meta tags on **`ad_storage` = granted** (Consent Mode already
   tracks this; see the `consent_update` event).
 
-The lead's identity is also stored in **Frappe CRM** (via the server `/api/lead` route) —
-that, not GTM/GA4, is where you view individual leads.
+The lead's identity is also stored in **Frappe CRM** (posted straight from the browser to
+the CRM's public `web_lead` endpoint) — that, not GTM/GA4, is where you view individual leads.
 
 ## 6. Testing
 
@@ -138,4 +138,4 @@ that, not GTM/GA4, is where you view individual leads.
 3. Confirm each event appears in Tag Assistant's dataLayer panel with the expected params, and that the GA4 tags fire.
 4. Cross-check in **GA4 → Realtime → Events**.
 
-> Attribution note: UTMs are **not** sent on form events — GA4/GTM already tie the session to its original UTM source from the landing `page_view`. The CRM lead separately stores raw UTM/ad values (captured first-party in the `clf_attribution` cookie and sent server-side via `/api/lead`).
+> Attribution note: UTMs are **not** sent on form events — GA4/GTM already tie the session to its original UTM source from the landing `page_view`. The CRM lead separately stores raw UTM/ad values (captured first-party in the `clf_attribution` cookie and sent with the lead to the CRM's `web_lead` endpoint).

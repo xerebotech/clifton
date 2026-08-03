@@ -6,6 +6,7 @@ import { submitInquiry, isValidPhone, SUBMIT_ERROR_MESSAGE, PHONE_ERROR_MESSAGE 
 import { useFormStart, trackFormError } from '@/lib/gtm';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle, RefreshCw } from 'lucide-react';
 import PhoneInput from './ui/PhoneInput';
+import HoneypotField from './ui/HoneypotField';
 
 function ContactSectionContent() {
     const ref = useRef(null);
@@ -180,6 +181,7 @@ function ContactSectionContent() {
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
                                     >
+                                        <HoneypotField />
                                         <div className="grid md:grid-cols-2 gap-6">
                                             <input
                                                 id="contact-first-name"

@@ -3,6 +3,7 @@ import { fmt, calcEMI, grossYield, calcValues } from './utils';
 import { submitInquiry, isValidPhone, SUBMIT_ERROR_MESSAGE, PHONE_ERROR_MESSAGE } from '@/lib/inquiryService';
 import { useFormStart, trackFormError, trackCtaClick } from '@/lib/gtm';
 import PhoneInput from '../ui/PhoneInput';
+import HoneypotField from '../ui/HoneypotField';
 import ROITab from './ROITab';
 import CostsTab from './CostsTab';
 import { LocationTab, CompareTab, TrustTab } from './OtherTabs';
@@ -374,7 +375,8 @@ export default function PropertyPopup({ p, allProperties, onClose, onPrev, onNex
                                             ROI projections, cost breakdown & area intelligence for{' '}
                                             <strong className="text-[#23312D]">{p?.title.split('—')[0]}</strong>.
                                         </p>
-                                        <form id="property-modal-inquiry-form" onSubmit={handleAnalysisSubmit} onFocusCapture={onAnalysisFormStart} className="space-y-3.5">
+                                        <form id="property-modal-analysis-form" onSubmit={handleAnalysisSubmit} onFocusCapture={onAnalysisFormStart} className="space-y-3.5">
+                                            <HoneypotField />
                                             <div className="grid grid-cols-2 gap-3">
                                                 {[
                                                     { label: 'First Name', key: 'firstName', placeholder: 'John' },

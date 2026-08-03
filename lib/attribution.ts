@@ -15,6 +15,8 @@
  * the raw source values on each lead inside Frappe CRM.
  */
 
+import { readCookie, writeCookie } from './cookies';
+
 export interface Attribution {
     utm_source?: string;
     utm_medium?: string;
@@ -41,18 +43,6 @@ const MAX_AGE_DAYS = 90;
 const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'] as const;
 const CLICK_ID_KEYS = ['gclid', 'fbclid', 'gbraid', 'wbraid', 'msclkid', 'ttclid'] as const;
 const AD_DETAIL_KEYS = ['adset', 'ad', 'placement'] as const;
-
-function readCookie(name: string): string | null {
-    if (typeof document === 'undefined') return null;
-    const match = document.cookie.split('; ').find(row => row.startsWith(name + '='));
-    return match ? decodeURIComponent(match.split('=').slice(1).join('=')) : null;
-}
-
-function writeCookie(name: string, value: string, days: number) {
-    if (typeof document === 'undefined') return;
-    const expires = new Date(Date.now() + days * 864e5).toUTCString();
-    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
-}
 
 /** Returns the stored first-touch attribution (empty object if none). */
 export function getAttribution(): Attribution {

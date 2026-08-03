@@ -7,6 +7,7 @@ import { submitInquiry, isValidPhone, SUBMIT_ERROR_MESSAGE, PHONE_ERROR_MESSAGE 
 import { useFormStart, trackFormError, trackFormStep } from '@/lib/gtm';
 import Link from 'next/link';
 import PhoneInput from '../ui/PhoneInput';
+import HoneypotField from '../ui/HoneypotField';
 
 function ExclusiveOfferContent() {
     const onFormStart = useFormStart('exclusive-offer-form');
@@ -108,6 +109,7 @@ function ExclusiveOfferContent() {
                             ) : (
                                 <div className="w-full max-w-xl">
                                     <form id="exclusive-offer-form" onSubmit={step === 1 ? handleNextStep : handleSubmit} onFocusCapture={onFormStart} className="flex flex-col gap-6">
+                                        <HoneypotField />
                                         <div className="relative overflow-hidden">
                                             <AnimatePresence mode="wait">
                                                 {step === 1 ? (
