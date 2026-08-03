@@ -34,6 +34,7 @@ import {
     X,
 } from 'lucide-react';
 import PhoneInput from '../../../components/ui/PhoneInput';
+import HoneypotField from '../../../components/ui/HoneypotField';
 import { fmt, calcValues } from '../../../components/properties/utils';
 import ROITab from '../../../components/properties/ROITab';
 import CostsTab from '../../../components/properties/CostsTab';
@@ -417,6 +418,7 @@ function PropertyDetailPageContent() {
                                                 Enquire About This Property
                                             </h3>
                                             <form id="property-detail-inquiry-form" onSubmit={handleSubmit} onFocusCapture={onInquiryFormStart} className="space-y-6">
+                                                <HoneypotField />
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <div className="relative">
                                                         <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -555,6 +557,7 @@ function PropertyDetailPageContent() {
                                     A detailed breakdown including ROI projections, cost analysis, and area intelligence for <strong>{property?.title}</strong>.
                                 </p>
                                 <form id="property-analysis-form" onSubmit={handleAnalysisSubmit} onFocusCapture={onAnalysisFormStart} className="space-y-4">
+                                    <HoneypotField />
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-1">
                                             <label className="text-[9px] font-bold text-gray-400 uppercase tracking-widest ml-1">First Name</label>

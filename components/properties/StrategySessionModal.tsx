@@ -6,6 +6,7 @@ import { X, Calendar, Send, CheckCircle, RefreshCw, ArrowRight } from 'lucide-re
 import { submitInquiry, isValidPhone, SUBMIT_ERROR_MESSAGE, PHONE_ERROR_MESSAGE } from '@/lib/inquiryService';
 import { useFormStart, trackFormError } from '@/lib/gtm';
 import PhoneInput from '../ui/PhoneInput';
+import HoneypotField from '../ui/HoneypotField';
 
 interface StrategySessionModalProps {
     isOpen: boolean;
@@ -108,6 +109,7 @@ export default function StrategySessionModal({ isOpen, onClose, propertyName }: 
                                 </div>
 
                                 <form id="strategy-session-form" onSubmit={handleSubmit} onFocusCapture={onFormStart} className="space-y-4">
+                                    <HoneypotField />
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-1.5">
                                             <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">First Name</label>

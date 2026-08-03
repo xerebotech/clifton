@@ -8,6 +8,7 @@ import { useSearchParams } from 'next/navigation';
 import { submitInquiry, isValidPhone, SUBMIT_ERROR_MESSAGE, PHONE_ERROR_MESSAGE } from '@/lib/inquiryService';
 import { useFormStart, trackFormError } from '@/lib/gtm';
 import PhoneInput from '../../components/ui/PhoneInput';
+import HoneypotField from '../../components/ui/HoneypotField';
 
 const contactInfo = [
     {
@@ -211,6 +212,7 @@ function ContactContent() {
                                 </motion.div>
                             ) : (
                                 <form id="contact-page-form" onSubmit={handleSubmit} onFocusCapture={onFormStart} className="bg-white p-10 shadow-lg space-y-6">
+                                    <HoneypotField />
                                     <div className="grid md:grid-cols-2 gap-6">
                                         <div>
                                             <label className="text-sm text-[#23312D] mb-2 block font-medium">First Name *</label>
