@@ -103,7 +103,7 @@ function ContactSectionContent() {
             link: `mailto:${EMAIL}`,
             type: "email"
         },
-        { icon: Clock, title: "Working Hours", content: "Sun - Thu: 9AM - 6PM" }
+        { icon: Clock, title: "Working Hours", content: "Mon - Sat: 9AM - 6PM" }
     ];
 
     return (
