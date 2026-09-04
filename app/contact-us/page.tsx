@@ -9,33 +9,57 @@ import { submitInquiry, isValidPhone, SUBMIT_ERROR_MESSAGE, PHONE_ERROR_MESSAGE 
 import { useFormStart, trackFormError } from '@/lib/gtm';
 import PhoneInput from '../../components/ui/PhoneInput';
 import HoneypotField from '../../components/ui/HoneypotField';
+import {
+    PHONE_MOBILE_DISPLAY,
+    PHONE_MOBILE_LINK,
+    PHONE_OFFICE_DISPLAY,
+    PHONE_OFFICE_LINK,
+    EMAIL,
+    ADDRESS,
+    MAPS_LINK
+} from '@/lib/contact';
 
-const contactInfo = [
+interface ContactInfoItem {
+    icon: React.ElementType;
+    title: string;
+    content: string;
+    subtext?: string;
+    link?: string;
+    type?: string;
+    secondaryContent?: string;
+    secondaryLink?: string;
+    secondaryLabel?: string;
+}
+
+const contactInfo: ContactInfoItem[] = [
     {
         icon: MapPin,
         title: "Visit Us",
-        content: "508, Sultan business centre, Oud metha, Dubai",
+        content: ADDRESS,
         subtext: "Dubai, UAE",
-        link: "https://maps.app.goo.gl/A8C2Rnh5k1rqJkmdA",
+        link: MAPS_LINK,
         type: "address"
     },
     {
         icon: Phone,
         title: "Call Us",
-        content: "+971 55 930 4697",
+        content: PHONE_MOBILE_DISPLAY,
         subtext: "24/7 Support Available",
-        link: "tel:+971559304697",
-        type: "phone"
+        link: PHONE_MOBILE_LINK,
+        type: "phone",
+        secondaryContent: PHONE_OFFICE_DISPLAY,
+        secondaryLink: PHONE_OFFICE_LINK,
+        secondaryLabel: "Office"
     },
     {
         icon: Mail,
         title: "Email Us",
-        content: "realestate@cliftonuae.com",
+        content: EMAIL,
         subtext: "We reply within 24 hours",
-        link: "mailto:realestate@cliftonuae.com",
+        link: `mailto:${EMAIL}`,
         type: "email"
     },
-    { icon: Clock, title: "Working Hours", content: "Sun - Thu: 9AM - 6PM", subtext: "Fri - Sat: Closed" }
+    { icon: Clock, title: "Working Hours", content: "Mon - Sat: 9AM - 6PM", subtext: "Sun: Closed" }
 ];
 
 export default function Contact() {
@@ -172,6 +196,18 @@ function ContactContent() {
                                         </a>
                                     ) : (
                                         <p className="text-[#3B5B5D] font-medium">{info.content}</p>
+                                    )}
+                                    {info.secondaryContent && info.secondaryLink && (
+                                        <a
+                                            href={info.secondaryLink}
+                                            className="text-[#3B5B5D] font-medium hover:text-[#AE9573] transition-colors duration-300 truncate block w-full mt-1"
+                                            onClick={() => trackClick(info.type || 'link', info.secondaryContent as string)}
+                                        >
+                                            {info.secondaryLabel && (
+                                                <span className="text-[#A5A19D] font-normal">{info.secondaryLabel}: </span>
+                                            )}
+                                            {info.secondaryContent}
+                                        </a>
                                     )}
                                     <p className="text-[#A5A19D] text-sm mt-1">{info.subtext}</p>
                                 </motion.div>
@@ -320,20 +356,21 @@ function ContactContent() {
                                 if (typeof window !== 'undefined' && (window as any).dataLayer) {
                                     (window as any).dataLayer.push({
                                         event: 'map_interaction',
-                                        map_location: 'Sultan Business Centre, Dubai'
+                                        map_location: 'Clifton Capital Real Estate LLC, Dubai'
                                     });
                                 }
                             }}
                         >
                             <div className="h-full min-h-[500px] w-full bg-[#f2f0eb] rounded-xl overflow-hidden shadow-lg border-4 border-transparent hover:border-[#3B5B5D]/10 transition-colors">
                                 <iframe
-                                    src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3609.1000183593183!2d55.30871200000001!3d25.233556!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f42cc28ba49af%3A0x57bbd7cd1311987e!2sSultan%20Business%20Centre!5e0!3m2!1sen!2sin!4v1769682109943!5m2!1sen!2sin"
+                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3609.110419451167!2d55.30883967593063!3d25.233205630240203!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f431f2c76669b%3A0xb9a8396c0203da3d!2sClifton%20Capital%20Real%20Estate%20LLC!5e0!3m2!1sen!2sae!4v1788439769903!5m2!1sen!2sae"
+                                    title="Clifton Capital Real Estate LLC on Google Maps"
                                     width="100%"
                                     height="100%"
                                     style={{ border: 0, minHeight: '500px' }}
                                     allowFullScreen
                                     loading="lazy"
-                                    referrerPolicy="no-referrer-when-downgrade"
+                                    referrerPolicy="strict-origin-when-cross-origin"
                                 />
                             </div>
                         </motion.div>

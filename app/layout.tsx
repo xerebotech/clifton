@@ -65,12 +65,20 @@ const jsonLd = {
     "addressLocality": "Dubai",
     "addressCountry": "AE"
   },
-  "contactPoint": {
-    "@type": "ContactPoint",
-    "telephone": "+971-55-930-4697",
-    "contactType": "customer service",
-    "email": "realestate@cliftonuae.com"
-  },
+  "contactPoint": [
+    {
+      "@type": "ContactPoint",
+      "telephone": "+971-50-164-9369",
+      "contactType": "customer service",
+      "email": "realestate@cliftonuae.com"
+    },
+    {
+      "@type": "ContactPoint",
+      "telephone": "+971-4-585-2370",
+      "contactType": "customer service",
+      "areaServed": "AE"
+    }
+  ],
   "sameAs": [
     "https://www.cliftonuae.com",
     "https://www.instagram.com/akhilsaja",

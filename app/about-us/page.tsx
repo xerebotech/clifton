@@ -649,7 +649,7 @@ export default function AboutUs() {
                                         </p>
                                         <div className="flex gap-3">
                                             <a
-                                                href="tel:+971559304697"
+                                                href="tel:+971501649369"
                                                 className="w-11 h-11 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-[#AE9573] hover:scale-110 transition-all duration-300 shadow-lg"
                                             >
                                                 <Phone className="w-5 h-5" />
@@ -847,7 +847,7 @@ export default function AboutUs() {
                             </Link>
 
                             <a
-                                href="tel:+971559304697"
+                                href="tel:+971501649369"
                                 className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-lg font-semibold flex items-center gap-2 hover:bg-white hover:text-[#00594F] transition-all duration-300"
                             >
                                 <Phone className="w-5 h-5" />
@@ -862,6 +862,13 @@ export default function AboutUs() {
                                 Email Us
                             </a>
                         </div>
+
+                        <p className="text-white/70 text-sm mt-6">
+                            Office:{' '}
+                            <a href="tel:+97145852370" className="hover:text-white transition-colors">
+                                +971 4 585 2370
+                            </a>
+                        </p>
                     </motion.div>
                 </div>
             </section>

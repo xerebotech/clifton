@@ -32,7 +32,7 @@ export interface InquiryData {
 
 /** Shared error copy shown when a submission fails. */
 export const SUBMIT_ERROR_MESSAGE =
-    "Something went wrong. Please try again or call us at +971 55 930 4697.";
+    "Something went wrong. Please try again or call us at +971 50 164 9369.";
 export const PHONE_ERROR_MESSAGE = "Please enter a valid phone number.";
 
 /** A usable phone needs at least 8 digits (the CRM requires mobile_no). */

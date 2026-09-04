@@ -5,6 +5,15 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Phone, Mail, MapPin, Facebook, Instagram, Linkedin, Twitter, ChevronDown, ChevronUp } from 'lucide-react';
+import {
+    PHONE_MOBILE_DISPLAY,
+    PHONE_MOBILE_LINK,
+    PHONE_OFFICE_DISPLAY,
+    PHONE_OFFICE_LINK,
+    EMAIL,
+    ADDRESS,
+    MAPS_LINK
+} from '@/lib/contact';
 
 const routeMap: Record<string, string> = {
     'Home': '/',
@@ -219,6 +228,33 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                                         )}
                                     </div>
                                 ))}
+
+                                <div className="pt-4 mt-2 border-t border-gray-100 space-y-3">
+                                    <a
+                                        href={PHONE_MOBILE_LINK}
+                                        className="flex items-center gap-3 py-1 text-[#23312D]"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                    >
+                                        <Phone className="w-4 h-4 text-[#AE9573]" />
+                                        {PHONE_MOBILE_DISPLAY}
+                                    </a>
+                                    <a
+                                        href={PHONE_OFFICE_LINK}
+                                        className="flex items-center gap-3 py-1 text-[#23312D]"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                    >
+                                        <Phone className="w-4 h-4 text-[#AE9573]" />
+                                        {PHONE_OFFICE_DISPLAY}
+                                    </a>
+                                    <a
+                                        href={`mailto:${EMAIL}`}
+                                        className="flex items-center gap-3 py-1 text-[#23312D]"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                    >
+                                        <Mail className="w-4 h-4 text-[#AE9573]" />
+                                        {EMAIL}
+                                    </a>
+                                </div>
                             </nav>
                         </motion.div>
                     )}
@@ -243,6 +279,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                             <p className="text-white/60 leading-relaxed mb-6 max-w-md">
                                 We turn dream homes into reality and help sellers get top dollar for their properties. With our deep market expertise and personal service, we make real estate transactions seamless.
                             </p>
+                           
                             <div className="flex gap-4">
                                 {[Facebook, Instagram, Linkedin, Twitter].map((Icon, index) => (
                                     <a

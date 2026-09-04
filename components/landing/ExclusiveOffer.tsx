@@ -188,11 +188,11 @@ function ExclusiveOfferContent() {
 
                             <p className="text-white/30 text-xs tracking-wider">
                                 Or contact our private office directly at <a
-                                    href="tel:+971559304697"
+                                    href="tel:+971501649369"
                                     className="text-white/60 underline hover:text-[#AE9573] transition-colors"
-                                    onClick={() => trackClick('phone', '+971 55 930 4697')}
+                                    onClick={() => trackClick('phone', '+971 50 164 9369')}
                                 >
-                                    +971 55 930 4697
+                                    +971 50 164 9369
                                 </a>
                             </p>
                         </div>

@@ -505,8 +505,8 @@ function PropertyDetailPageContent() {
                                 {/* Contact Options */}
                                 <div className="mt-6 space-y-3">
                                     <a
-                                        href="tel:+971559304697"
-                                        onClick={() => trackClick('phone', '+971 55 930 4697')}
+                                        href="tel:+971501649369"
+                                        onClick={() => trackClick('phone', '+971 50 164 9369')}
                                         className="flex items-center justify-center gap-3 w-full py-4 border-2 border-[#00594F] text-[#00594F] font-semibold rounded-xl hover:bg-[#00594F] hover:text-white transition-colors"
                                     >
                                         <Phone className="w-5 h-5" />

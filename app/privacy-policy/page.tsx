@@ -66,7 +66,7 @@ export default function PrivacyPolicy() {
                             </p>
                             <p className="mt-4 font-normal text-[#23312D]">
                                 Email: privacy@cliftoncapital.com<br />
-                                Phone: +971 (0) 4 123 4567<br />
+                                Phone: +971 4 585 2370<br />
                                 Address: Dubai Marina, Dubai, UAE
                             </p>
                         </div>

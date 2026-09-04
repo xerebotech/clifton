@@ -7,6 +7,26 @@ import { useFormStart, trackFormError } from '@/lib/gtm';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle, RefreshCw } from 'lucide-react';
 import PhoneInput from './ui/PhoneInput';
 import HoneypotField from './ui/HoneypotField';
+import {
+    PHONE_MOBILE_DISPLAY,
+    PHONE_MOBILE_LINK,
+    PHONE_OFFICE_DISPLAY,
+    PHONE_OFFICE_LINK,
+    EMAIL,
+    ADDRESS,
+    MAPS_LINK
+} from '@/lib/contact';
+
+interface ContactInfoItem {
+    icon: React.ElementType;
+    title: string;
+    content: string;
+    link?: string;
+    type?: string;
+    secondaryContent?: string;
+    secondaryLink?: string;
+    secondaryLabel?: string;
+}
 
 function ContactSectionContent() {
     const ref = useRef(null);
@@ -58,26 +78,29 @@ function ContactSectionContent() {
         }
     };
 
-    const contactInfo = [
+    const contactInfo: ContactInfoItem[] = [
         {
             icon: MapPin,
             title: "Address",
-            content: "508, Sultan business centre, Oud metha, Dubai",
-            link: "https://maps.app.goo.gl/A8C2Rnh5k1rqJkmdA",
+            content: ADDRESS,
+            link: MAPS_LINK,
             type: "address"
         },
         {
             icon: Phone,
             title: "Phone",
-            content: "+971 55 930 4697",
-            link: "tel:+971559304697",
-            type: "phone"
+            content: PHONE_MOBILE_DISPLAY,
+            link: PHONE_MOBILE_LINK,
+            type: "phone",
+            secondaryContent: PHONE_OFFICE_DISPLAY,
+            secondaryLink: PHONE_OFFICE_LINK,
+            secondaryLabel: "Office"
         },
         {
             icon: Mail,
             title: "Email",
-            content: "realestate@cliftonuae.com",
-            link: "mailto:realestate@cliftonuae.com",
+            content: EMAIL,
+            link: `mailto:${EMAIL}`,
             type: "email"
         },
         { icon: Clock, title: "Working Hours", content: "Sun - Thu: 9AM - 6PM" }
@@ -135,6 +158,18 @@ function ContactSectionContent() {
                                                 </a>
                                             ) : (
                                                 <p className="text-[#5a5a5a]">{info.content}</p>
+                                            )}
+                                            {info.secondaryContent && info.secondaryLink && (
+                                                <a
+                                                    href={info.secondaryLink}
+                                                    className="block text-[#5a5a5a] hover:text-[#AE9573] transition-colors duration-300 mt-1"
+                                                    onClick={() => trackClick(info.type || 'link', info.secondaryContent as string)}
+                                                >
+                                                    {info.secondaryLabel && (
+                                                        <span className="text-[#A5A19D]">{info.secondaryLabel}: </span>
+                                                    )}
+                                                    {info.secondaryContent}
+                                                </a>
                                             )}
                                         </div>
                                     </motion.div>

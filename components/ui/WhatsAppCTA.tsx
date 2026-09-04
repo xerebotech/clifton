@@ -6,7 +6,7 @@ import { MessageCircle } from 'lucide-react';
 import { trackWhatsappClick } from '@/lib/gtm';
 
 export default function WhatsAppCTA() {
-    const phoneNumber = "+971559304697"; // As seen in ContactSection
+    const phoneNumber = "+971501649369"; // As seen in ContactSection
     const message = encodeURIComponent("Hello! I'm interested in luxury property investment opportunities in Dubai. Could you provide more information?");
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
 
