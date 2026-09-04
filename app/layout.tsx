@@ -61,7 +61,7 @@ const jsonLd = {
   "description": "Premium real estate services in Dubai, specialized in luxury properties and investment consulting.",
   "address": {
     "@type": "PostalAddress",
-    "streetAddress": "508, Sultan business centre, Oud metha",
+    "streetAddress": "219, Sultan business centre, Oud metha",
     "addressLocality": "Dubai",
     "addressCountry": "AE"
   },
