@@ -1,6 +1,11 @@
 User-agent: *
 Allow: /
 
+# Blog images are served through this proxy because CMS media is tenant-scoped
+# and a browser cannot authenticate to it. Must sit above the /api/ disallow,
+# or Google cannot fetch a single image on the blog.
+Allow: /api/cms-media/
+
 Disallow: /api/
 Disallow: /assets/email/
 

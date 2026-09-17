@@ -23,6 +23,7 @@ const routeMap: Record<string, string> = {
     'BuyProperty': '/buy-property',
     'SellProperty': '/sell-property',
     'RentProperty': '/rent-property',
+    'Blog': '/blog',
     'Contact': '/contact-us',
     'PrivacyPolicy': '/privacy-policy',
     'TermsOfService': '/terms-of-service'
@@ -50,6 +51,7 @@ const navItems: NavItem[] = [
             { name: 'Rent Your Property', page: 'RentProperty' }
         ]
     },
+    { name: 'Blog', page: 'Blog' },
     { name: 'Contact Us', page: 'Contact' }
 ];
 
@@ -309,6 +311,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                                     : [
                                         { name: 'Home', page: 'Home' },
                                         { name: 'About Us', page: 'About' },
+                                        { name: 'Blog', page: 'Blog' },
                                         { name: 'Contact Us', page: 'Contact' }
                                     ]
                                 ).map((link, index) => (
