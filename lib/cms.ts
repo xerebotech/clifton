@@ -197,6 +197,12 @@ export function mediaUrl(media: MediaDoc | string | null | undefined): string | 
     return `/api/cms-media/${encodeURIComponent(filename)}`;
 }
 
+/** The file's own ratio as a CSS aspect-ratio value, when the CMS recorded its size. */
+export function mediaAspect(media: MediaDoc | string | null | undefined): string | undefined {
+    const doc = populated<MediaDoc>(media);
+    return doc?.width && doc?.height ? `${doc.width} / ${doc.height}` : undefined;
+}
+
 export function mediaAlt(media: MediaDoc | string | null | undefined, fallback = ""): string {
     return populated<MediaDoc>(media)?.alt || fallback;
 }

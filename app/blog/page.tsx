@@ -2,7 +2,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import Reveal from "@/components/blog/Reveal";
-import { categoriesOf, formatDate, getPosts, mediaAlt, mediaUrl, type PostSummary } from "@/lib/cms";
+import {
+    categoriesOf,
+    formatDate,
+    getPosts,
+    mediaAlt,
+    mediaAspect,
+    mediaUrl,
+    type PostSummary,
+} from "@/lib/cms";
 
 export const metadata: Metadata = {
     title: "Insights & Market News | Clifton Capital Real Estate",
@@ -44,7 +52,12 @@ function FeaturedPost({ post }: { post: PostSummary }) {
                             className="absolute -bottom-6 -right-6 hidden h-48 w-48 bg-[#23312D] md:block"
                         />
                         <div className="relative z-10 overflow-hidden rounded-sm">
-                            <div className="aspect-[4/3] w-full bg-[#23312D]/5">
+                            {/* Sized to the file itself: featured images carry baked-in
+                                titles and logos that a fixed crop would cut off. */}
+                            <div
+                                className="aspect-video w-full bg-[#23312D]/5"
+                                style={{ aspectRatio: mediaAspect(post.featuredImage) }}
+                            >
                                 {image && (
                                     // eslint-disable-next-line @next/next/no-img-element
                                     <img
