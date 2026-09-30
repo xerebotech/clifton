@@ -129,7 +129,10 @@ function PostCard({ post, index }: { post: PostSummary; index: number }) {
         <Reveal delay={(index % 3) * 0.1}>
             <article className="group flex h-full flex-col bg-white transition-shadow duration-500 hover:shadow-[0_25px_60px_rgba(35,49,45,0.12)]">
                 <Link href={`/blog/${post.slug}`} className="relative block overflow-hidden">
-                    <div className="aspect-[16/11] w-full bg-[#23312D]/5">
+                    <div
+                        className="aspect-video w-full bg-[#23312D]/5"
+                        style={{ aspectRatio: mediaAspect(post.featuredImage) }}
+                    >
                         {image && (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
