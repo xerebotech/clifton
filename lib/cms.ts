@@ -40,6 +40,7 @@ export interface PostSummary {
     featuredImage?: MediaDoc | string | null;
     categories?: (CategoryDoc | string)[] | null;
     publishedAt?: string | null;
+    updatedAt?: string | null;
 }
 
 /** A block row from a post's `layout`. Shapes are narrowed in the renderer. */
@@ -61,7 +62,6 @@ export interface AuthorDoc {
 export interface PostDoc extends PostSummary {
     author?: AuthorDoc | string | null;
     layout?: LayoutBlock[] | null;
-    updatedAt?: string | null;
     meta?: {
         title?: string | null;
         description?: string | null;

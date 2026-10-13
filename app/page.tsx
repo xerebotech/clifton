@@ -4,6 +4,12 @@ import WhyDubaiSection from "@/components/WhyDubaiSection";
 import ServicesSection from "@/components/ServicesSection";
 import DevelopersSection from "@/components/DevelopersSection";
 import ContactSection from "@/components/ContactSection";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+  openGraph: { url: "/" },
+};
 
 export default function Home() {
   return (
