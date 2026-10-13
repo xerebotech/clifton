@@ -22,13 +22,12 @@ export const metadata: Metadata = {
   title: "Clifton Capital Real Estate LLC | Premium Dubai Properties",
   description: "Clifton Capital Real Estate LLC offers premium real estate services in Dubai. Find your dream home, invest in lucrative properties, or sell with experts.",
   metadataBase: new URL('https://www.cliftonuae.com'),
-  alternates: {
-    canonical: '/',
-  },
+  // No canonical or og:url here: every route inherits this object, so a value
+  // set here told Google that /about-us, /buy-property etc. were all copies of
+  // the homepage. Each page sets its own in its page.tsx or layout.tsx.
   openGraph: {
     title: 'Clifton Capital Real Estate LLC | Premium Dubai Properties',
     description: 'Expert real estate services in Dubai. Buying, selling, and property management with a premium touch.',
-    url: 'https://www.cliftonuae.com',
     siteName: 'Clifton Capital Real Estate',
     images: [
       {
